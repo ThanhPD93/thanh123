@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Member Login</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/login_style.css"/>
+</head>
+<body>
+    <div class="login-container">
+        <div class="avatar">
+            <img src="avatar.png" alt="Avatar">
+        </div>
+        <div class="login-form">
+            <h2>Member Login</h2>
+            <form action="/login" method="post">
+                <div class="input-container">
+                    <input type="text" placeholder="Username" required>
+                </div>
+                <div class="input-container">
+                    <input type="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="login-btn">Sign in</button>
+            </form>
+            <a href="#" class="forgot-password">Forgot Password?</a>
+        </div>
+    </div>
+</body>
+</html>
