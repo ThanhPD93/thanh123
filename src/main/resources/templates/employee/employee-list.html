@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"/>
     <title>Employee List</title>
 
 </head>
@@ -61,7 +62,8 @@
                 <td>0123456789</td>
                 <td>HCM</td>
                 <td class="text-center">
-                    <image src="/static/images/wallpapersden.com_astronaut-with-jellyfish_1366x768.jpg" alt="image" style="height: 30px; width: 45px"></image>
+<!--                  use when run  <img th:src="@{images/wallpapersden.com_astronaut-with-jellyfish_1366x768.jpg}" alt="image" style="height: 30px; width: 45px">-->
+                    <img src="/static/images/wallpapersden.com_astronaut-with-jellyfish_1366x768.jpg" alt="image" style="height: 30px; width: 45px">
                 </td>
             </tr>
             <tr>
@@ -73,7 +75,7 @@
                 <td>0987654321</td>
                 <td>Ha Noi</td>
                 <td class="text-center">
-                    <image src="/static/images/wallpapersden.com_astronaut-with-jellyfish_1366x768.jpg" alt="image" style="height: 30px; width: 45px"></image>
+                    <img src="/static/images/wallpapersden.com_astronaut-with-jellyfish_1366x768.jpg" alt="image" style="height: 30px; width: 45px">
                 </td>
             </tr>
             </tbody>
