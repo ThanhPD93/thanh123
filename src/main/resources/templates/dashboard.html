@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Dash Board</title>
@@ -21,24 +22,27 @@
              </div>
         </div>
     </div>
+
     <div class="row">
         <div class="col-3 px-0 ">
             <div class="bg-danger pb-1">
                 <img class="w-25 p-1" th:src="@{/images/profile.png}" alt="profile">
-                <p class="px-3">Admin</p>
+                <p class="px-3">Welcome! <span sec:authentication="principal.username"></span></p>
                 <a class="nav-link text-black d-flex justify-content-between" href="#" data-bs-toggle="collapse" data-bs-target="#logout"
                    aria-expanded="false" aria-controls="logout">
                     <div>
-                        <p class="px-3">Admin@FPT.com</p>
+                        <p class="px-3" th:text="${email}"></p>
                     </div>
                     <div>
                         <i class="bi bi-chevron-down mx-3"></i>
                     </div>
                 </a>
                 <div class="sub-menu collapse " id="logout">
-                    <a class="navi-link text-black text-decoration-none" th:href="@{/login}">
-                        Logout
-                    </a>
+                    <form th:action="@{/logout}" method="POST" onsubmit="return confirmAction('Are you sure you want to log out?');">
+                        <button type="submit" class="navi-link text-black text-decoration-none" style="background: none; border: none; font: inherit; color: inherit;">
+                            Logout
+                        </button>
+                    </form>
                 </div>
 
             </div>
