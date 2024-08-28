@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dash Board</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/dashboard.css}">
+
+</head>
+<body>
+<div class="container-fluid " style="background-color: rgb(233, 233, 233)" >
+    <div class="row">
+        <div class="d-flex justify-content-between " style="background-color: rgb(0, 150, 136)">
+            <div class="p-3">
+            <a><img style="width: 70px" th:src="@{/images/Logo-FPT.webp}" alt="FPT"></a>
+            </div>
+            <div class="p-3 align-baseline" >
+                    <input  type="text" class="bg-transparent " style="border: none">
+                    <span> <img th:src="@{images/loupe.png}" alt="img"></span>
+             </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3 px-0 ">
+            <div class="bg-danger pb-1">
+                <img class="w-25 p-1" th:src="@{/images/profile.png}" alt="profile">
+                <p class="px-3">Admin</p>
+                <a class="nav-link text-black d-flex justify-content-between" href="#" data-bs-toggle="collapse" data-bs-target="#logout"
+                   aria-expanded="false" aria-controls="logout">
+                    <div>
+                        <p class="px-3">Admin@FPT.com</p>
+                    </div>
+                    <div>
+                        <i class="bi bi-chevron-down mx-3"></i>
+                    </div>
+                </a>
+                <div class="sub-menu collapse " id="logout">
+                    <a class="navi-link text-black text-decoration-none" th:href="@{/login}">
+                        Logout
+                    </a>
+                </div>
+
+            </div>
+            <div class="sidebar bg-white">
+                <nav class="nav flex-column ">
+                    <a class="nav-link text-black" href="#">
+                        Home
+                    </a>
+                    <a class="nav-link text-black d-flex justify-content-between" href="#" data-bs-toggle="collapse" data-bs-target="#employeeManagement"
+                       aria-expanded="false" aria-controls="employeeManagement">
+                        <div>
+                            Employee Management
+                        </div>
+                        <div>
+                            <i class="bi bi-plus"></i>
+                        </div>
+                    </a>
+                    <div class="sub-menu collapse " id="employeeManagement">
+                        <a class="nav-link text-black" href="#">
+                            Employee List
+                        </a>
+                        <a class="nav-link text-black" href="#">
+                            Create Employee
+                        </a>
+                    </div>
+                    <a class="nav-link text-black d-flex justify-content-between" href="#" data-bs-toggle="collapse" data-bs-target="#customerManagement"
+                       aria-expanded="false" aria-controls="customerManagement">
+                        <div>
+                            Customer Management
+                        </div>
+                        <div>
+                            <i class="bi bi-plus"></i>
+                        </div>
+                    </a>
+                    <div class="sub-menu collapse" id="customerManagement">
+                        <a class="nav-link text-black" href="#">
+                           Customer List
+                        </a>
+                        <a class="nav-link text-black" href="#">
+                           Create Customer
+                        </a>
+                    </div>
+                    <a class="nav-link text-black d-flex justify-content-between" href="#" data-bs-toggle="collapse" data-bs-target="#vaccineType"
+                       aria-expanded="false" aria-controls="vaccineType">
+                        <div>
+                            Vaccine Type Management
+                        </div>
+                        <div>
+                            <i class="bi bi-plus"></i>
+                        </div>
+                    </a>
+                    <div class="sub-menu collapse" id="vaccineType">
+                        <a class="nav-link text-black" href="#">
+                           Vaccine Type List
+                        </a>
+                        <a class="nav-link text-black" href="#">
+                            Create Vaccine Type
+                        </a>
+                    </div>
+                    <a class="nav-link text-black d-flex justify-content-between" href="#" data-bs-toggle="collapse" data-bs-target="#vaccine"
+                       aria-expanded="false" aria-controls="vaccine">
+                        <div>
+                            Vaccine management
+                        </div>
+                        <div>
+                            <i class="bi bi-plus"></i>
+                        </div>
+                    </a>
+                    <div class="sub-menu collapse" id="vaccine">
+                        <a class="nav-link text-black" href="#">
+                           Vaccine List
+                        </a>
+                        <a class="nav-link text-black" href="#">
+                           Create Vaccine
+                        </a>
+                    </div>
+                    <a class="nav-link text-black d-flex justify-content-between" href="#" data-bs-toggle="collapse" data-bs-target="#injectionSchedule"
+                       aria-expanded="false" aria-controls="injectionSchedule">
+                        <div>
+                            Injection Schedule
+                        </div>
+                        <div>
+                            <i class="bi bi-plus"></i>
+                        </div>
+                    </a>
+                    <div class="sub-menu collapse" id="injectionSchedule">
+                        <a class="nav-link text-black" href="#">
+                           Injection Schedule List
+                        </a>
+                        <a class="nav-link text-black" href="#">
+                           Create Injection Schedule
+                        </a>
+                    </div>
+                    <a class="nav-link text-black d-flex justify-content-between" href="#" data-bs-toggle="collapse" data-bs-target="#injectionResult"
+                       aria-expanded="false" aria-controls="injectionResult">
+                        <div>
+                            Injection Result
+                        </div>
+                        <div>
+                            <i class="bi bi-plus"></i>
+                        </div>
+                    </a>
+                    <div class="sub-menu collapse" id="injectionResult">
+                        <a class="nav-link text-black" href="#">
+                            Injection Result List
+                        </a>
+                        <a class="nav-link text-black" href="#">
+                            Create Injection Result
+                        </a>
+                    </div>
+                    <a class="nav-link text-black d-flex justify-content-between" href="#" data-bs-toggle="collapse" data-bs-target="#news"
+                       aria-expanded="false" aria-controls="news">
+                        <div>
+                            News
+                        </div>
+                        <div>
+                            <i class="bi bi-plus"></i>
+                        </div>
+                    </a>
+                    <div class="sub-menu collapse" id="news">
+                        <a class="nav-link text-black " href="#" >
+                          Injection News List
+                        </a>
+                        <a class="nav-link text-black" href="#">
+                           Create News Result
+                        </a>
+                    </div>
+                    <a class="nav-link text-black d-flex justify-content-between" href="#">
+                        <div>
+                            Report
+                        </div>
+                        <div>
+                            <i class="bi bi-plus"></i>
+                        </div>
+                    </a>
+                </nav>
+            </div>
+        </div>
+        <div class="col-9 " >
+            <div class="row text-center my-4">
+                <h3>WELCOME TO VACCINE MANAGEMENT SYSTEM</h3>
+            </div>
+            <div class="row bg-white mx-2 shadow" >
+                <br>
+                <br>
+                <br>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
