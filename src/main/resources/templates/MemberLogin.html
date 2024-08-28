@@ -3,22 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <title>Member Login</title>
-    <link rel="stylesheet" type="text/css" href="/static/css/login_style.css"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/login_style.css}">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap.min.css}"/>
 </head>
 <body>
     <div class="login-container">
 
         <div class="avatar">
-            <img src="avatar.png" alt="Avatar">
+            <img src="#" alt="Avatar">
         </div>
         <div class="login-form">
             <h2>Member Login</h2>
-            <form action="/login" method="post">
+
+            <!-- message for logout here -->
+            <div th:if="${errorMessage}" th:text="${errorMessage}" class="text-danger"></div>
+            <div th:if="${param.logout}" class="alert alert-dark">You have been logged out</div>
+            <br>
+
+            <form th:action="@{/authenticateUser}" method="post">
                 <div class="input-container">
-                    <input type="text" placeholder="Username" required>
+                    <input type="text" placeholder="Username" name="username" required>
                 </div>
                 <div class="input-container">
-                    <input type="password" placeholder="Password" required>
+                    <input type="password" placeholder="Password" name="password" required>
                 </div>
                 <button type="submit" class="login-btn">Sign in</button>
             </form>
