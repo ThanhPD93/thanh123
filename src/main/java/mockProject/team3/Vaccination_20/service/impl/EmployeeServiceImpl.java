@@ -29,6 +29,9 @@ package mockProject.team3.Vaccination_20.service.impl;
 //
 //}
 
+import mockProject.team3.Vaccination_20.dto.request.forcreate.CRequestEmployee;
+import mockProject.team3.Vaccination_20.dto.request.forupdate.URequestEmployee;
+import mockProject.team3.Vaccination_20.dto.response.fordetail.DResponseEmployee;
 import mockProject.team3.Vaccination_20.dto.response.forlist.LResponseEmployee;
 import mockProject.team3.Vaccination_20.dto.response.forlist.LResponseEmployeetest;
 import mockProject.team3.Vaccination_20.model.Employee;
@@ -58,5 +61,15 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeRepository.findAllBy();
     }
 
+    @Override
+    public DResponseEmployee addEmployee(CRequestEmployee cRequestEmployee) {
+        Employee employee = modelMapper.map(cRequestEmployee, Employee.class);
+        return modelMapper.map(employeeRepository.save(employee), DResponseEmployee.class);
+    }
 
+    @Override
+    public DResponseEmployee updateEmployee(URequestEmployee uRequestEmployee) {
+        Employee employee = modelMapper.map(uRequestEmployee, Employee.class);
+        return modelMapper.map(employeeRepository.save(employee), DResponseEmployee.class);
+    }
 }
