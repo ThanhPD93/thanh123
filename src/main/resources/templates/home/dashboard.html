@@ -198,7 +198,7 @@
 <script>
     <!--function to fetch ajax data-->
     function fetchDocument(filename) {
-        fetch(`/getAjax?filename=${filename}`)
+        fetch(`/employee/getAjax?filename=${filename}`) <!-- change path -->
             .then(response => response.text())
             .then(data => {
                 document.getElementById('ajax-content').innerHTML = data;
