@@ -1,12 +1,12 @@
  // function to fetch ajax data
-    function fetchDocument(filename) {
-        fetch(`/employee/getAjax?filename=${filename}`)
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('ajax-content').innerHTML = data;
-            })
-            .catch(error => console.error('Error fetching document:', error));
-    }
+ function fetchEmployee(filename) {
+     fetch(`/employee/getAjax?filename=${filename}`)
+         .then(response => response.text())
+         .then(data => {
+             document.getElementById('ajax-content').innerHTML = data;
+         })
+         .catch(error => console.error('Error fetching document:', error));
+ }
 
 // function to fetch email
 //   document.addEventListener('DOMContentLoaded', function() {
