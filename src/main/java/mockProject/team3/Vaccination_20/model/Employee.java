@@ -18,7 +18,7 @@ import java.util.*;
 public class Employee {
     @Id
     @Column(length = 36)
-    private String EmployeeId;
+    private String employeeId;
 
     private String address;
 
