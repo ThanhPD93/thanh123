@@ -1,4 +1,4 @@
 package mockProject.team3.Vaccination_20.service;
 
-public interface EmployeeService {
+public interface NewsService {
 }

@@ -1,0 +1,8 @@
+package mockProject.team3.Vaccination_20.service.impl;
+
+import mockProject.team3.Vaccination_20.service.VaccineTypeService;
+import org.springframework.stereotype.Service;
+
+@Service
+public class VaccineTypeServiceImpl implements VaccineTypeService {
+}
