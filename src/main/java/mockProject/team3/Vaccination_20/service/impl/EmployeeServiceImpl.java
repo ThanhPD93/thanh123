@@ -29,9 +29,12 @@ package mockProject.team3.Vaccination_20.service.impl;
 //
 //}
 
+import mockProject.team3.Vaccination_20.dto.response.forlist.LResponseEmployee;
+import mockProject.team3.Vaccination_20.dto.response.forlist.LResponseEmployeetest;
 import mockProject.team3.Vaccination_20.model.Employee;
 import mockProject.team3.Vaccination_20.repository.EmployeeRepository;
 import mockProject.team3.Vaccination_20.service.EmployeeService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,8 +45,18 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     @Override
     public List<Employee> findBySearch(String searchInput) {
         return employeeRepository.findBysearch(searchInput);
     }
+
+    @Override
+    public List<LResponseEmployee> getAll() {
+        return employeeRepository.findAllBy();
+    }
+
+
 }
