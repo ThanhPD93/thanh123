@@ -26,7 +26,6 @@ public class EmployeeController {
 
     @GetMapping("/getEmployeesBySearch")
     public List<Employee> getEmployeesBySearch(@RequestParam String searchInput) {
-        var abc=employeeService.findBySearch(searchInput);
         return employeeService.findBySearch(searchInput);
     }
 

@@ -195,28 +195,8 @@
     </div>
 </div>
 
-<script>
-    <!--function to fetch ajax data-->
-    function fetchDocument(filename) {
-        fetch(`/employee/getAjax?filename=${filename}`) <!-- change path -->
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('ajax-content').innerHTML = data;
-            })
-            .catch(error => console.error('Error fetching document:', error));
-    }
-
-    <!-- function to fetch email -->
-<!--    document.addEventListener('DOMContentLoaded', function() {-->
-<!--    fetch('/getEmail')-->
-<!--        .then(response => response.text())-->
-<!--        .then(data => {-->
-<!--            document.getElementById('email').textContent = data;-->
-<!--        })-->
-<!--        .catch(error => console.error('Error fetching email:', error));-->
-<!--});-->
-
-</script>
+<script src="/js/dashboard.js"></script>
+<script src="/js/employee.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

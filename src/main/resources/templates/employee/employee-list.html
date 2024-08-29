@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"/>
     <title>Employee List</title>
 
 </head>
@@ -30,13 +30,8 @@
         <div class="search">
             <div class="d-flex">
                 <span class="me-2">Search:</span>
-                <form action="/employee/getEmployeesBySearch">
                     <input type="search" name="searchInput" id="searchInput" class="border-bottom border-0 border-info" placeholder="...">
-                    <button type="submit">
-                        search
-                    </button>
-                </form>
-
+                    <button id="search-button" onclick="search()">search</button>
             </div>
         </div>
     </div>
@@ -68,7 +63,7 @@
                 <td>HCM</td>
                 <td class="text-center">
 <!--                  use when run  <img th:src="@{images/wallpapersden.com_astronaut-with-jellyfish_1366x768.jpg}" alt="image" style="height: 30px; width: 45px">-->
-                    <img src="/static/images/wallpapersden.com_astronaut-with-jellyfish_1366x768.jpg" alt="image" style="height: 30px; width: 45px">
+                    <img src="/images/wallpapersden.com_astronaut-with-jellyfish_1366x768.jpg" alt="image" style="height: 30px; width: 45px">
                 </td>
             </tr>
             <tr>
@@ -80,7 +75,7 @@
                 <td>0987654321</td>
                 <td>Ha Noi</td>
                 <td class="text-center">
-                    <img src="/static/images/wallpapersden.com_astronaut-with-jellyfish_1366x768.jpg" alt="image" style="height: 30px; width: 45px">
+                    <img src="/images/wallpapersden.com_astronaut-with-jellyfish_1366x768.jpg" alt="image" style="height: 30px; width: 45px">
                 </td>
             </tr>
             </tbody>
@@ -108,39 +103,6 @@
         </div>
     </div>
 </div>
-<script>
-        document.getElementById('searchInput').addEventListener('keyDown', function() {
-            console.log(this.value);
-            const query = this.value;
-
-            fetch('/employee/getEmployeesBySearch?searchInput=' + encodeURIComponent(query))
-                .then(response => response.json())
-                .then(data => {
-                    const tableBody = document.getElementById('table-content');
-                    tableBody.innerHTML = '';
-
-                    data.forEach(employee => {
-                        const row = document.createElement('tr');
-
-                        row.innerHTML = `
-                            <td class="text-center"><input type="checkbox"></td>
-                            <td>${employee.employeeId}</td>
-                            <td>${employee.employeeName}</td>
-                            <td>${employee.dateOfBirth}</td>
-                            <td>${employee.gender}</td>
-                            <td>${employee.phone}</td>
-                            <td>${employee.address}</td>
-                            <td class="text-center"><img src="${employee.image}" alt="image" style="height: 30px; width: 45px"></td>
-                        `;
-
-                        tableBody.appendChild(row);
-                    });
-                })
-                .catch(error => console.error('Error fetching employee data:', error));
-        });
-</script>
-
-
 
 </body>
 </html>
