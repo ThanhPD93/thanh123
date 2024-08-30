@@ -5,4 +5,5 @@ import java.util.List;
 
 public interface EmployeeService {
     List<Employee> findBySearch(String searchInput);
+    List<Employee> findAll();
 }

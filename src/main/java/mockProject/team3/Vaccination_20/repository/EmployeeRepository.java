@@ -20,6 +20,4 @@ public interface EmployeeRepository extends JpaRepository<Employee, String> {
             "LOWER(e.workingPlace) LIKE LOWER(CONCAT('%', :searchInput, '%'))")
     List<Employee> findBysearch(String searchInput);
 
-    List<Employee> findByEmployeeNameContainsIgnoreCaseOrAddressContainsIgnoreCase(String employeeName, String address);
-
 }

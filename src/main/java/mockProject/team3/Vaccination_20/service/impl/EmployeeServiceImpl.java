@@ -46,4 +46,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     public List<Employee> findBySearch(String searchInput) {
         return employeeRepository.findBysearch(searchInput);
     }
+
+    @Override
+    public List<Employee> findAll() {
+        return employeeRepository.findAll();
+    }
 }

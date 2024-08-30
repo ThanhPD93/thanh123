@@ -29,4 +29,9 @@ public class EmployeeController {
         return employeeService.findBySearch(searchInput);
     }
 
+    @GetMapping("/findAll")
+    public List<Employee> findAll() {
+        return employeeService.findAll();
+    }
+
 }

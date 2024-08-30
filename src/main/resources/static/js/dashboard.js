@@ -4,6 +4,7 @@
          .then(response => response.text())
          .then(data => {
              document.getElementById('ajax-content').innerHTML = data;
+             findAllEmployee();
          })
          .catch(error => console.error('Error fetching document:', error));
  }
