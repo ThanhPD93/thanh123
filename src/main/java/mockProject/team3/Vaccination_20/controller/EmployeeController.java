@@ -35,6 +35,11 @@ public class EmployeeController {
         return employeeService.findBySearch(searchInput);
     }
 
+    @GetMapping("/findAll")
+    public List<Employee> findAll() {
+        return employeeService.findAll();
+    }
+
     @GetMapping("/list")
     public ResponseEntity<List<LResponseEmployee>> listEmployees(Model model) {
     List<LResponseEmployee> employees = employeeService.getAll();
