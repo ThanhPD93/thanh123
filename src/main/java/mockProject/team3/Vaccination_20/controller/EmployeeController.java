@@ -1,9 +1,15 @@
 package mockProject.team3.Vaccination_20.controller;
 
+import mockProject.team3.Vaccination_20.dto.request.forcreate.CRequestEmployee;
+import mockProject.team3.Vaccination_20.dto.request.forupdate.URequestEmployee;
+import mockProject.team3.Vaccination_20.dto.response.fordetail.DResponseEmployee;
+import mockProject.team3.Vaccination_20.dto.response.forlist.LResponseEmployee;
 import mockProject.team3.Vaccination_20.model.Employee;
 import mockProject.team3.Vaccination_20.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -34,4 +40,21 @@ public class EmployeeController {
         return employeeService.findAll();
     }
 
+    @GetMapping("/list")
+    public ResponseEntity<List<LResponseEmployee>> listEmployees(Model model) {
+    List<LResponseEmployee> employees = employeeService.getAll();
+    return ResponseEntity.ok().body(employees);
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity<DResponseEmployee> addEmployee(@RequestBody CRequestEmployee cRequestEmployee){
+        DResponseEmployee dResponseEmployee = employeeService.addEmployee(cRequestEmployee);
+        return ResponseEntity.ok().body(dResponseEmployee);
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<DResponseEmployee> updateEmployee(@RequestBody URequestEmployee uRequestEmployee){
+        DResponseEmployee dResponseEmployee = employeeService.updateEmployee(uRequestEmployee);
+        return ResponseEntity.ok().body(dResponseEmployee);
+    }
 }

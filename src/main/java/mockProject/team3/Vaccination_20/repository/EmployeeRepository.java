@@ -1,5 +1,7 @@
 package mockProject.team3.Vaccination_20.repository;
 
+import mockProject.team3.Vaccination_20.dto.response.forlist.LResponseEmployee;
+import mockProject.team3.Vaccination_20.dto.response.forlist.LResponseEmployeetest;
 import mockProject.team3.Vaccination_20.model.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,4 +22,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, String> {
             "LOWER(e.workingPlace) LIKE LOWER(CONCAT('%', :searchInput, '%'))")
     List<Employee> findBysearch(String searchInput);
 
+    List<Employee> findByEmployeeNameContainsIgnoreCaseOrAddressContainsIgnoreCase(String employeeName, String address);
+
+    List<LResponseEmployee> findAllBy();
 }
