@@ -40,7 +40,7 @@
             <div class="d-flex">
                 <span class="me-2">Search:</span>
                     <input type="search" name="searchInput" id="searchInput" class="border-bottom border-0 border-info" placeholder="...">
-                    <button id="search-button" onclick="search()">search</button>
+                    <button id="search-button" onclick="search()" class="rounded-5 border-0 bg-light"><img src="/images/icons/search.png"></button>
             </div>
         </div>
     </div>
@@ -78,13 +78,13 @@
 <!--    3 button-->
     <div class="d-flex flex-row mt-2">
         <div class="me-2">
-            <button type="button" class="btn btn-success">New Employee</button>
+            <a type="button" class="btn btn-success" href="#" onclick="fetchEmployee('employee-create.html')">New Employee</a>
         </div>
         <div class="me-2">
-            <button type="button" class="btn btn-warning text-white">Update Employee</button>
+            <a type="button" class="btn btn-warning text-white">Update Employee</a>
         </div>
         <div>
-            <button type="button" class="btn btn-danger">Delete Employee</button>
+            <a type="button" class="btn btn-danger">Delete Employee</a>
         </div>
     </div>
 </div>
