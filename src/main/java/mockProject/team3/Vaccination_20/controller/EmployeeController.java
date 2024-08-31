@@ -6,6 +6,7 @@ import mockProject.team3.Vaccination_20.dto.response.fordetail.DResponseEmployee
 import mockProject.team3.Vaccination_20.dto.response.forlist.LResponseEmployee;
 import mockProject.team3.Vaccination_20.model.Employee;
 import mockProject.team3.Vaccination_20.service.EmployeeService;
+import mockProject.team3.Vaccination_20.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -40,21 +42,56 @@ public class EmployeeController {
         return employeeService.findAll();
     }
 
+
+//    @PutMapping("/update")
+//    public ResponseEntity<DResponseEmployee> updateEmployee(@RequestBody URequestEmployee uRequestEmployee){
+//        DResponseEmployee dResponseEmployee = employeeService.updateEmployee(uRequestEmployee);
+//        return ResponseEntity.ok().body(dResponseEmployee);
+//    }
+
+    //show list employee
     @GetMapping("/list")
-    public ResponseEntity<List<LResponseEmployee>> listEmployees(Model model) {
-    List<LResponseEmployee> employees = employeeService.getAll();
-    return ResponseEntity.ok().body(employees);
-    }
+    public ResponseEntity<ApiResponse<List<LResponseEmployee>>> listEmployees(Model model) {
+        List<LResponseEmployee> employees = employeeService.getAll();
 
+        ApiResponse<List<LResponseEmployee>> response;
+        if (employees.isEmpty()) {
+            response = new ApiResponse<>(0, "Not Found!", new ArrayList<>());
+        } else {
+            response = new ApiResponse<>(1, "Success", employees);
+        }
+
+        return ResponseEntity.ok(response);
+    }
+    //add employee
     @PostMapping("/add")
-    public ResponseEntity<DResponseEmployee> addEmployee(@RequestBody CRequestEmployee cRequestEmployee){
+    public ResponseEntity<ApiResponse<DResponseEmployee>> addEmployee(@RequestBody CRequestEmployee cRequestEmployee) {
         DResponseEmployee dResponseEmployee = employeeService.addEmployee(cRequestEmployee);
-        return ResponseEntity.ok().body(dResponseEmployee);
+
+        ApiResponse<DResponseEmployee> response;
+        if (dResponseEmployee != null) {
+            response = new ApiResponse<>(1, "Employee added successfully", dResponseEmployee);
+        } else {
+            response = new ApiResponse<>(0, "Failed to add employee", null);
+        }
+
+        return ResponseEntity.ok(response);
     }
 
+	// update
     @PutMapping("/update")
-    public ResponseEntity<DResponseEmployee> updateEmployee(@RequestBody URequestEmployee uRequestEmployee){
+    public ResponseEntity<ApiResponse<DResponseEmployee>> updateEmployee(@RequestBody URequestEmployee uRequestEmployee) {
         DResponseEmployee dResponseEmployee = employeeService.updateEmployee(uRequestEmployee);
-        return ResponseEntity.ok().body(dResponseEmployee);
+
+        ApiResponse<DResponseEmployee> response;
+        if (dResponseEmployee != null) {
+            response = new ApiResponse<>(1, "Employee updated successfully", dResponseEmployee);
+        } else {
+            response = new ApiResponse<>(0, "Failed to update employee", null);
+        }
+
+        return ResponseEntity.ok(response);
     }
+
+
 }
