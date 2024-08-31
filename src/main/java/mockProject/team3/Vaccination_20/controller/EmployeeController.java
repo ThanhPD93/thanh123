@@ -8,6 +8,7 @@ import mockProject.team3.Vaccination_20.model.Employee;
 import mockProject.team3.Vaccination_20.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -30,14 +31,22 @@ public class EmployeeController {
         return Files.readString(path);
     }
 
-    @GetMapping("/getEmployeesBySearch")
-    public List<Employee> getEmployeesBySearch(@RequestParam String searchInput) {
-        return employeeService.findBySearch(searchInput);
+    @GetMapping("/getEmployeesBySearchWithPagination")
+    public Page<Employee> getEmployeesBySearchWithPagination(@RequestParam String searchInput,
+                                                               @RequestParam(defaultValue = "0") int page,
+                                                               @RequestParam(defaultValue = "1") int size) {
+        return employeeService.findBySearchWithPagination(searchInput, page, size);
     }
 
     @GetMapping("/findAll")
     public List<Employee> findAll() {
         return employeeService.findAll();
+    }
+
+    @GetMapping("/findAllWithPagination")
+    public Page<Employee> findAllWithPagination(@RequestParam(defaultValue = "0") int page,
+                                                @RequestParam(defaultValue = "1") int size) {
+		return employeeService.findAllWithPagination(page, size);
     }
 
     @GetMapping("/list")

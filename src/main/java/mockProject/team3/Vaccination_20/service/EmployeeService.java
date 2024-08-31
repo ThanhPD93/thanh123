@@ -6,10 +6,12 @@ import mockProject.team3.Vaccination_20.dto.response.fordetail.DResponseEmployee
 import mockProject.team3.Vaccination_20.dto.response.forlist.LResponseEmployee;
 import mockProject.team3.Vaccination_20.dto.response.forlist.LResponseEmployeetest;
 import mockProject.team3.Vaccination_20.model.Employee;
+import org.springframework.data.domain.Page;
+
 import java.util.List;
 
 public interface EmployeeService {
-    List<Employee> findBySearch(String searchInput);
+    Page<Employee> findBySearchWithPagination(String searchInput, int page, int size);
     List<Employee> findAll();
 
     List<LResponseEmployee> getAll();
@@ -17,4 +19,6 @@ public interface EmployeeService {
     DResponseEmployee addEmployee(CRequestEmployee cRequestEmployee);
 
     DResponseEmployee updateEmployee(URequestEmployee uRequestEmployee);
+
+    Page<Employee> findAllWithPagination(int page, int size);
 }

@@ -39,6 +39,10 @@ import mockProject.team3.Vaccination_20.repository.EmployeeRepository;
 import mockProject.team3.Vaccination_20.service.EmployeeService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -51,9 +55,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     private ModelMapper modelMapper;
 
-    @Override
-    public List<Employee> findBySearch(String searchInput) {
-        return employeeRepository.findBysearch(searchInput);
+    public Page<Employee> findBySearchWithPagination(String searchInput, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        List<Employee> employees = employeeRepository.findBysearch(searchInput);
+        return new PageImpl<>(employees, pageable, employees.size());
     }
 
     @Override
@@ -76,5 +81,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     public DResponseEmployee updateEmployee(URequestEmployee uRequestEmployee) {
         Employee employee = modelMapper.map(uRequestEmployee, Employee.class);
         return modelMapper.map(employeeRepository.save(employee), DResponseEmployee.class);
+    }
+
+    @Override
+    public Page<Employee> findAllWithPagination(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return employeeRepository.findAll(pageable);
     }
 }
