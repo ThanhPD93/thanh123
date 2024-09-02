@@ -32,7 +32,8 @@ public class Employee {
 
     private Gender gender;
 
-    private String image;
+    @Lob
+    private byte[] image;
 
     private String password;
 

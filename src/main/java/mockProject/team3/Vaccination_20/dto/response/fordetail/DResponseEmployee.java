@@ -23,7 +23,7 @@ public class DResponseEmployee {
 
     private Gender gender;
 
-    private String image;
+    private byte[] image;
 
     private String phone;
 
