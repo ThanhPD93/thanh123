@@ -9,9 +9,12 @@ import mockProject.team3.Vaccination_20.service.EmployeeService;
 import mockProject.team3.Vaccination_20.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,9 +35,12 @@ public class EmployeeController {
         return Files.readString(path);
     }
 
-    @GetMapping("/getEmployeesBySearch")
-    public List<Employee> getEmployeesBySearch(@RequestParam String searchInput) {
-        return employeeService.findBySearch(searchInput);
+    @GetMapping("/getEmployeesBySearchWithPagination")
+    public Page<Employee> getEmployeesBySearchWithPagination(@RequestParam String searchInput,
+                                                               @RequestParam(defaultValue = "0") int page,
+                                                               @RequestParam(defaultValue = "1") int size) {
+        System.out.println(size);
+        return employeeService.findBySearchWithPagination(searchInput, page, size);
     }
 
     @GetMapping("/findAll")
@@ -50,6 +56,13 @@ public class EmployeeController {
 //    }
 
     //show list employee
+    @GetMapping("/findAllWithPagination")
+    public Page<Employee> findAllWithPagination(@RequestParam String searchInput,
+            									@RequestParam(defaultValue = "0") int page,
+                                                @RequestParam(defaultValue = "1") int size) {
+        return employeeService.findBySearchWithPagination(searchInput, page, size);
+    }
+
     @GetMapping("/list")
     public ResponseEntity<ApiResponse<List<LResponseEmployee>>> listEmployees(Model model) {
         List<LResponseEmployee> employees = employeeService.getAll();
@@ -93,5 +106,14 @@ public class EmployeeController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/image/{id}")
+    public ResponseEntity<byte[]> getEmployeeImage(@PathVariable String id) {
+        Employee employee = employeeService.findById(id);
+        byte[] imageBytes = employee.getImage();
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG)  // Or IMAGE_PNG based on your image type
+                .body(imageBytes);
+    }
 
 }

@@ -1,0 +1,9 @@
+#page-buttons button {
+	background-color: #f8f9fa;
+	color: black;
+	border: none;
+}
+
+#page-buttons button:hover {
+    background-color: grey;
+}

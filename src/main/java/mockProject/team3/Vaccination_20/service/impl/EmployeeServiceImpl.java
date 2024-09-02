@@ -29,6 +29,7 @@ package mockProject.team3.Vaccination_20.service.impl;
 //
 //}
 
+import jakarta.persistence.EntityNotFoundException;
 import mockProject.team3.Vaccination_20.dto.request.forcreate.CRequestEmployee;
 import mockProject.team3.Vaccination_20.dto.request.forupdate.URequestEmployee;
 import mockProject.team3.Vaccination_20.dto.response.fordetail.DResponseEmployee;
@@ -39,6 +40,10 @@ import mockProject.team3.Vaccination_20.repository.EmployeeRepository;
 import mockProject.team3.Vaccination_20.service.EmployeeService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -52,8 +57,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     private ModelMapper modelMapper;
 
     @Override
-    public List<Employee> findBySearch(String searchInput) {
-        return employeeRepository.findBysearch(searchInput);
+    public Page<Employee> findBySearchWithPagination(String searchInput, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        if (searchInput.trim().equals("")) {
+            return employeeRepository.findAll(pageable);
+        } else {
+            return employeeRepository.findBysearch(searchInput, pageable);
+        }
     }
 
     @Override
@@ -77,4 +87,17 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = modelMapper.map(uRequestEmployee, Employee.class);
         return modelMapper.map(employeeRepository.save(employee), DResponseEmployee.class);
     }
+
+    @Override
+    public Page<Employee> findAllWithPagination(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return employeeRepository.findAll(pageable);
+    }
+
+    @Override
+    public Employee findById(String id) {
+        return employeeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found with id: " + id));
+    }
 }
+

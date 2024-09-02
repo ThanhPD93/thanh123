@@ -10,5 +10,4 @@ import org.springframework.web.bind.annotation.RestController;
 public class InjectionScheduleController {
 	@Autowired
     private InjectionScheduleService injectionScheduleService;
-
 }

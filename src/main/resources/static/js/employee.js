@@ -1,66 +1,99 @@
-function search() {
-            console.log(document.getElementById('searchInput').value);
-            const query = document.getElementById('searchInput').value;
+function checkAllBoxes() {
+	 const selectAllCheckbox = document.getElementById('mother-checkbox');
+    const checkboxes = document.querySelectorAll('.check-boxes input[type="checkbox"]');
+    checkboxes.forEach(function(checkbox) {
+        checkbox.checked = selectAllCheckbox.checked;
+    });
+}
 
-            fetch('/employee/getEmployeesBySearch?searchInput=' + encodeURIComponent(query))
-                .then(response => response.json())
-                .then(data => {
-                    const tableBody = document.getElementById('employee-list-content');
-                    tableBody.innerHTML = '';
+function search(page) {
+    const query = document.getElementById('searchInput').value;
+    const currentPageSize = parseInt(document.getElementById("dropdownMenuButton").innerHTML, 10);
+    console.log(currentPageSize);
 
-                    data.forEach(employee => {
-                        const row = document.createElement('tr');
+    fetch(`/employee/getEmployeesBySearchWithPagination?searchInput=${encodeURIComponent(query)}&page=${page}&size=${currentPageSize}`)
+        .then(response => response.json())
+        .then(employees => {
+            const tableBody = document.getElementById('employee-list-content');
+            tableBody.innerHTML = '';
 
-                        row.innerHTML = `
-                            <td class="text-center"><input type="checkbox"></td>
-                            <td>${employee.employeeId}</td>
-                            <td>${employee.employeeName}</td>
-                            <td>${employee.dateOfBirth}</td>
-                            <td>${employee.gender}</td>
-                            <td>${employee.phone}</td>
-                            <td>${employee.address}</td>
-                            <td class="text-center"><img src="${employee.image}" alt="image" style="height: 30px; width: 45px"></td>
-                        `;
-                        tableBody.appendChild(row);
-                    });
-                })
-                .catch(error => console.error('Error fetching employee data:', error));
-        }
+            employees.content.forEach(employee => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="text-center check-boxes"><input type="checkbox"></td>
+                    <td><a href="#" class="link-offset-2 link-underline link-underline-opacity-0">${employee.employeeId}</a></td>
+                    <td>${employee.employeeName}</td>
+                    <td>${employee.dateOfBirth}</td>
+                    <td>${employee.gender}</td>
+                    <td>${employee.phone}</td>
+                    <td>${employee.address}</td>
+                    <td class="text-center"><img src="/employee/image/${employee.employeeId}" alt="image" style="height: 30px; width: 45px"></td>
+                `;
+                tableBody.appendChild(row);
+            });
+            updatePaginationControls(employees.number, employees.totalPages, currentPageSize, employees.totalElements);
+        })
+        .catch(error => console.error('Error fetching employee data:', error));
+}
 
-// show list employee
+function findAllEmployeeWithPagination(page, pageSize) {
+    const query = document.getElementById('searchInput').value;
+    fetch(`/employee/findAllWithPagination?searchInput=${encodeURIComponent(query)}&page=${page}&size=${pageSize}`)
+        .then(response => response.json())
+        .then(employees => {
+            const tableBody = document.getElementById('employee-list-content');
+            tableBody.innerHTML = '';
+
+            employees.content	.forEach(employee => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="text-center check-boxes"><input type="checkbox"></td>
+                    <td><a href="#" class="link-offset-2 link-underline link-underline-opacity-0">${employee.employeeId}</a></td>
+                    <td>${employee.employeeName}</td>
+                    <td>${employee.dateOfBirth}</td>
+                    <td>${employee.gender}</td>
+                    <td>${employee.phone}</td>
+                    <td>${employee.address}</td>
+                    <td class="text-center"><img src="/employee/image/${employee.employeeId}" alt="image" style="height: 30px; width: 45px"></td>
+                `;
+                tableBody.appendChild(row);
+            });
+            updatePaginationControls(employees.number, employees.totalPages, pageSize, employees.totalElements);
+        })
+        .catch(error => console.error('Error fetching list of employees', error));
+}
+
 function findAllEmployee() {
     fetch('/employee/list')
         .then(response => response.json())
         .then(response => {
-            if (response.code === 1) { // Check if the response is successful
-                const employees = response.data; // Access the data field
-                document.getElementById('employee-list-content').innerHTML = "";
+            if (response.code === 1) {
+                const employees = response.data;
+                const tableBody = document.getElementById('employee-list-content');
+                tableBody.innerHTML = '';
+
                 employees.forEach(employee => {
-                    document.getElementById("employee-list-content").innerHTML += `
-                        <tr>
-                            <td class="text-center"><input type="checkbox"></td>
-                            <td><a href="#" class="link-offset-2 link-underline link-underline-opacity-0">${employee.employeeId}</a></td>
-                            <td>${employee.employeeName}</td>
-                            <td>${employee.dateOfBirth}</td>
-                            <td>${employee.gender}</td>
-                            <td>${employee.phone}</td>
-                            <td>${employee.address}</td>
-                            <td class="text-center">
-                                <img src="${employee.image}" alt="image" style="height: 30px; width: 45px">
-                            </td>
-                        </tr>
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="text-center check-boxes"><input type="checkbox"></td>
+                        <td><a href="#" class="link-offset-2 link-underline link-underline-opacity-0">${employee.employeeId}</a></td>
+                        <td>${employee.employeeName}</td>
+                        <td>${employee.dateOfBirth}</td>
+                        <td>${employee.gender}</td>
+                        <td>${employee.phone}</td>
+                        <td>${employee.address}</td>
+                        <td class="text-center"><img src="${employee.image}" alt="image" style="height: 30px; width: 45px"></td>
                     `;
+                    tableBody.appendChild(row);
                 });
             } else {
-                console.error('Failed to fetch employees: ', response.description);
+                console.error('Failed to fetch employees:', response.description);
             }
         })
         .catch(error => console.error('Error fetching list of employees', error));
 }
 
-//add
 function addEmployee() {
-    // Gather employee data from form inputs
     const employeeData = {
         employeeId: document.getElementById('employeeId').value,
         employeeName: document.getElementById('employeeName').value,
@@ -70,11 +103,9 @@ function addEmployee() {
         address: document.getElementById('address').value,
         email: document.getElementById('email').value,
         workingPlace: document.getElementById('workingPlace').value,
-        position: document.getElementById('position').value,
-        // image: document.getElementById('image').files[0] ? document.getElementById('image').files[0].name : ''
+        position: document.getElementById('position').value
     };
 
-    // Send POST request to add the employee
     fetch('/employee/add', {
         method: 'POST',
         headers: {
@@ -84,9 +115,8 @@ function addEmployee() {
     })
         .then(response => response.json())
         .then(response => {
-            if (response.code === 1) { // Check if the employee was added successfully
+            if (response.code === 1) {
                 alert('Employee added successfully!');
-                // Optionally, clear the form or redirect to another page
                 document.getElementById('add-employee-form').reset();
             } else {
                 alert('Failed to add employee: ' + response.description);
@@ -94,3 +124,37 @@ function addEmployee() {
         })
         .catch(error => console.error('Error adding employee', error));
 }
+
+function updatePaginationControls(currentPage, totalPages, pageSize, totalElements) {
+    document.getElementById("start-entry").innerHTML = currentPage === 0 ? 1 : currentPage * pageSize + 1;
+    document.getElementById("end-entry").innerHTML = currentPage === totalPages - 1 ? totalElements : (currentPage + 1) * pageSize;
+    document.getElementById("total-entries").innerHTML = totalElements;
+
+    const paginationContainer = document.getElementById("page-buttons");
+    let pageButtons = '';
+
+    if (currentPage > 0) {
+        pageButtons += `<button onclick="findAllEmployeeWithPagination(${currentPage - 1}, ${pageSize})">&lt;&lt;</button>`;
+    } else {
+        pageButtons += `<button disabled style="color: grey">&lt;&lt;</button>`;
+    }
+
+    for (let i = 0; i < totalPages; i++) {
+        if (i === currentPage) {
+            pageButtons += `<button disabled style="background-color: blue; color: white">${i + 1}</button>`;
+        } else {
+            pageButtons += `<button onclick="findAllEmployeeWithPagination(${i}, ${pageSize})">${i + 1}</button>`;
+        }
+    }
+
+    if (currentPage < totalPages - 1) {
+        pageButtons += `<button onclick="findAllEmployeeWithPagination(${currentPage + 1}, ${pageSize})">&gt;&gt;</button>`;
+    } else {
+        pageButtons += `<button disabled style="color: grey">&gt;&gt;</button>`;
+    }
+
+    paginationContainer.innerHTML = pageButtons;
+    document.getElementById("dropdownMenuButton").innerHTML = pageSize;
+}
+
+
