@@ -21,4 +21,6 @@ public interface EmployeeService {
     DResponseEmployee updateEmployee(URequestEmployee uRequestEmployee);
 
     Page<Employee> findAllWithPagination(int page, int size);
+
+    Employee findById(String id);
 }

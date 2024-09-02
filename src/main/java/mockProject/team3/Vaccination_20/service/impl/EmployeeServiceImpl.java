@@ -29,6 +29,7 @@ package mockProject.team3.Vaccination_20.service.impl;
 //
 //}
 
+import jakarta.persistence.EntityNotFoundException;
 import mockProject.team3.Vaccination_20.dto.request.forcreate.CRequestEmployee;
 import mockProject.team3.Vaccination_20.dto.request.forupdate.URequestEmployee;
 import mockProject.team3.Vaccination_20.dto.response.fordetail.DResponseEmployee;
@@ -55,10 +56,14 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Override
     public Page<Employee> findBySearchWithPagination(String searchInput, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        List<Employee> employees = employeeRepository.findBysearch(searchInput);
-        return new PageImpl<>(employees, pageable, employees.size());
+        if (searchInput.trim().equals("")) {
+            return employeeRepository.findAll(pageable);
+        } else {
+            return employeeRepository.findBysearch(searchInput, pageable);
+        }
     }
 
     @Override
@@ -88,4 +93,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         Pageable pageable = PageRequest.of(page, size);
         return employeeRepository.findAll(pageable);
     }
+
+    @Override
+    public Employee findById(String id) {
+        return employeeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found with id: " + id));
+    }
 }
+
