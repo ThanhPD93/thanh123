@@ -130,38 +130,7 @@ function findAllEmployee() {
         .catch(error => console.error('Error fetching list of employees', error));
 }
 
-//function addEmployee() {
-//    const employeeData = {
-//        employeeId: document.getElementById('employeeId').value,
-//        employeeName: document.getElementById('employeeName').value,
-//        dateOfBirth: document.getElementById('dateOfBirth').value,
-//        gender: document.querySelector('input[name="gender"]:checked').value,
-//        phone: document.getElementById('phone').value,
-//        address: document.getElementById('address').value,
-//        email: document.getElementById('email').value,
-//        workingPlace: document.getElementById('workingPlace').value,
-//        position: document.getElementById('position').value
-//    };
-//
-//    fetch('/employee/add', {
-//        method: 'POST',
-//        headers: {
-//            'Content-Type': 'application/json'
-//        },
-//        body: JSON.stringify(employeeData)
-//    })
-//        .then(response => response.json())
-//        .then(response => {
-//            if (response.code === 1) {
-//                alert('Employee added successfully!');
-//                document.getElementById('add-employee-form').reset();
-//            } else {
-//                alert('Failed to add employee: ' + response.description);
-//            }
-//        })
-//        .catch(error => console.error('Error adding employee', error));
-//}
-
+//add employee
 function addEmployee() {
     const form = document.getElementById('add-employee-form');
     const formData = new FormData(form);
@@ -200,6 +169,7 @@ function addEmployee() {
     }
 }
 
+//
 function sendEmployeeData(employee) {
     fetch('/employee/add', {
         method: 'POST',
@@ -215,31 +185,40 @@ function sendEmployeeData(employee) {
         return response.json();
     })
     .then(data => {
-        console.log('Employee added successfully:', data);
+        alert('Employee added successfully!');
+        document.getElementById('add-employee-form').reset();
+        document.getElementById('image-preview').style.display = 'none';
     })
     .catch(error => {
-        console.error('Error adding employee:', error);
+        alert('Error adding employee:');
     });
 }
 
-function previewImage(event) {
+//preview image
+function previewImage() {
     const imagePreview = document.getElementById('image-preview');
-    // Remove the inline style that hides the image
-    imagePreview.style.display = 'block';
-    const file = event.target.files[0];
+    const fileInput = document.getElementById('image');
+    const file = fileInput.files[0];
+
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
             imagePreview.src = e.target.result;
-            imagePreview.style.display = 'block';
+            imagePreview.style.display = 'block'; // Show the preview
         };
         reader.readAsDataURL(file);
     } else {
         imagePreview.src = '';
-        imagePreview.style.display = 'none';
+        imagePreview.style.display = 'none'; // Hide the preview if no file is selected
     }
 }
 
+//button reset: reset and hide preview image
+function resetInputEmployee(){
+        document.getElementById('add-employee-form').reset();
+        document.getElementById('image-preview').style.display = 'none';
+        document.getElementById('image-preview').src = '#';
+}
 
 
 
