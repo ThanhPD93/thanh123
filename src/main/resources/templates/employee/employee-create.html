@@ -12,7 +12,6 @@
 </head>
 <body class="bg-body-secondary">
 <div class="container mt-3 bg-light p-3">
-    <!-- Updated form tag -->
     <form id="add-employee-form" onsubmit="event.preventDefault(); addEmployee();">
         <!-- Row 1 -->
         <div class="d-flex justify-content-between mb-4">
@@ -83,7 +82,7 @@
             <div class="col-4">
                 <label class="form-label fw-medium">Working place</label>
                 <div class="input-group">
-                    <img src="/images/icons/bulding.png" class="input-group-text border-0">
+                    <img src="/images/icons/building.png" class="input-group-text border-0">
                     <input type="text" class="form-control" id="workingPlace">
                 </div>
             </div>
@@ -105,7 +104,7 @@
                 </div>
             </div>
         </div>
-        <!-- Row 5 show image -->
+        <!-- Row 5: show image -->
         <div class="d-flex col-4 justify-content-center mb-4">
             <div>
                 <img src="#" alt="Image" id="image-preview" style="width: 100px; height: 100px; display: none;">
@@ -117,11 +116,10 @@
                 <button type="submit" class="btn btn-success" style="width: 100px;">Save</button>
             </div>
             <div class="me-2">
-                <button type="reset" class="btn btn-info text-white" style="width: 100px;">Reset</button>
+                <button type="reset" class="btn btn-info text-white" style="width: 100px;" onclick="resetInputEmployee()">Reset</button>
             </div>
             <div>
-                <a class="btn btn-warning text-white" href="#" onclick="fetchEmployee('employee-list.html')" style="width: 100px;">
-                Cancel</a>
+                <a class="btn btn-warning text-white" href="#" onclick="fetchEmployee('employee-list.html')" style="width: 100px;">Cancel</a>
             </div>
         </div>
     </form>
