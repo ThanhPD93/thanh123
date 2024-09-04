@@ -25,7 +25,7 @@ public class CRequestEmployee {
 
     private Gender gender;
 
-    private byte[] image;
+    private String image;
 
     private String phone;
 

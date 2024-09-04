@@ -101,14 +101,14 @@
                 <label class="form-label fw-medium">Image</label>
                 <div class="input-group">
                     <img src="/images/icons/image.png" class="input-group-text border-0">
-                    <input type="file" class="form-control" id="image">
+                    <input type="file" class="form-control" id="image" onchange="previewImage()">
                 </div>
             </div>
         </div>
         <!-- Row 5 show image -->
         <div class="d-flex col-4 justify-content-center mb-4">
             <div>
-                <img src="/images/wallpapersden.com_astronaut-with-jellyfish_1366x768.jpg" alt="Image" style="width: 100px; height: 100px;">
+                <img src="#" alt="Image" id="image-preview" style="width: 100px; height: 100px; display: none;">
             </div>
         </div>
         <!-- Row 6: buttons -->
