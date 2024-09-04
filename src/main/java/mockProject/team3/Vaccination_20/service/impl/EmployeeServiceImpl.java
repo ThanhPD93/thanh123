@@ -105,8 +105,27 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public DResponseEmployee updateEmployee(URequestEmployee uRequestEmployee) {
-        Employee employee = modelMapper.map(uRequestEmployee, Employee.class);
-        return modelMapper.map(employeeRepository.save(employee), DResponseEmployee.class);
+        // Fetch the existing employee by ID
+        Employee existingEmployee = employeeRepository.findById(uRequestEmployee.getEmployeeId())
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+        // Map the DTO to the existing entity, keeping existing data if necessary
+        modelMapper.map(uRequestEmployee, existingEmployee);
+
+        // If a new image is provided, decode and set it
+        if (uRequestEmployee.getImage() != null && !uRequestEmployee.getImage().isEmpty()) {
+            try {
+                String base64Image = uRequestEmployee.getImage();
+                byte[] decodedImage = Base64.getDecoder().decode(base64Image);
+                existingEmployee.setImage(decodedImage);
+            } catch (IllegalArgumentException e) {
+                System.err.println("Failed to decode image: " + e.getMessage());
+                throw new RuntimeException("Invalid Base64 image data", e);
+            }
+        }
+
+        // Save the updated employee
+        return modelMapper.map(employeeRepository.save(existingEmployee), DResponseEmployee.class);
     }
 
     @Override
