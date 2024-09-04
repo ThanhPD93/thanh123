@@ -98,6 +98,7 @@ public class EmployeeController {
         return ResponseEntity.ok(response);
     }
 
+
     @GetMapping("/image/{id}")
     public ResponseEntity<byte[]> getEmployeeImage(@PathVariable String id) {
         Employee employee = employeeService.findById(id);
