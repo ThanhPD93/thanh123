@@ -33,6 +33,7 @@ public class Employee {
     private Gender gender;
 
     @Lob
+    @Column(columnDefinition = "MEDIUMBLOB")
     private byte[] image;
 
     private String password;
@@ -46,5 +47,4 @@ public class Employee {
     private String username;
 
     private String workingPlace;
-
 }

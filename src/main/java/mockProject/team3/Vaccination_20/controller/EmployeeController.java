@@ -35,14 +35,6 @@ public class EmployeeController {
         return Files.readString(path);
     }
 
-    @GetMapping("/getEmployeesBySearchWithPagination")
-    public Page<Employee> getEmployeesBySearchWithPagination(@RequestParam String searchInput,
-                                                               @RequestParam(defaultValue = "0") int page,
-                                                               @RequestParam(defaultValue = "1") int size) {
-        System.out.println(size);
-        return employeeService.findBySearchWithPagination(searchInput, page, size);
-    }
-
     @GetMapping("/findAll")
     public List<Employee> findAll() {
         return employeeService.findAll();

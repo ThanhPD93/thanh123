@@ -34,18 +34,17 @@ import mockProject.team3.Vaccination_20.dto.request.forcreate.CRequestEmployee;
 import mockProject.team3.Vaccination_20.dto.request.forupdate.URequestEmployee;
 import mockProject.team3.Vaccination_20.dto.response.fordetail.DResponseEmployee;
 import mockProject.team3.Vaccination_20.dto.response.forlist.LResponseEmployee;
-import mockProject.team3.Vaccination_20.dto.response.forlist.LResponseEmployeetest;
 import mockProject.team3.Vaccination_20.model.Employee;
 import mockProject.team3.Vaccination_20.repository.EmployeeRepository;
 import mockProject.team3.Vaccination_20.service.EmployeeService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -62,7 +61,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (searchInput.trim().equals("")) {
             return employeeRepository.findAll(pageable);
         } else {
-            return employeeRepository.findBysearch(searchInput, pageable);
+            return employeeRepository.findBySearch(searchInput, pageable);
         }
     }
 
@@ -76,11 +75,33 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeRepository.findAllBy();
     }
 
+//    @Override
+//    public DResponseEmployee addEmployee(CRequestEmployee cRequestEmployee) {
+//        Employee employee = modelMapper.map(cRequestEmployee, Employee.class);
+//        return modelMapper.map(employeeRepository.save(employee), DResponseEmployee.class);
+//    }
+
     @Override
     public DResponseEmployee addEmployee(CRequestEmployee cRequestEmployee) {
         Employee employee = modelMapper.map(cRequestEmployee, Employee.class);
+
+        if (cRequestEmployee.getImage() != null && !cRequestEmployee.getImage().isEmpty()) {
+            try {
+                // Clean and decode the Base64 string
+                String base64Image = cRequestEmployee.getImage();
+                byte[] decodedImage = Base64.getDecoder().decode(base64Image);
+                employee.setImage(decodedImage);
+            } catch (IllegalArgumentException e) {
+                System.err.println("Failed to decode image: " + e.getMessage());
+                throw new RuntimeException("Invalid Base64 image data", e);
+            }
+        }
+
         return modelMapper.map(employeeRepository.save(employee), DResponseEmployee.class);
     }
+
+
+
 
     @Override
     public DResponseEmployee updateEmployee(URequestEmployee uRequestEmployee) {
