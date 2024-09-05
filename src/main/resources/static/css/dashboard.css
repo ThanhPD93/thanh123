@@ -2,3 +2,11 @@
     margin-left: 25px;
 
 }
+
+#ajax-content {
+    max-height: 80vh; /* Adjust this value based on your layout */
+    overflow-y: auto;
+    padding: 10px;
+    border: 1px solid #ccc; /* Optional: for visual separation */
+    background-color: #f8f9fa; /* Optional: background color */
+}

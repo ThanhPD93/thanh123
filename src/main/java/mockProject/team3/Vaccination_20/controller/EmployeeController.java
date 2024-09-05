@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/employee")
@@ -51,7 +52,7 @@ public class EmployeeController {
     @GetMapping("/findAllWithPagination")
     public Page<Employee> findAllWithPagination(@RequestParam String searchInput,
             									@RequestParam(defaultValue = "0") int page,
-                                                @RequestParam(defaultValue = "1") int size) {
+                                                @RequestParam(defaultValue = "5") int size) {
         return employeeService.findBySearchWithPagination(searchInput, page, size);
     }
 
@@ -84,19 +85,19 @@ public class EmployeeController {
     }
 
 	// update
-    @PutMapping("/update")
-    public ResponseEntity<ApiResponse<DResponseEmployee>> updateEmployee(@RequestBody URequestEmployee uRequestEmployee) {
-        DResponseEmployee dResponseEmployee = employeeService.updateEmployee(uRequestEmployee);
-
-        ApiResponse<DResponseEmployee> response;
-        if (dResponseEmployee != null) {
-            response = new ApiResponse<>(1, "Employee updated successfully", dResponseEmployee);
-        } else {
-            response = new ApiResponse<>(0, "Failed to update employee", null);
-        }
-
-        return ResponseEntity.ok(response);
-    }
+//    @PutMapping("/update")
+//    public ResponseEntity<ApiResponse<DResponseEmployee>> updateEmployee(@RequestBody URequestEmployee uRequestEmployee) {
+//        DResponseEmployee dResponseEmployee = employeeService.updateEmployee(uRequestEmployee);
+//
+//        ApiResponse<DResponseEmployee> response;
+//        if (dResponseEmployee != null) {
+//            response = new ApiResponse<>(1, "Employee updated successfully", dResponseEmployee);
+//        } else {
+//            response = new ApiResponse<>(0, "Failed to update employee", null);
+//        }
+//
+//        return ResponseEntity.ok(response);
+//    }
 
 
     @GetMapping("/image/{id}")
@@ -108,5 +109,13 @@ public class EmployeeController {
                 .contentType(MediaType.IMAGE_JPEG)  // Or IMAGE_PNG based on your image type
                 .body(imageBytes);
     }
-
+    @GetMapping("/detail/{id}")
+    public ResponseEntity<Employee> getEmployeeById(@PathVariable String id) {
+        Employee employee = employeeService.findEmployeeById(id);
+        if (employee != null) {
+            return ResponseEntity.ok(employee);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

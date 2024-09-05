@@ -6,7 +6,7 @@
 
 </head>
 <body class="bg-body-secondary">
-<div class="container mt-3 bg-light p-2">
+<div class="container mt-3 bg-light p-2 text-center">
 
 <!--    show-search on top-->
     <div class="d-flex justify-content-between"><div class="show-entries">
@@ -44,7 +44,7 @@
         </div>
     </div>
 <!--    table show list employees-->
-    <div class="table-employee mt-3">
+    <div class="table-employee mt-3" >
         <table class="table table-striped table-hover table-bordered">
             <thead class="text-center ">
             <tr>
@@ -82,10 +82,10 @@
             <a type="button" class="btn btn-success" href="#" onclick="fetchEmployee('employee-create.html')">New Employee</a>
         </div>
         <div class="me-2">
-            <a type="button" class="btn btn-warning text-white">Update Employee</a>
+            <a type="button" class="update-button btn btn-warning text-white" href="#" onclick="updateSelectedEmployee()">Update Employee</a>
         </div>
         <div>
-            <a type="button" class="btn btn-danger">Delete Employee</a>
+            <a type="button" class=" btn btn-danger" id="deleteButton">Delete Employee</a>
         </div>
     </div>
 </div>
