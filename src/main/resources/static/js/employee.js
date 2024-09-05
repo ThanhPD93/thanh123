@@ -132,9 +132,6 @@ function updateEmployeeDetail(employeeId) {
     });
 }
 
-
-
-
 function updatePaginationControls(currentPage, totalPages, pageSize, totalElements) {
     document.getElementById("start-entry").innerHTML = currentPage === 0 ? 1 : currentPage * pageSize + 1;
     document.getElementById("end-entry").innerHTML = currentPage === totalPages - 1 ? totalElements : (currentPage + 1) * pageSize;
@@ -211,7 +208,7 @@ function addEmployee() {
         dateOfBirth: document.getElementById('dateOfBirth').value,
         phone: document.getElementById('phone').value,
         address: document.getElementById('address').value,
-        email: document.getElementById('email'), // updated to use the fetched input directly
+        email: document.getElementById('email').value,
         workingPlace: document.getElementById('workingPlace').value,
         position: document.getElementById('position').value,
         username: document.getElementById('username').value,
