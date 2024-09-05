@@ -1,4 +1,4 @@
- // function to fetch ajax data
+ // Ajax
  function fetchEmployee(filename) {
      fetch(`/employee/getAjax?filename=${filename}`)
          .then(response => response.text())
@@ -9,12 +9,12 @@
          .catch(error => console.error('Error fetching document:', error));
  }
 
-// function to fetch email
-//   document.addEventListener('DOMContentLoaded', function() {
-//    fetch('/getEmail')
-//       .then(response => response.text())
-//       .then(data => {
-//          document.getElementById('email').textContent = data;
-//      })
-//       .catch(error => console.error('Error fetching email:', error));
-//	});
+ function fetchUpdateEmployee(filename, employeeId) {
+     fetch(`/employee/getAjax?filename=${filename}`)
+         .then(response => response.text())
+         .then(data => {
+             document.getElementById('ajax-content').innerHTML = data;
+             UpdateEmployeeDetail(employeeId);
+         })
+         .catch(error => console.error('Error fetching document:', error));
+ }

@@ -27,4 +27,5 @@ public interface EmployeeRepository extends JpaRepository<Employee, String> {
 
     List<LResponseEmployee> findAllBy();
 
+    Employee findByEmployeeId(String employeeId);
 }

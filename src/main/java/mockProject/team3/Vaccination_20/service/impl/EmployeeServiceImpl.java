@@ -46,6 +46,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -101,8 +102,6 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
 
-
-
     @Override
     public DResponseEmployee updateEmployee(URequestEmployee uRequestEmployee) {
         // Fetch the existing employee by ID
@@ -138,6 +137,11 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee findById(String id) {
         return employeeRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Employee not found with id: " + id));
+    }
+
+    @Override
+    public Employee findEmployeeById(String id) {
+        return employeeRepository.findByEmployeeId(id);
     }
 }
 

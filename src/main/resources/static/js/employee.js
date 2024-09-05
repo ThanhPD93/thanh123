@@ -37,7 +37,11 @@ function search(page) {
 }
 
 function findAllEmployeeWithPagination(page, pageSize) {
-    const query = document.getElementById('searchInput').value;
+    const searchInputElement = document.getElementById('searchInput');
+
+    // Check if the element exists before accessing its value
+    const query = searchInputElement ? searchInputElement.value : '';
+    console.log('Search input element:', searchInputElement);
     fetch(`/employee/findAllWithPagination?searchInput=${encodeURIComponent(query)}&page=${page}&size=${pageSize}`)
         .then(response => response.json())
         .then(employees => {
@@ -49,7 +53,7 @@ function findAllEmployeeWithPagination(page, pageSize) {
             employees.content.forEach(employee => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td class="text-center check-boxes"><input type="checkbox"></td>
+                    <td class="text-center check-boxes"><input type="checkbox" onchange="handleCheckboxChange()" class="check-select-box"></td>
                     <td><a href="#" class="link-offset-2 link-underline link-underline-opacity-0">${employee.employeeId}</a></td>
                     <td>${employee.employeeName}</td>
                     <td>${employee.dateOfBirth}</td>
@@ -64,6 +68,69 @@ function findAllEmployeeWithPagination(page, pageSize) {
         })
         .catch(error => console.error('Error fetching list of employees', error));
 }
+
+let selectedEmployeeId = null;
+
+function handleCheckboxChange() {
+    const checkboxes = document.querySelectorAll('.check-select-box');
+    const updateButton = document.querySelector('.update-button');
+
+    const checkedBox = Array.from(checkboxes).find(checkbox => checkbox.checked);
+
+    if (checkedBox) {
+        selectedEmployeeId = checkedBox.closest('tr').querySelector('td:nth-child(2) a').textContent;
+    }
+}
+
+function updateSelectedEmployee() {
+    const checkbox = document.querySelectorAll('#employee-list-content input[type="checkbox"]:checked')
+    if(checkbox.length !== 1) {
+        alert("Please select only one employee");
+        return;
+    }
+    const employeeId = checkbox[0].closest('tr').querySelector('td:nth-child(2)').textContent;
+    console.log(employeeId);
+    // Fetch employee data using selectedEmployeeId
+    fetchUpdateEmployee('employee-create.html',employeeId);
+}
+
+function UpdateEmployeeDetail(employeeId) {
+    fetch(`/employee/detail/` + employeeId)
+        .then(response => response.json())
+        .then(employee => {
+            // Now that the form is loaded, populate the form with employee data
+            document.getElementById('employeeId').value = employee.employeeId;
+            document.getElementById('employeeId').readOnly = true;
+
+            document.getElementById('employeeName').value = employee.employeeName;
+            document.getElementById('dateOfBirth').value = employee.dateOfBirth;
+            document.getElementById('phone').value = employee.phone;
+            document.getElementById('address').value = employee.address;
+            document.getElementById('email').value = employee.email;
+            document.getElementById('workingPlace').value = employee.workingPlace;
+            document.getElementById('position').value = employee.position;
+
+            // Set gender
+            if (employee.gender === 'MALE') {
+                document.getElementById('gender-male').checked = true;
+            } else {
+                document.getElementById('gender-female').checked = true;
+            }
+
+            // Image preview (optional)
+            if (employee.image) {
+                document.getElementById('image-preview').src = `/employee/image/${employee.employeeId}`;
+                document.getElementById('image-preview').style.display = 'block';
+            } else {
+                document.getElementById('image-preview').style.display = 'none';
+            }
+        }).catch(error => {
+        console.error('Error fetching employee data', error);
+    });
+}
+
+
+
 
 function updatePaginationControls(currentPage, totalPages, pageSize, totalElements) {
     document.getElementById("start-entry").innerHTML = currentPage === 0 ? 1 : currentPage * pageSize + 1;
@@ -100,35 +167,35 @@ function updatePaginationControls(currentPage, totalPages, pageSize, totalElemen
     document.getElementById("dropdownMenuButton").innerHTML = pageSize;
 }
 
-function findAllEmployee() {
-    fetch('/employee/list')
-        .then(response => response.json())
-        .then(response => {
-            if (response.code === 1) {
-                const employees = response.data;
-                const tableBody = document.getElementById('employee-list-content');
-                tableBody.innerHTML = '';
-
-                employees.forEach(employee => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td class="text-center check-boxes"><input type="checkbox"></td>
-                        <td><a href="#" class="link-offset-2 link-underline link-underline-opacity-0">${employee.employeeId}</a></td>
-                        <td>${employee.employeeName}</td>
-                        <td>${employee.dateOfBirth}</td>
-                        <td>${employee.gender}</td>
-                        <td>${employee.phone}</td>
-                        <td>${employee.address}</td>
-                        <td class="text-center"><img src="${employee.image}" alt="image" style="height: 30px; width: 45px"></td>
-                    `;
-                    tableBody.appendChild(row);
-                });
-            } else {
-                console.error('Failed to fetch employees:', response.description);
-            }
-        })
-        .catch(error => console.error('Error fetching list of employees', error));
-}
+// function findAllEmployee() {
+//     fetch('/employee/list')
+//         .then(response => response.json())
+//         .then(response => {
+//             if (response.code === 1) {
+//                 const employees = response.data;
+//                 const tableBody = document.getElementById('employee-list-content');
+//                 tableBody.innerHTML = '';
+//
+//                 employees.forEach(employee => {
+//                     const row = document.createElement('tr');
+//                     row.innerHTML = `
+//                         <td class="text-center check-boxes"><input type="checkbox"></td>
+//                         <td><a href="#" class="link-offset-2 link-underline link-underline-opacity-0">${employee.employeeId}</a></td>
+//                         <td>${employee.employeeName}</td>
+//                         <td>${employee.dateOfBirth}</td>
+//                         <td>${employee.gender}</td>
+//                         <td>${employee.phone}</td>
+//                         <td>${employee.address}</td>
+//                         <td class="text-center"><img src="${employee.image}" alt="image" style="height: 30px; width: 45px"></td>
+//                     `;
+//                     tableBody.appendChild(row);
+//                 });
+//             } else {
+//                 console.error('Failed to fetch employees:', response.description);
+//             }
+//         })
+//         .catch(error => console.error('Error fetching list of employees', error));
+// }
 
 //add employee
 // function addEmployee() {
