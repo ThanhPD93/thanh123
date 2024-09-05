@@ -33,4 +33,7 @@ public class CRequestEmployee {
 
     private String workingPlace;
 
+    private String username;
+
+    private String password;
 }

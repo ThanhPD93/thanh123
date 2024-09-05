@@ -23,11 +23,15 @@ public class DResponseEmployee {
 
     private Gender gender;
 
-    private byte[] image;
+    private String image;
 
     private String phone;
 
     private String position;
 
     private String workingPlace;
+
+    private String username;
+
+    private String password;
 }

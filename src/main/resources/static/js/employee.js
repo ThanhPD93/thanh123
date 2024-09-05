@@ -131,68 +131,70 @@ function findAllEmployee() {
 }
 
 //add employee
-function addEmployee() {
-    const form = document.getElementById('add-employee-form');
-    const formData = new FormData(form);
-
-    const employee = {
-        employeeId: document.getElementById('employeeId').value,
-        employeeName: document.getElementById('employeeName').value,
-        gender: document.querySelector('input[name="gender"]:checked').value,
-        dateOfBirth: document.getElementById('dateOfBirth').value,
-        phone: document.getElementById('phone').value,
-        address: document.getElementById('address').value,
-        email: document.getElementById('email').value,
-        workingPlace: document.getElementById('workingPlace').value,
-        position: document.getElementById('position').value,
-        image: null
-    };
-
-    const imageFile = document.getElementById('image').files[0];
-    if (imageFile) {
-        const reader = new FileReader();
-        reader.onloadend = function() {
-            // Debugging: Log the Base64 data to ensure it's correct
-            console.log('Base64 Image Data:', reader.result);
-
-            // Extract the Base64 part after the comma
-			employee.image = reader.result.split(',')[1].replace(/\s/g, '');
-
-            // Debugging: Log the extracted Base64 image string
-            console.log('Extracted Base64 Image String:', employee.image);
-
-            sendEmployeeData(employee);
-        };
-        reader.readAsDataURL(imageFile);
-    } else {
-        sendEmployeeData(employee); // Send without image if not provided
-    }
-}
-
+// function addEmployee() {
+//     const form = document.getElementById('add-employee-form');
+//     const formData = new FormData(form);
 //
-function sendEmployeeData(employee) {
-    fetch('/employee/add', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(employee)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Failed to add employee');
-        }
-        return response.json();
-    })
-    .then(data => {
-        alert('Employee added successfully!');
-        document.getElementById('add-employee-form').reset();
-        document.getElementById('image-preview').style.display = 'none';
-    })
-    .catch(error => {
-        alert('Error adding employee:');
-    });
-}
+//     const employee = {
+//         employeeId: document.getElementById('employeeId').value,
+//         employeeName: document.getElementById('employeeName').value,
+//         gender: document.querySelector('input[name="gender"]:checked').value,
+//         dateOfBirth: document.getElementById('dateOfBirth').value,
+//         phone: document.getElementById('phone').value,
+//         address: document.getElementById('address').value,
+//         email: document.getElementById('email').value,
+//         workingPlace: document.getElementById('workingPlace').value,
+//         position: document.getElementById('position').value,
+//         username: document.getElementById('username').value,
+//         password: document.getElementById('password').value,
+//         image: null
+//     };
+//
+//     const imageFile = document.getElementById('image').files[0];
+//     if (imageFile) {
+//         const reader = new FileReader();
+//         reader.onloadend = function() {
+//             // Debugging: Log the Base64 data to ensure it's correct
+//             console.log('Base64 Image Data:', reader.result);
+//
+//             // Extract the Base64 part after the comma
+// 			employee.image = reader.result.split(',')[1].replace(/\s/g, '');
+//
+//             // Debugging: Log the extracted Base64 image string
+//             console.log('Extracted Base64 Image String:', employee.image);
+//
+//             sendEmployeeData(employee);
+//         };
+//         reader.readAsDataURL(imageFile);
+//     } else {
+//         sendEmployeeData(employee); // Send without image if not provided
+//     }
+// }
+//
+// //
+// function sendEmployeeData(employee) {
+//     fetch('/employee/add', {
+//         method: 'POST',
+//         headers: {
+//             'Content-Type': 'application/json'
+//         },
+//         body: JSON.stringify(employee)
+//     })
+//     .then(response => {
+//         if (!response.ok) {
+//             throw new Error('Failed to add employee');
+//         }
+//         return response.json();
+//     })
+//     .then(data => {
+//         alert('Employee added successfully!');
+//         document.getElementById('add-employee-form').reset();
+//         document.getElementById('image-preview').style.display = 'none';
+//     })
+//     .catch(error => {
+//         alert('Error adding employee:');
+//     });
+// }
 
 //preview image
 function previewImage() {
@@ -218,6 +220,67 @@ function resetInputEmployee(){
         document.getElementById('add-employee-form').reset();
         document.getElementById('image-preview').style.display = 'none';
         document.getElementById('image-preview').src = '#';
+}
+
+// add employee
+function addEmployee() {
+    const form = document.getElementById('add-employee-form');
+    const formData = new FormData(form);
+
+    const genderInput = document.querySelector('input[name="gender"]:checked');
+    const genderValue = genderInput ? genderInput.value : null;
+
+    const employee = {
+        employeeId: document.getElementById('employeeId').value,
+        employeeName: document.getElementById('employeeName').value,
+        gender: genderValue,
+        dateOfBirth: document.getElementById('dateOfBirth').value,
+        phone: document.getElementById('phone').value,
+        address: document.getElementById('address').value,
+        email: document.getElementById('email').value,
+        workingPlace: document.getElementById('workingPlace').value,
+        position: document.getElementById('position').value,
+        username: document.getElementById('username').value,
+        password: document.getElementById('password').value,  // Hash on the backend
+        image: null
+    };
+
+    const imageFile = document.getElementById('image').files[0];
+    if (imageFile) {
+        const reader = new FileReader();
+        reader.onloadend = function() {
+            employee.image = reader.result.split(',')[1].replace(/\s/g, '');
+            sendEmployeeData(employee);
+        };
+        reader.readAsDataURL(imageFile);
+    } else {
+        sendEmployeeData(employee);
+    }
+}
+
+function sendEmployeeData(employee) {
+    fetch('/employee/add', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(employee)
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to add employee');
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert('Employee added successfully!');
+            document.getElementById('add-employee-form').reset();
+            document.getElementById('image-preview').style.display = 'none';
+        })
+        .catch(error => {
+            console.error('Error adding employee:', error);
+            alert('Error adding employee.');
+        });
 }
 
 
