@@ -1,60 +1,44 @@
 package mockProject.team3.Vaccination_20.service.impl;
 
-//import mockProject.team3.Vaccination_20.model.Employee;
-//import mockProject.team3.Vaccination_20.repository.EmployeeRepository;
-//import mockProject.team3.Vaccination_20.service.EmployeeService;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.beans.factory.annotation.Value;
-//import org.springframework.stereotype.Service;
-//
-//@Service
-//public class EmployeeServiceImpl implements EmployeeService {
-//    @Autowired
-//    private EmployeeRepository employeeRepository;
-//
-//
-//    @Value("${admin.username}")
-//    private String username;
-//    @Value("${admin.password}")
-//    private String password;
-//
-//
-//    public Employee findById(String id) {
-//        return employeeRepository.findById(id).get();
-//    }
-//
-//    public String getEmailByUsername(String username) {
-//        return employeeRepository.findByUsername(username).getEmail();
-//    }
-//
-//}
-
+import mockProject.team3.Vaccination_20.model.Admin;
+import mockProject.team3.Vaccination_20.model.Employee;
+import mockProject.team3.Vaccination_20.repository.EmployeeRepository;
+import mockProject.team3.Vaccination_20.service.EmployeeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityNotFoundException;
 import mockProject.team3.Vaccination_20.dto.request.forcreate.CRequestEmployee;
 import mockProject.team3.Vaccination_20.dto.request.forupdate.URequestEmployee;
 import mockProject.team3.Vaccination_20.dto.response.fordetail.DResponseEmployee;
 import mockProject.team3.Vaccination_20.dto.response.forlist.LResponseEmployee;
-import mockProject.team3.Vaccination_20.model.Employee;
-import mockProject.team3.Vaccination_20.repository.EmployeeRepository;
-import mockProject.team3.Vaccination_20.service.EmployeeService;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Base64;
 import java.util.List;
-import java.util.Optional;
 
 @Service
-public class EmployeeServiceImpl implements EmployeeService {
+public class EmployeeServiceImpl implements EmployeeService, UserDetailsService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Value("${admin.username}")
+    private String adminUsername;
+    @Value("${admin.password}")
+    private String adminPassword;
 
     @Override
     public Page<Employee> findBySearchWithPagination(String searchInput, int page, int size) {
@@ -84,7 +68,14 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public DResponseEmployee addEmployee(CRequestEmployee cRequestEmployee) {
-        Employee employee = modelMapper.map(cRequestEmployee, Employee.class);
+        Employee employee;
+        if(cRequestEmployee.getImage() == null) {
+           byte[] currentImage = employeeRepository.findByEmployeeId(cRequestEmployee.getEmployeeId()).getImage();
+            employee = modelMapper.map(cRequestEmployee, Employee.class);
+            employee.setImage(currentImage);
+        } else {
+            employee = modelMapper.map(cRequestEmployee, Employee.class);
+        }
 
         if (cRequestEmployee.getImage() != null && !cRequestEmployee.getImage().isEmpty()) {
             try {
@@ -97,10 +88,9 @@ public class EmployeeServiceImpl implements EmployeeService {
                 throw new RuntimeException("Invalid Base64 image data", e);
             }
         }
-
+        employee.setPassword(passwordEncoder.encode(employee.getPassword()));
         return modelMapper.map(employeeRepository.save(employee), DResponseEmployee.class);
     }
-
 
     @Override
     public DResponseEmployee updateEmployee(URequestEmployee uRequestEmployee) {
@@ -143,5 +133,20 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee findEmployeeById(String id) {
         return employeeRepository.findByEmployeeId(id);
     }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        if (username.equals(adminUsername)) {
+            String encodedAdminPassword = passwordEncoder.encode(adminPassword);
+            return new Admin(adminUsername, encodedAdminPassword);
+        }
+        Employee employee = employeeRepository.findByUsername(username);
+        if (employee == null) {
+            throw new UsernameNotFoundException("User not found with username: " + username);
+        }
+
+        return employee;
+    }
+
 }
 

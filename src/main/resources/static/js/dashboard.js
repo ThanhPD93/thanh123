@@ -14,7 +14,7 @@
          .then(response => response.text())
          .then(data => {
              document.getElementById('ajax-content').innerHTML = data;
-             UpdateEmployeeDetail(employeeId);
+             updateEmployeeDetail(employeeId);
          })
          .catch(error => console.error('Error fetching document:', error));
  }
