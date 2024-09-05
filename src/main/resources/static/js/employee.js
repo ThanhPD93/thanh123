@@ -94,14 +94,13 @@ function updateSelectedEmployee() {
     fetchUpdateEmployee('employee-create.html',employeeId);
 }
 
-function UpdateEmployeeDetail(employeeId) {
+function updateEmployeeDetail(employeeId) {
     fetch(`/employee/detail/` + employeeId)
         .then(response => response.json())
         .then(employee => {
             // Now that the form is loaded, populate the form with employee data
             document.getElementById('employeeId').value = employee.employeeId;
             document.getElementById('employeeId').readOnly = true;
-
             document.getElementById('employeeName').value = employee.employeeName;
             document.getElementById('dateOfBirth').value = employee.dateOfBirth;
             document.getElementById('phone').value = employee.phone;
@@ -109,6 +108,10 @@ function UpdateEmployeeDetail(employeeId) {
             document.getElementById('email').value = employee.email;
             document.getElementById('workingPlace').value = employee.workingPlace;
             document.getElementById('position').value = employee.position;
+            document.getElementById('username').value = employee.username;
+            document.getElementById('username').readOnly = true;
+            document.getElementById('password').value = employee.password;
+            document.getElementById('password').readOnly = true;
 
             // Set gender
             if (employee.gender === 'MALE') {
@@ -167,102 +170,6 @@ function updatePaginationControls(currentPage, totalPages, pageSize, totalElemen
     document.getElementById("dropdownMenuButton").innerHTML = pageSize;
 }
 
-// function findAllEmployee() {
-//     fetch('/employee/list')
-//         .then(response => response.json())
-//         .then(response => {
-//             if (response.code === 1) {
-//                 const employees = response.data;
-//                 const tableBody = document.getElementById('employee-list-content');
-//                 tableBody.innerHTML = '';
-//
-//                 employees.forEach(employee => {
-//                     const row = document.createElement('tr');
-//                     row.innerHTML = `
-//                         <td class="text-center check-boxes"><input type="checkbox"></td>
-//                         <td><a href="#" class="link-offset-2 link-underline link-underline-opacity-0">${employee.employeeId}</a></td>
-//                         <td>${employee.employeeName}</td>
-//                         <td>${employee.dateOfBirth}</td>
-//                         <td>${employee.gender}</td>
-//                         <td>${employee.phone}</td>
-//                         <td>${employee.address}</td>
-//                         <td class="text-center"><img src="${employee.image}" alt="image" style="height: 30px; width: 45px"></td>
-//                     `;
-//                     tableBody.appendChild(row);
-//                 });
-//             } else {
-//                 console.error('Failed to fetch employees:', response.description);
-//             }
-//         })
-//         .catch(error => console.error('Error fetching list of employees', error));
-// }
-
-//add employee
-// function addEmployee() {
-//     const form = document.getElementById('add-employee-form');
-//     const formData = new FormData(form);
-//
-//     const employee = {
-//         employeeId: document.getElementById('employeeId').value,
-//         employeeName: document.getElementById('employeeName').value,
-//         gender: document.querySelector('input[name="gender"]:checked').value,
-//         dateOfBirth: document.getElementById('dateOfBirth').value,
-//         phone: document.getElementById('phone').value,
-//         address: document.getElementById('address').value,
-//         email: document.getElementById('email').value,
-//         workingPlace: document.getElementById('workingPlace').value,
-//         position: document.getElementById('position').value,
-//         username: document.getElementById('username').value,
-//         password: document.getElementById('password').value,
-//         image: null
-//     };
-//
-//     const imageFile = document.getElementById('image').files[0];
-//     if (imageFile) {
-//         const reader = new FileReader();
-//         reader.onloadend = function() {
-//             // Debugging: Log the Base64 data to ensure it's correct
-//             console.log('Base64 Image Data:', reader.result);
-//
-//             // Extract the Base64 part after the comma
-// 			employee.image = reader.result.split(',')[1].replace(/\s/g, '');
-//
-//             // Debugging: Log the extracted Base64 image string
-//             console.log('Extracted Base64 Image String:', employee.image);
-//
-//             sendEmployeeData(employee);
-//         };
-//         reader.readAsDataURL(imageFile);
-//     } else {
-//         sendEmployeeData(employee); // Send without image if not provided
-//     }
-// }
-//
-// //
-// function sendEmployeeData(employee) {
-//     fetch('/employee/add', {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify(employee)
-//     })
-//     .then(response => {
-//         if (!response.ok) {
-//             throw new Error('Failed to add employee');
-//         }
-//         return response.json();
-//     })
-//     .then(data => {
-//         alert('Employee added successfully!');
-//         document.getElementById('add-employee-form').reset();
-//         document.getElementById('image-preview').style.display = 'none';
-//     })
-//     .catch(error => {
-//         alert('Error adding employee:');
-//     });
-// }
-
 //preview image
 function previewImage() {
     const imagePreview = document.getElementById('image-preview');
@@ -304,13 +211,15 @@ function addEmployee() {
         dateOfBirth: document.getElementById('dateOfBirth').value,
         phone: document.getElementById('phone').value,
         address: document.getElementById('address').value,
-        email: document.getElementById('email').value,
+        email: document.getElementById('email'), // updated to use the fetched input directly
         workingPlace: document.getElementById('workingPlace').value,
         position: document.getElementById('position').value,
         username: document.getElementById('username').value,
-        password: document.getElementById('password').value,  // Hash on the backend
+        password: document.getElementById('password').value,
         image: null
     };
+
+    console.log(employee.email);
 
     const imageFile = document.getElementById('image').files[0];
     if (imageFile) {
@@ -324,6 +233,7 @@ function addEmployee() {
         sendEmployeeData(employee);
     }
 }
+
 
 function sendEmployeeData(employee) {
     fetch('/employee/add', {

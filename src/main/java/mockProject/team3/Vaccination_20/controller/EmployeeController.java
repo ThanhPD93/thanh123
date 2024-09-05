@@ -31,7 +31,7 @@ public class EmployeeController {
 
     @GetMapping("/getAjax")
     public String getDocument(@RequestParam String filename) throws IOException {
-        ClassPathResource resource = new ClassPathResource("templates/employee/" + filename);
+        ClassPathResource resource = new ClassPathResource("static/html/employee/" + filename);
         Path path = resource.getFile().toPath();
         return Files.readString(path);
     }
@@ -73,7 +73,6 @@ public class EmployeeController {
     @PostMapping("/add")
     public ResponseEntity<ApiResponse<DResponseEmployee>> addEmployee(@RequestBody CRequestEmployee cRequestEmployee) {
         DResponseEmployee dResponseEmployee = employeeService.addEmployee(cRequestEmployee);
-
         ApiResponse<DResponseEmployee> response;
         if (dResponseEmployee != null) {
             response = new ApiResponse<>(1, "Employee added successfully", dResponseEmployee);
