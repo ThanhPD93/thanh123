@@ -21,7 +21,7 @@ function search(page) {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td class="text-center check-boxes"><input type="checkbox"></td>
-                    <td><a href="#" class="link-offset-2 link-underline link-underline-opacity-0">${employee.employeeId} </a></td>
+                    <td><a href="#" class="link-offset-2 link-underline link-underline-opacity-0" onclick="showEmployeeDetails('${employee.employeeId}')">${employee.employeeId}</a></td>
                     <td>${employee.employeeName}</td>
                     <td>${employee.dateOfBirth}</td>
                     <td>${employee.gender}</td>
@@ -36,37 +36,32 @@ function search(page) {
         .catch(error => console.error('Error fetching employee data:', error));
 }
 
+//---------------------------
 function findAllEmployeeWithPagination(page, pageSize) {
     const searchInputElement = document.getElementById('searchInput');
-    const query = searchInputElement ? searchInputElement.value : '';
 
+    // Check if the element exists before accessing its value
+    const query = searchInputElement ? searchInputElement.value : '';
+    console.log('Search input element:', searchInputElement);
     fetch(`/employee/findAllWithPagination?searchInput=${encodeURIComponent(query)}&page=${page}&size=${pageSize}`)
         .then(response => response.json())
         .then(employees => {
             const tableBody = document.getElementById('employee-list-content');
             tableBody.innerHTML = '';
 
+            // List<Employee> .forEach()
+            // Page<Employee> .content() (trả về List<Employee>, .totalPages, .number, .totalElements
             employees.content.forEach(employee => {
                 const row = document.createElement('tr');
-                // Ensure employee.employeeId is passed correctly as a string
                 row.innerHTML = `
-                    <td class="text-center check-boxes">
-                        <input type="checkbox" onchange="handleCheckboxChange()" class="check-select-box">
-                    </td>
-                    <td>
-                        <a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-uppercase"
-                           onclick="showEmployeeDetails('${employee.employeeId}')">
-                           ${employee.employeeId}
-                        </a>
-                    </td>
+                    <td class="text-center check-boxes"><input type="checkbox" onchange="handleCheckboxChange()" class="check-select-box"></td>
+                    <td><a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-uppercase" onclick="showEmployeeDetails('${employee.employeeId}')">${employee.employeeId}</a></td>
                     <td class="text-capitalize text-start">${employee.employeeName}</td>
                     <td class="text-start">${employee.dateOfBirth}</td>
                     <td class="text-start">${employee.gender}</td>
                     <td class="text-start">${employee.phone}</td>
                     <td class="text-capitalize text-start">${employee.address}</td>
-                    <td class="text-center">
-                        <img src="/employee/image/${employee.employeeId}" alt="image" style="height: 30px; width: 45px">
-                    </td>
+                    <td class="text-center"><img src="/employee/image/${employee.employeeId}" alt="image" style="height: 30px; width: 45px"></td>
                 `;
                 tableBody.appendChild(row);
             });
@@ -74,34 +69,9 @@ function findAllEmployeeWithPagination(page, pageSize) {
         })
         .catch(error => console.error('Error fetching list of employees', error));
 }
-
-function showEmployeeDetails(employeeId) {
-    // Fetch employee details by ID
-    fetch(`/employee/detail/${employeeId}`)
-        .then(response => response.json())
-        .then(employee => {
-            // Populate modal with employee details
-            document.getElementById('modalEmployeeId').value = employee.employeeId;
-            document.getElementById('modalEmployeeName').value = employee.employeeName;
-            document.getElementById('modalEmployeeDob').value = employee.dateOfBirth;
-            document.getElementById('modalEmployeeGender').value = employee.gender;
-            document.getElementById('modalEmployeePhone').value = employee.phone;
-            document.getElementById('modalEmployeeAddress').value = employee.address;
-            document.getElementById('modalEmployeeEmail').value = employee.email;
-            document.getElementById('modalEmployeePosition').value = employee.position;
-            document.getElementById('modalEmployeeImage').src = `/employee/image/${employee.employeeId}`;
-
-            // Show the modal
-            const employeeModal = new bootstrap.Modal(document.getElementById('employeeModal'));
-            employeeModal.show();
-        })
-        .catch(error => console.error('Error fetching employee details:', error));
-}
-
-
+//---------------------------------
 
 let selectedEmployeeId = null;
-
 function handleCheckboxChange() {
     const checkboxes = document.querySelectorAll('.check-select-box');
     const updateButton = document.querySelector('.update-button');
@@ -113,6 +83,7 @@ function handleCheckboxChange() {
     }
 }
 
+//--update
 function updateSelectedEmployee() {
     const checkbox = document.querySelectorAll('#employee-list-content input[type="checkbox"]:checked')
     if (checkbox.length !== 1) {
@@ -124,46 +95,90 @@ function updateSelectedEmployee() {
     // Fetch employee data using selectedEmployeeId
     fetchUpdateEmployee('employee-create.html', employeeId);
 }
+
+//------delete
+// async function deleteSelectedEmployee() {
+//     const checkboxes = document.querySelectorAll('#employee-list-content input[type="checkbox"]:checked')
+//     if(checkboxes.length == 0) {
+//         alert("Please select at least one employee to delete");
+//         return;
+//     }
+//     const employeeIds = Array.from(checkboxes).map(checkbox => {
+//         return checkbox.closest('tr').querySelector('td:nth-child(2)').textContent.trim();
+//     });
+//     console.log(employeeIds);
+//     const confirmed = confirm("Are you sure you want to delete the selected employees?");
+//     if (!confirmed) {
+//         return;
+//     }
+//     try {
+//         // Gửi request DELETE đến backend
+//         const response = await fetch('/employee/delete', {
+//             method: 'DELETE', // Hoặc 'DELETE' nếu backend yêu cầu
+//             headers: {
+//                 'Content-Type': 'application/json'
+//             },
+//             body: JSON.stringify(employeeIds)
+//         });
+//
+//         const result = await response.json();
+//
+//         if (response.ok) {
+//             // Xử lý kết quả nếu thành công
+//             alert("Employees deleted successfully!");
+//             // Cập nhật danh sách nhân viên trên giao diện người dùng nếu cần
+//             location.reload(); // Tải lại trang để cập nhật
+//         } else {
+//             // Xử lý lỗi từ server
+//             alert("Error deleting employees: " + result.message);
+//         }
+//     } catch (error) {
+//         // Xử lý lỗi khi gửi request
+//         alert("An error occurred: " + error.message);
+//     }
+// }
+
 async function deleteSelectedEmployee() {
-    const checkboxes = document.querySelectorAll('#employee-list-content input[type="checkbox"]:checked')
-        if(checkboxes.length == 0) {
-            alert("Please select at least one employee to delete");
-            return;
-        }
+    const checkboxes = document.querySelectorAll('#employee-list-content input[type="checkbox"]:checked');
+    if (checkboxes.length === 0) {
+        alert("Please select at least one employee to delete");
+        return;
+    }
+
     const employeeIds = Array.from(checkboxes).map(checkbox => {
-            return checkbox.closest('tr').querySelector('td:nth-child(2)').textContent.trim();
-        });
+        return checkbox.closest('tr').querySelector('td:nth-child(2)').textContent.trim();
+    });
     console.log(employeeIds);
+
     const confirmed = confirm("Are you sure you want to delete the selected employees?");
-        if (!confirmed) {
-            return;
-        }
-        try {
-                // Gửi request DELETE đến backend
-                const response = await fetch('/employee/delete', {
-                    method: 'DELETE', // Hoặc 'DELETE' nếu backend yêu cầu
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(employeeIds)
-                });
+    if (!confirmed) {
+        return;
+    }
 
-                const result = await response.json();
+    try {
+        const response = await fetch('/employee/delete', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(employeeIds)
+        });
 
-                if (response.ok) {
-                    // Xử lý kết quả nếu thành công
-                    alert("Employees deleted successfully!");
-                    // Cập nhật danh sách nhân viên trên giao diện người dùng nếu cần
-                    location.reload(); // Tải lại trang để cập nhật
-                } else {
-                    alert("Error deleting employees: " + result.message);
-                }
-        } catch (error) {
-                // Xử lý lỗi khi gửi request
-                alert("An error occurred: " + error.message);
+        const result = await response.json();
+
+        if (response.ok) {
+            alert(result.description);
+            location.reload();
+        } else {
+            alert("Error deleting employees: " + result.description);
         }
+    } catch (error) {
+        alert("An error occurred: " + error.message);
+    }
 }
 
+
+//---update
 function updateEmployeeDetail(employeeId) {
     fetch(`/employee/detail/` + employeeId)
         .then(response => response.json())
@@ -205,6 +220,69 @@ function updateEmployeeDetail(employeeId) {
     });
 }
 
+//------show employee details on modal
+function showEmployeeDetails(employeeId) {
+    // Fetch employee details by employeeId
+    fetch(`/employee/detail/` + employeeId)
+        .then(response => response.json())  // Assuming the response is in JSON format
+        .then(employee => {
+            // Populate the modal fields with employee data
+            document.getElementById('modalEmployeeId').value = employee.employeeId;
+            document.getElementById('modalEmployeeName').value = employee.employeeName;
+            document.getElementById('modalEmployeeDob').value = employee.dateOfBirth;
+            document.getElementById('modalEmployeeGender').value = employee.gender;
+            document.getElementById('modalEmployeePhone').value = employee.phone;
+            document.getElementById('modalEmployeeAddress').value = employee.address;
+            document.getElementById('modalEmployeeEmail').value = employee.email;
+            document.getElementById('modalEmployeePosition').value = employee.position;
+            document.getElementById('modalWorkingPlace').value = employee.workingPlace;
+            document.getElementById('modalEmployeeImage').src = `/employee/image/${employee.employeeId}`;
+
+            // Show the modal
+            var modal = new bootstrap.Modal(document.getElementById('employeeModal'));
+            modal.show();
+        })
+        .catch(error => {
+            console.error('Error fetching employee details:', error);
+            alert('Failed to load employee details. Please try again.');
+        });
+}
+
+//------
+// function updatePaginationControls(currentPage, totalPages, pageSize, totalElements) {
+//     document.getElementById("start-entry").innerHTML = currentPage === 0 ? 1 : currentPage * pageSize + 1;
+//     document.getElementById("end-entry").innerHTML = currentPage === totalPages - 1 ? totalElements : (currentPage + 1) * pageSize;
+//     document.getElementById("total-entries").innerHTML = totalElements;
+//
+//     const paginationContainer = document.getElementById("page-buttons");
+//     let pageButtons = '';
+//
+//     // left button
+//     if (currentPage > 0) {
+//         pageButtons += `<button onclick="findAllEmployeeWithPagination(${currentPage - 1}, ${pageSize})" class="text-info">&laquo;</button>`;
+//     } else {
+//         pageButtons += `<button disabled class="text-info">&laquo;</button>`;
+//     }
+//
+//     // buttons with number page
+//     for (let i = 0; i < totalPages; i++) {
+//         if (i === currentPage) {
+//             pageButtons += `<button disabled class="bg-info fw-medium">${i + 1}</button>`;
+//         } else {
+//             pageButtons += `<button onclick="findAllEmployeeWithPagination(${i}, ${pageSize})">${i + 1}</button>`;
+//         }
+//     }
+//
+//     // right button
+//     if (currentPage < totalPages - 1) {
+//         pageButtons += `<button onclick="findAllEmployeeWithPagination(${currentPage + 1}, ${pageSize})" class="text-info">&raquo;</button>`;
+//     } else {
+//         pageButtons += `<button disabled class="text-info">&raquo;</button>`;
+//     }
+//
+//     paginationContainer.innerHTML = pageButtons;
+//     document.getElementById("dropdownMenuButton").innerHTML = pageSize;
+// }
 function updatePaginationControls(currentPage, totalPages, pageSize, totalElements) {
     document.getElementById("start-entry").innerHTML = currentPage === 0 ? 1 : currentPage * pageSize + 1;
     document.getElementById("end-entry").innerHTML = currentPage === totalPages - 1 ? totalElements : (currentPage + 1) * pageSize;
@@ -213,33 +291,64 @@ function updatePaginationControls(currentPage, totalPages, pageSize, totalElemen
     const paginationContainer = document.getElementById("page-buttons");
     let pageButtons = '';
 
-    // left button
+    // Left button
     if (currentPage > 0) {
-        pageButtons += `<button onclick="findAllEmployeeWithPagination(${currentPage - 1}, ${pageSize})" class="text-info">&laquo;</button>`;
+        pageButtons += `<li class="page-item"><a class="page-link" onclick="findAllEmployeeWithPagination(${currentPage - 1}, ${pageSize})">&laquo;</a></li>`;
     } else {
-        pageButtons += `<button disabled class="text-info">&laquo;</button>`;
+        pageButtons += `<li class="page-item disabled"><span class="page-link">&laquo;</span></li>`;
     }
 
-    // buttons with number page
-    for (let i = 0; i < totalPages; i++) {
-        if (i === currentPage) {
-            pageButtons += `<button disabled class="bg-info fw-medium">${i + 1}</button>`;
-        } else {
-            pageButtons += `<button onclick="findAllEmployeeWithPagination(${i}, ${pageSize})">${i + 1}</button>`;
+    // Show all pages if totalPages < 10
+    if (totalPages <= 10) {
+        for (let i = 0; i < totalPages; i++) {
+            pageButtons += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" onclick="findAllEmployeeWithPagination(${i}, ${pageSize})">${i + 1}</a></li>`;
+        }
+    } else {
+        // Always show page 1 and 2
+        if (totalPages > 1) {
+            pageButtons += `<li class="page-item ${currentPage === 0 ? 'active' : ''}"><a class="page-link" onclick="findAllEmployeeWithPagination(0, ${pageSize})">1</a></li>`;
+            if (totalPages > 2) {
+                pageButtons += `<li class="page-item ${currentPage === 1 ? 'active' : ''}"><a class="page-link" onclick="findAllEmployeeWithPagination(1, ${pageSize})">2</a></li>`;
+            }
+        }
+
+        // Show page numbers around the current page with ellipses
+        if (currentPage > 2) {
+            pageButtons += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+        }
+
+        let startPage = Math.max(2, currentPage - 1);
+        let endPage = Math.min(totalPages - 3, currentPage + 1);
+
+        for (let i = startPage; i <= endPage; i++) {
+            pageButtons += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" onclick="findAllEmployeeWithPagination(${i}, ${pageSize})">${i + 1}</a></li>`;
+        }
+
+        if (currentPage < totalPages - 4) {
+            pageButtons += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+        }
+
+        // Always show the last two pages
+        if (totalPages > 2) {
+            if (totalPages > 3) {
+                pageButtons += `<li class="page-item ${currentPage === totalPages - 2 ? 'active' : ''}"><a class="page-link" onclick="findAllEmployeeWithPagination(${totalPages - 2}, ${pageSize})">${totalPages - 1}</a></li>`;
+            }
+            pageButtons += `<li class="page-item ${currentPage === totalPages - 1 ? 'active' : ''}"><a class="page-link" onclick="findAllEmployeeWithPagination(${totalPages - 1}, ${pageSize})">${totalPages}</a></li>`;
         }
     }
 
-    // right button
+    // Right button
     if (currentPage < totalPages - 1) {
-        pageButtons += `<button onclick="findAllEmployeeWithPagination(${currentPage + 1}, ${pageSize})" class="text-info">&raquo;</button>`;
+        pageButtons += `<li class="page-item"><a class="page-link" onclick="findAllEmployeeWithPagination(${currentPage + 1}, ${pageSize})">&raquo;</a></li>`;
     } else {
-        pageButtons += `<button disabled class="text-info">&raquo;</button>`;
+        pageButtons += `<li class="page-item disabled"><span class="page-link">&raquo;</span></li>`;
     }
 
-    paginationContainer.innerHTML = pageButtons;
+    paginationContainer.innerHTML = `<ul class="pagination">${pageButtons}</ul>`;
     document.getElementById("dropdownMenuButton").innerHTML = pageSize;
 }
 
+//------------------
 //preview image
 function previewImage() {
     const imagePreview = document.getElementById('image-preview');
@@ -339,14 +448,31 @@ function togglePassword() {
 
 // button reset: reset and hide preview image, can't reset id, username, password
 function resetInput() {
-    document.getElementById('employeeName').value ='';
-    document.getElementById('dateOfBirth').value ='';
-    document.getElementById('phone').value = '';
-    document.getElementById('address').value ='';
-    document.getElementById('email').value ='';
-    document.getElementById('workingPlace').value = '';
-    document.getElementById('position').value ='';
+    // Get all the fields
+    const employeeId = document.getElementById('employeeId');
+    const employeeName = document.getElementById('employeeName');
+    const dateOfBirth = document.getElementById('dateOfBirth');
+    const phone = document.getElementById('phone');
+    const address = document.getElementById('address');
+    const email = document.getElementById('email');
+    const workingPlace = document.getElementById('workingPlace');
+    const position = document.getElementById('position');
+    const username = document.getElementById('username');
+    const password = document.getElementById('password');
 
+    // Reset only fields that are not disabled
+    if (!employeeId.disabled) employeeId.value = '';
+    if (!employeeName.disabled) employeeName.value = '';
+    if (!dateOfBirth.disabled) dateOfBirth.value = '';
+    if (!phone.disabled) phone.value = '';
+    if (!address.disabled) address.value = '';
+    if (!email.disabled) email.value = '';
+    if (!workingPlace.disabled) workingPlace.value = '';
+    if (!position.disabled) position.value = '';
+    if (!username.disabled) username.value = '';
+    if (!password.disabled) password.value = '';
+
+    // Reset the image preview
     document.getElementById('image-preview').style.display = 'none';
-    document.getElementById('image-preview').src = '#';
+    document.getElementById('image-preview').src = '/images/icons/image.png'; // Set to default image icon
 }
