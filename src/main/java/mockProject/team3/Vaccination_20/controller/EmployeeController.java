@@ -1,7 +1,6 @@
 package mockProject.team3.Vaccination_20.controller;
 
 import mockProject.team3.Vaccination_20.dto.request.forcreate.CRequestEmployee;
-import mockProject.team3.Vaccination_20.dto.request.forupdate.URequestEmployee;
 import mockProject.team3.Vaccination_20.dto.response.fordetail.DResponseEmployee;
 import mockProject.team3.Vaccination_20.dto.response.forlist.LResponseEmployee;
 import mockProject.team3.Vaccination_20.model.Employee;
@@ -10,6 +9,7 @@ import mockProject.team3.Vaccination_20.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -51,7 +51,7 @@ public class EmployeeController {
     //show list employee
     @GetMapping("/findAllWithPagination")
     public Page<Employee> findAllWithPagination(@RequestParam String searchInput,
-            									@RequestParam(defaultValue = "0") int page,
+                                                @RequestParam(defaultValue = "0") int page,
                                                 @RequestParam(defaultValue = "5") int size) {
         return employeeService.findBySearchWithPagination(searchInput, page, size);
     }
@@ -83,7 +83,7 @@ public class EmployeeController {
         return ResponseEntity.ok(response);
     }
 
-	// update
+    // update
 //    @PutMapping("/update")
 //    public ResponseEntity<ApiResponse<DResponseEmployee>> updateEmployee(@RequestBody URequestEmployee uRequestEmployee) {
 //        DResponseEmployee dResponseEmployee = employeeService.updateEmployee(uRequestEmployee);
@@ -117,4 +117,19 @@ public class EmployeeController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteEmployees(@RequestBody List<String> employeeIds) {
+        if (employeeIds == null || employeeIds.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No data deleted!");
+        }
+
+        try {
+            employeeService.deleteEmployees(employeeIds);
+            return ResponseEntity.ok("Employees deleted successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
+        }
+    }
+
 }

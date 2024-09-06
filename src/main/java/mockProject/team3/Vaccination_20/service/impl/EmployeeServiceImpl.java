@@ -148,5 +148,13 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         return employee;
     }
 
+    @Override
+    public void deleteEmployees(List<String> employeeIds) {
+        if (employeeIds == null || employeeIds.isEmpty()) {
+            throw new IllegalArgumentException("No employees selected for deletion");
+        }
+        employeeRepository.deleteEmployeesByIds(employeeIds);
+    }
+
 }
 

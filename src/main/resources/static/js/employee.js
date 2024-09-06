@@ -93,6 +93,46 @@ function updateSelectedEmployee() {
     // Fetch employee data using selectedEmployeeId
     fetchUpdateEmployee('employee-create.html',employeeId);
 }
+async function deleteSelectedEmployee() {
+    const checkboxes = document.querySelectorAll('#employee-list-content input[type="checkbox"]:checked')
+        if(checkboxes.length == 0) {
+            alert("Please select at least one employee to delete");
+            return;
+        }
+    const employeeIds = Array.from(checkboxes).map(checkbox => {
+            return checkbox.closest('tr').querySelector('td:nth-child(2)').textContent.trim();
+        });
+    console.log(employeeIds);
+    const confirmed = confirm("Are you sure you want to delete the selected employees?");
+        if (!confirmed) {
+            return;
+        }
+        try {
+                // Gửi request DELETE đến backend
+                const response = await fetch('/employee/delete', {
+                    method: 'DELETE', // Hoặc 'DELETE' nếu backend yêu cầu
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(employeeIds)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // Xử lý kết quả nếu thành công
+                    alert("Employees deleted successfully!");
+                    // Cập nhật danh sách nhân viên trên giao diện người dùng nếu cần
+                    location.reload(); // Tải lại trang để cập nhật
+                } else {
+                              // Xử lý lỗi từ server
+                              alert("Error deleting employees: " + result.message);
+                          }
+                      } catch (error) {
+                          // Xử lý lỗi khi gửi request
+                          alert("An error occurred: " + error.message);
+                      }
+}
 
 function updateEmployeeDetail(employeeId) {
     fetch(`/employee/detail/` + employeeId)
@@ -211,7 +251,7 @@ function addEmployee() {
         dateOfBirth: document.getElementById('dateOfBirth').value,
         phone: document.getElementById('phone').value,
         address: document.getElementById('address').value,
-        email: document.getElementById('email'), // updated to use the fetched input directly
+        email: document.getElementById('email').value, // updated to use the fetched input directly
         workingPlace: document.getElementById('workingPlace').value,
         position: document.getElementById('position').value,
         username: document.getElementById('username').value,
@@ -258,7 +298,10 @@ function sendEmployeeData(employee) {
             console.error('Error adding employee:', error);
             alert('Error adding employee.');
         });
+
 }
+
+
 
 
 
