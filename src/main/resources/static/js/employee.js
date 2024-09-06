@@ -1,7 +1,7 @@
 function checkAllBoxes() {
-	 const selectAllCheckbox = document.getElementById('mother-checkbox');
+    const selectAllCheckbox = document.getElementById('mother-checkbox');
     const checkboxes = document.querySelectorAll('.check-boxes input[type="checkbox"]');
-    checkboxes.forEach(function(checkbox) {
+    checkboxes.forEach(function (checkbox) {
         checkbox.checked = selectAllCheckbox.checked;
     });
 }
@@ -21,7 +21,7 @@ function search(page) {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td class="text-center check-boxes"><input type="checkbox"></td>
-                    <td><a href="#" class="link-offset-2 link-underline link-underline-opacity-0">${employee.employeeId}</a></td>
+                    <td><a href="#" class="link-offset-2 link-underline link-underline-opacity-0">${employee.employeeId} </a></td>
                     <td>${employee.employeeName}</td>
                     <td>${employee.dateOfBirth}</td>
                     <td>${employee.gender}</td>
@@ -48,18 +48,18 @@ function findAllEmployeeWithPagination(page, pageSize) {
             const tableBody = document.getElementById('employee-list-content');
             tableBody.innerHTML = '';
 
-			// List<Employee> .forEach()
-			// Page<Employee> .content() (trả về List<Employee>, .totalPages, .number, .totalElements
+            // List<Employee> .forEach()
+            // Page<Employee> .content() (trả về List<Employee>, .totalPages, .number, .totalElements
             employees.content.forEach(employee => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td class="text-center check-boxes"><input type="checkbox" onchange="handleCheckboxChange()" class="check-select-box"></td>
-                    <td><a href="#" class="link-offset-2 link-underline link-underline-opacity-0">${employee.employeeId}</a></td>
-                    <td>${employee.employeeName}</td>
-                    <td>${employee.dateOfBirth}</td>
-                    <td>${employee.gender}</td>
-                    <td>${employee.phone}</td>
-                    <td>${employee.address}</td>
+                    <td><a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-uppercase">${employee.employeeId}</a></td>
+                    <td class="text-capitalize text-start">${employee.employeeName}</td>
+                    <td class="text-start">${employee.dateOfBirth}</td>
+                    <td class="text-start">${employee.gender}</td>
+                    <td class="text-start">${employee.phone}</td>
+                    <td class="text-capitalize text-start">${employee.address}</td>
                     <td class="text-center"><img src="/employee/image/${employee.employeeId}" alt="image" style="height: 30px; width: 45px"></td>
                 `;
                 tableBody.appendChild(row);
@@ -84,14 +84,14 @@ function handleCheckboxChange() {
 
 function updateSelectedEmployee() {
     const checkbox = document.querySelectorAll('#employee-list-content input[type="checkbox"]:checked')
-    if(checkbox.length !== 1) {
+    if (checkbox.length !== 1) {
         alert("Please select only one employee");
         return;
     }
     const employeeId = checkbox[0].closest('tr').querySelector('td:nth-child(2)').textContent;
     console.log(employeeId);
     // Fetch employee data using selectedEmployeeId
-    fetchUpdateEmployee('employee-create.html',employeeId);
+    fetchUpdateEmployee('employee-create.html', employeeId);
 }
 
 function updateEmployeeDetail(employeeId) {
@@ -100,7 +100,8 @@ function updateEmployeeDetail(employeeId) {
         .then(employee => {
             // Now that the form is loaded, populate the form with employee data
             document.getElementById('employeeId').value = employee.employeeId;
-            document.getElementById('employeeId').readOnly = true;
+            document.getElementById('employeeId').disabled = true;
+            // document.getElementById('employeeId').readOnly = true;
             document.getElementById('employeeName').value = employee.employeeName;
             document.getElementById('dateOfBirth').value = employee.dateOfBirth;
             document.getElementById('phone').value = employee.phone;
@@ -109,10 +110,12 @@ function updateEmployeeDetail(employeeId) {
             document.getElementById('workingPlace').value = employee.workingPlace;
             document.getElementById('position').value = employee.position;
             document.getElementById('username').value = employee.username;
-            document.getElementById('username').readOnly = true;
+            document.getElementById('username').disabled = true;
+            // document.getElementById('username').readOnly = true;
             document.getElementById('password').value = employee.password;
-            document.getElementById('password').readOnly = true;
-
+            document.getElementById('password').disabled = true;
+            // document.getElementById('password').readOnly = true;
+            document.getElementById('toggle-button').hidden = true; //hide toggle button
             // Set gender
             if (employee.gender === 'MALE') {
                 document.getElementById('gender-male').checked = true;
@@ -140,27 +143,27 @@ function updatePaginationControls(currentPage, totalPages, pageSize, totalElemen
     const paginationContainer = document.getElementById("page-buttons");
     let pageButtons = '';
 
-	// left button
+    // left button
     if (currentPage > 0) {
-        pageButtons += `<button onclick="findAllEmployeeWithPagination(${currentPage - 1}, ${pageSize})">&lt;&lt;</button>`;
+        pageButtons += `<button onclick="findAllEmployeeWithPagination(${currentPage - 1}, ${pageSize})" class="text-info">&laquo;</button>`;
     } else {
-        pageButtons += `<button disabled style="color: grey">&lt;&lt;</button>`;
+        pageButtons += `<button disabled class="text-info">&laquo;</button>`;
     }
 
-	// buttons with number page
+    // buttons with number page
     for (let i = 0; i < totalPages; i++) {
         if (i === currentPage) {
-            pageButtons += `<button disabled style="background-color: blue; color: white">${i + 1}</button>`;
+            pageButtons += `<button disabled class="bg-info fw-medium">${i + 1}</button>`;
         } else {
             pageButtons += `<button onclick="findAllEmployeeWithPagination(${i}, ${pageSize})">${i + 1}</button>`;
         }
     }
 
-	// right button
+    // right button
     if (currentPage < totalPages - 1) {
-        pageButtons += `<button onclick="findAllEmployeeWithPagination(${currentPage + 1}, ${pageSize})">&gt;&gt;</button>`;
+        pageButtons += `<button onclick="findAllEmployeeWithPagination(${currentPage + 1}, ${pageSize})" class="text-info">&raquo;</button>`;
     } else {
-        pageButtons += `<button disabled style="color: grey">&gt;&gt;</button>`;
+        pageButtons += `<button disabled class="text-info">&raquo;</button>`;
     }
 
     paginationContainer.innerHTML = pageButtons;
@@ -175,7 +178,7 @@ function previewImage() {
 
     if (file) {
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             imagePreview.src = e.target.result;
             imagePreview.style.display = 'block'; // Show the preview
         };
@@ -186,12 +189,6 @@ function previewImage() {
     }
 }
 
-//button reset: reset and hide preview image
-function resetInputEmployee(){
-        document.getElementById('add-employee-form').reset();
-        document.getElementById('image-preview').style.display = 'none';
-        document.getElementById('image-preview').src = '#';
-}
 
 // add employee
 function addEmployee() {
@@ -221,7 +218,7 @@ function addEmployee() {
     const imageFile = document.getElementById('image').files[0];
     if (imageFile) {
         const reader = new FileReader();
-        reader.onloadend = function() {
+        reader.onloadend = function () {
             employee.image = reader.result.split(',')[1].replace(/\s/g, '');
             sendEmployeeData(employee);
         };
@@ -257,5 +254,29 @@ function sendEmployeeData(employee) {
         });
 }
 
+// show/hide password when input data
+function togglePassword() {
+    const passwordField = document.getElementById("password");
+    const toggleIcon = document.getElementById("toggle-icon");
+    if (passwordField.type === "password") {
+        passwordField.type = "text";
+        toggleIcon.src = "/images/icons/hidden.png"; // Change to hide icon
+    } else {
+        passwordField.type = "password";
+        toggleIcon.src = "/images/icons/eye.png"; // Change to show icon
+    }
+}
 
+// button reset: reset and hide preview image, can't reset id, username, password
+function resetInput() {
+    document.getElementById('employeeName').value ='';
+    document.getElementById('dateOfBirth').value ='';
+    document.getElementById('phone').value = '';
+    document.getElementById('address').value ='';
+    document.getElementById('email').value ='';
+    document.getElementById('workingPlace').value = '';
+    document.getElementById('position').value ='';
 
+    document.getElementById('image-preview').style.display = 'none';
+    document.getElementById('image-preview').src = '#';
+}

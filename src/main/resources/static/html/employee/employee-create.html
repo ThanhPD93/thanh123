@@ -18,18 +18,19 @@
         <div class="d-flex justify-content-between mb-4">
             <!--employee ID-->
             <div class="col-4">
-                <label class="form-label fw-medium">Employee ID <span class="text-danger">(*)</span></label>
+                <label class="form-label fw-medium">Employee ID <span class="text-danger">**</span></label>
                 <div class="input-group">
                     <img src="/images/icons/people.png" class="input-group-text border-0">
-                    <input type="text" class="form-control" id="employeeId">
+                    <input type="text" class="form-control text-uppercase" id="employeeId" placeholder="ID09AZ..." required>
                 </div>
             </div>
             <!--employee name-->
             <div class="col-4">
-                <label class="form-label fw-medium">Employee Name <span class="text-danger">(*)</span></label>
+                <label class="form-label fw-medium">Employee Name <span class="text-danger">*</span></label>
                 <div class="input-group">
                     <img src="/images/icons/people.png" class="input-group-text border-0">
-                    <input type="text" class="form-control" id="employeeName">
+                    <input type="text" class="form-control text-capitalize" id="employeeName" placeholder="
+David Copperfield..." required>
                 </div>
             </div>
             <!--gender-->
@@ -39,11 +40,12 @@
                     <img src="/images/icons/gender.png" class="input-group-text border-0">
                     <div class="mt-2">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="gender" id="gender-male" value="MALE">
+                            <input class="form-check-input" type="radio" name="gender" id="gender-male" value="MALE" checked>
                             <label class="form-check-label" for="gender-male">Male</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="gender" id="gender-female" value="FEMALE">
+                            <input class="form-check-input" type="radio" name="gender" id="gender-female"
+                                   value="FEMALE">
                             <label class="form-check-label" for="gender-female">Female</label>
                         </div>
                     </div>
@@ -54,7 +56,7 @@
         <div class="d-flex justify-content-between mb-4">
             <!--date of birth-->
             <div class="col-4">
-                <label class="form-label fw-medium">Date of Birth <span class="text-danger">(*)</span></label>
+                <label class="form-label fw-medium">Date of Birth <span class="text-danger">*</span></label>
                 <div class="input-group">
                     <img src="/images/icons/calendar.png" class="input-group-text border-0">
                     <input type="date" class="form-control" id="dateOfBirth">
@@ -62,18 +64,18 @@
             </div>
             <!--phone-->
             <div class="col-4">
-                <label class="form-label fw-medium">Phone <span class="text-danger">(*)</span></label>
+                <label class="form-label fw-medium">Phone <span class="text-danger">*</span></label>
                 <div class="input-group">
                     <img src="/images/icons/old-typical-phone.png" class="input-group-text border-0">
-                    <input type="number" class="form-control" id="phone">
+                    <input type="number" class="form-control" id="phone" placeholder="0988xxxx88" required>
                 </div>
             </div>
             <!--address-->
             <div class="col-3">
-                <label class="form-label fw-medium">Address <span class="text-danger">(*)</span></label>
+                <label class="form-label fw-medium">Address <span class="text-danger">*</span></label>
                 <div class="input-group">
                     <img src="/images/icons/location.png" class="input-group-text border-0">
-                    <input type="text" class="form-control" id="address">
+                    <input type="text" class="form-control text-capitalize" id="address" placeholder="Metuchen, NewJersey, US..." required>
                 </div>
             </div>
         </div>
@@ -81,18 +83,18 @@
         <div class="d-flex justify-content-between mb-4">
             <!--email-->
             <div class="col-4">
-                <label class="form-label fw-medium">Email <span class="text-danger">(*)</span></label>
+                <label class="form-label fw-medium">Email <span class="text-danger">*</span></label>
                 <div class="input-group">
                     <img src="/images/icons/email.png" class="input-group-text border-0">
-                    <input type="email" class="form-control" id="email">
+                    <input type="email" class="form-control" id="email" placeholder="Email@domain..." required>
                 </div>
             </div>
             <!--working place-->
             <div class="col-4">
-                <label class="form-label fw-medium">Working place</label>
+                <label class="form-label fw-medium">Working Place</label>
                 <div class="input-group">
                     <img src="/images/icons/building.png" class="input-group-text border-0">
-                    <input type="text" class="form-control" id="workingPlace">
+                    <input type="text" class="form-control text-capitalize" id="workingPlace" placeholder="Metuchen, NewJersey, US...">
                 </div>
             </div>
             <!--position-->
@@ -100,7 +102,7 @@
                 <label class="form-label fw-medium">Position</label>
                 <div class="input-group">
                     <img src="/images/icons/employee.png" class="input-group-text border-0">
-                    <input type="text" class="form-control" id="position">
+                    <input type="text" class="form-control text-capitalize" id="position" placeholder="Manager...">
                 </div>
             </div>
         </div>
@@ -116,18 +118,22 @@
             </div>
             <!--username-->
             <div class="col-4">
-                <label class="form-label fw-medium">Username <span class="text-danger">(*)</span></label>
+                <label class="form-label fw-medium">Username <span class="text-danger">**</span></label>
                 <div class="input-group">
                     <img src="/images/icons/id-card.png" class="input-group-text border-0">
-                    <input type="text" class="form-control" id="username">
+                    <input type="text" class="form-control" id="username" placeholder="Username01..." required>
                 </div>
             </div>
             <!--password-->
             <div class="col-3">
-                <label class="form-label fw-medium">Password <span class="text-danger">(*)</span></label>
+                <label class="form-label fw-medium">Password <span class="text-danger">**</span></label>
                 <div class="input-group">
                     <img src="/images/icons/password.png" class="input-group-text border-0">
-                    <input type="password" class="form-control" id="password">
+                    <input type="password" class="form-control" id="password" placeholder="P4ssw0rd..." required>
+                    <button type="button" class="toggle-password border border-start-0 rounded-end"
+                            onclick="togglePassword()" id="toggle-button">
+                        <img src="/images/icons/eye.png" alt="" id="toggle-icon">
+                    </button>
                 </div>
             </div>
         </div>
@@ -138,15 +144,30 @@
             </div>
         </div>
         <!-- Row 6: buttons -->
-        <div class="d-flex col-4 justify-content-center">
-            <div class="me-2">
-                <button type="submit" class="btn btn-success" style="width: 100px;">Save</button>
+        <div class="d-flex justify-content-center">
+            <!--button-->
+            <div class="d-flex col-9">
+                <div class="me-2">
+                    <button type="submit" class="btn btn-success" style="width: 100px;">Save</button>
+                </div>
+                <div class="me-2">
+                    <button type="button" class="btn btn-info text-white" style="width: 100px;"
+                            onclick="resetInput()">Reset
+                    </button>
+                </div>
+                <div>
+                    <a class="btn btn-warning text-white" href="#" onclick="fetchEmployee('employee-list.html')"
+                       style="width: 100px;">Cancel</a>
+                </div>
             </div>
-            <div class="me-2">
-                <button type="reset" class="btn btn-info text-white" style="width: 100px;" onclick="resetInputEmployee()">Reset</button>
-            </div>
-            <div>
-                <a class="btn btn-warning text-white" href="#" onclick="fetchEmployee('employee-list.html')" style="width: 100px;">Cancel</a>
+            <!--note-->
+            <div class="col-2 fst-italic">
+                <div>
+                    <span class="text-danger me-2">*</span><span>Can not empty</span>
+                </div>
+                <div>
+                    <span class="text-danger me-1">**</span><span>Can not update/reset</span>
+                </div>
             </div>
         </div>
     </form>
