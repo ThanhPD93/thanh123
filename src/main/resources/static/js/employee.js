@@ -38,29 +38,35 @@ function search(page) {
 
 function findAllEmployeeWithPagination(page, pageSize) {
     const searchInputElement = document.getElementById('searchInput');
-
-    // Check if the element exists before accessing its value
     const query = searchInputElement ? searchInputElement.value : '';
-    console.log('Search input element:', searchInputElement);
+
     fetch(`/employee/findAllWithPagination?searchInput=${encodeURIComponent(query)}&page=${page}&size=${pageSize}`)
         .then(response => response.json())
         .then(employees => {
             const tableBody = document.getElementById('employee-list-content');
             tableBody.innerHTML = '';
 
-            // List<Employee> .forEach()
-            // Page<Employee> .content() (trả về List<Employee>, .totalPages, .number, .totalElements
             employees.content.forEach(employee => {
                 const row = document.createElement('tr');
+                // Ensure employee.employeeId is passed correctly as a string
                 row.innerHTML = `
-                    <td class="text-center check-boxes"><input type="checkbox" onchange="handleCheckboxChange()" class="check-select-box"></td>
-                    <td><a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-uppercase">${employee.employeeId}</a></td>
+                    <td class="text-center check-boxes">
+                        <input type="checkbox" onchange="handleCheckboxChange()" class="check-select-box">
+                    </td>
+                    <td>
+                        <a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-uppercase"
+                           onclick="showEmployeeDetails('${employee.employeeId}')">
+                           ${employee.employeeId}
+                        </a>
+                    </td>
                     <td class="text-capitalize text-start">${employee.employeeName}</td>
                     <td class="text-start">${employee.dateOfBirth}</td>
                     <td class="text-start">${employee.gender}</td>
                     <td class="text-start">${employee.phone}</td>
                     <td class="text-capitalize text-start">${employee.address}</td>
-                    <td class="text-center"><img src="/employee/image/${employee.employeeId}" alt="image" style="height: 30px; width: 45px"></td>
+                    <td class="text-center">
+                        <img src="/employee/image/${employee.employeeId}" alt="image" style="height: 30px; width: 45px">
+                    </td>
                 `;
                 tableBody.appendChild(row);
             });
@@ -68,6 +74,31 @@ function findAllEmployeeWithPagination(page, pageSize) {
         })
         .catch(error => console.error('Error fetching list of employees', error));
 }
+
+function showEmployeeDetails(employeeId) {
+    // Fetch employee details by ID
+    fetch(`/employee/detail/${employeeId}`)
+        .then(response => response.json())
+        .then(employee => {
+            // Populate modal with employee details
+            document.getElementById('modalEmployeeId').value = employee.employeeId;
+            document.getElementById('modalEmployeeName').value = employee.employeeName;
+            document.getElementById('modalEmployeeDob').value = employee.dateOfBirth;
+            document.getElementById('modalEmployeeGender').value = employee.gender;
+            document.getElementById('modalEmployeePhone').value = employee.phone;
+            document.getElementById('modalEmployeeAddress').value = employee.address;
+            document.getElementById('modalEmployeeEmail').value = employee.email;
+            document.getElementById('modalEmployeePosition').value = employee.position;
+            document.getElementById('modalEmployeeImage').src = `/employee/image/${employee.employeeId}`;
+
+            // Show the modal
+            const employeeModal = new bootstrap.Modal(document.getElementById('employeeModal'));
+            employeeModal.show();
+        })
+        .catch(error => console.error('Error fetching employee details:', error));
+}
+
+
 
 let selectedEmployeeId = null;
 
@@ -125,13 +156,12 @@ async function deleteSelectedEmployee() {
                     // Cập nhật danh sách nhân viên trên giao diện người dùng nếu cần
                     location.reload(); // Tải lại trang để cập nhật
                 } else {
-                              // Xử lý lỗi từ server
-                              alert("Error deleting employees: " + result.message);
-                          }
-                      } catch (error) {
-                          // Xử lý lỗi khi gửi request
-                          alert("An error occurred: " + error.message);
-                      }
+                    alert("Error deleting employees: " + result.message);
+                }
+        } catch (error) {
+                // Xử lý lỗi khi gửi request
+                alert("An error occurred: " + error.message);
+        }
 }
 
 function updateEmployeeDetail(employeeId) {
