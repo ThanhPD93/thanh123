@@ -68,8 +68,8 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
 
     @Override
     public DResponseEmployee addEmployee(CRequestEmployee cRequestEmployee) {
-        Employee employee;
-        if(cRequestEmployee.getImage() == null) {
+        Employee employee = employeeRepository.findByEmployeeId(cRequestEmployee.getEmployeeId());
+        if(cRequestEmployee.getImage() == null && employee != null) {
            byte[] currentImage = employeeRepository.findByEmployeeId(cRequestEmployee.getEmployeeId()).getImage();
             employee = modelMapper.map(cRequestEmployee, Employee.class);
             employee.setImage(currentImage);
