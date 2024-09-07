@@ -118,18 +118,34 @@ public class EmployeeController {
         }
     }
 
+//    @DeleteMapping("/delete")
+//    public ResponseEntity<String> deleteEmployees(@RequestBody List<String> employeeIds) {
+//        if (employeeIds == null || employeeIds.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No data deleted!");
+//        }
+//
+//        try {
+//            employeeService.deleteEmployees(employeeIds);
+//            return ResponseEntity.ok("Employees deleted successfully");
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
+//        }
+//    }
+
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteEmployees(@RequestBody List<String> employeeIds) {
+    public ResponseEntity<ApiResponse<String>> deleteEmployees(@RequestBody List<String> employeeIds) {
         if (employeeIds == null || employeeIds.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No data deleted!");
+            return ResponseEntity.badRequest().body(new ApiResponse<>(400, "No data deleted!", null));
         }
 
         try {
             employeeService.deleteEmployees(employeeIds);
-            return ResponseEntity.ok("Employees deleted successfully");
+            return ResponseEntity.ok(new ApiResponse<>(200, "Employees deleted successfully", null));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>(500, "An error occurred: " + e.getMessage(), null));
         }
     }
+
 
 }
