@@ -5,6 +5,7 @@ import mockProject.team3.Vaccination_20.service.impl.EmployeeServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -55,6 +56,7 @@ public class SecurityConfig {
                         .deleteCookies("JSESSIONID")
                         .permitAll()
                 )
+                .httpBasic(Customizer.withDefaults())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .accessDeniedPage("/access-denied.html")
                         .authenticationEntryPoint((request, response, authException) -> {

@@ -134,6 +134,7 @@
                            Create Injection Schedule
                         </a>
                     </div>
+<!--                    injection result-->
                     <a class="nav-link text-black d-flex justify-content-between" href="#" data-bs-toggle="collapse" data-bs-target="#injectionResult"
                        aria-expanded="false" aria-controls="injectionResult">
                         <div>
@@ -144,13 +145,15 @@
                         </div>
                     </a>
                     <div class="sub-menu collapse" id="injectionResult">
-                        <a class="nav-link text-black" href="#">
+                        <a class="nav-link text-black" href="#" onclick="fetchInjectionResult('injection-result-list.html')">
                             Injection Result List
                         </a>
-                        <a class="nav-link text-black" href="#">
+                        <a class="nav-link text-black" href="#" onclick="fetchInjectionResult('injection-result-create.html')">
                             Create Injection Result
                         </a>
                     </div>
+
+<!--                    news-->
                     <a class="nav-link text-black d-flex justify-content-between" href="#" data-bs-toggle="collapse" data-bs-target="#news"
                        aria-expanded="false" aria-controls="news">
                         <div>
@@ -199,7 +202,7 @@
 <script src="/js/dashboard.js"></script>
 <script src="/js/employee.js"></script>
 <script src="/js/vaccineType.js"></script>
-
+<script src="/js/injectionresult.js"> </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

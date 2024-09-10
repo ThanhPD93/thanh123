@@ -11,12 +11,5 @@ import java.util.List;
 @Service
 public class VaccineTypeServiceImpl implements VaccineTypeService {
 
-    @Autowired
-    private VaccineTypeRepository vaccineTypeRepository;
 
-
-    @Override
-    public List<VaccineType> getAllVaccineTypes() {
-        return vaccineTypeRepository.findAll();
-    }
 }

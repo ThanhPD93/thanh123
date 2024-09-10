@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Injection Create</title>
+    <style>
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+        }
+    </style>
+    <link rel="stylesheet" href="/static/css/bootstrap/bootstrap.min.css">
+</head>
+<body class="bg-body-secondary">
+<div class="container mt-3 bg-light p-3">
+    <form id="add-injection-result-form" onsubmit="addInjectionResult(event)">
+        <!-- Row 1 -->
+        <div class="d-flex justify-content-between mb-4">
+            <!-- Customer -->
+            <div class="col-4">
+                <label class="form-label fw-medium">Customer <span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <img src="/images/icons/people.png" class="input-group-text border-0">
+                    <select class="form-select" id="customer">
+                        <option value="" disabled selected>--Select Customer--</option>
+                    </select>
+                </div>
+            </div>
+            <!-- Prevention -->
+            <div class="col-4">
+                <label class="form-label fw-medium">Prevention <span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <img src="/images/icons/prevention.png" class="input-group-text border-0">
+                    <select class="form-select" id="prevention">
+                        <option value="" disabled selected>--Select Prevention--</option>
+                    </select>
+                </div>
+            </div>
+            <!-- Vaccine Type -->
+            <div class="col-3">
+                <label class="form-label fw-medium">Vaccine type <span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <img src="/images/icons/vaccine.png" class="input-group-text border-0">
+                    <select class="form-select" id="vaccinetype">
+                        <option value="" disabled selected>--Select Vaccine Type--</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <!-- Row 2 -->
+        <div class="d-flex justify-content-between mb-4">
+            <!-- Injection -->
+            <div class="col-4">
+                <label class="form-label fw-medium">Injection</label>
+                <div class="input-group">
+                    <img src="/images/icons/vaccination.png" class="input-group-text border-0">
+                    <input type="number" class="form-control" id="injection">
+                </div>
+            </div>
+            <!-- Date of Injection -->
+            <div class="col-4">
+                <label class="form-label fw-medium">Date of Injection</label>
+                <div class="input-group">
+                    <img src="/images/icons/calendar.png" class="input-group-text border-0">
+                    <input type="date" class="form-control" id="injectiondate">
+                </div>
+            </div>
+            <!-- Next Injection Date -->
+            <div class="col-3">
+                <label class="form-label fw-medium">Next Injection Appointment</label>
+                <div class="input-group">
+                    <img src="/images/icons/calendar.png" class="input-group-text border-0">
+                    <input type="date" class="form-control" id="nextinjectiondate">
+                </div>
+            </div>
+        </div>
+        <!-- Row 3 -->
+        <div class="d-flex justify-content-between mb-4">
+            <!-- Place of Injection -->
+            <div class="col-4">
+                <label class="form-label fw-medium">Place of Injection</label>
+                <div class="input-group">
+                    <img src="/images/icons/location.png" class="input-group-text border-0">
+                    <select class="form-select" id="injectionplace">
+                        <option value="" disabled selected>--Select Place of Injection--</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <!-- Row 4: Buttons -->
+        <div class="d-flex">
+            <div class="me-2">
+                <button type="submit" class="btn btn-success" style="width: 100px;">Save</button>
+            </div>
+            <div class="me-2">
+                <button type="button" class="btn btn-info text-white" style="width: 100px;" onclick="resetInput()">Reset</button>
+            </div>
+            <div>
+                <a class="btn btn-warning text-white" href="#" onclick="fetchInjectionResult('injection-result-list.html')" style="width: 100px;">Cancel</a>
+            </div>
+        </div>
+    </form>
+
+</div>
+
+</body>
+</html>

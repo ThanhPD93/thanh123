@@ -22,16 +22,4 @@ public class VaccineTypeController {
     @Autowired
     private VaccineTypeService vaccineTypeService;
 
-    @GetMapping
-    List<VaccineType> getAllVaccineTypes() {
-        return vaccineTypeService.getAllVaccineTypes();
-    }
-
-    @GetMapping("/getAjax")
-    public String getDocument(@RequestParam String filename) throws IOException {
-        ClassPathResource resource = new ClassPathResource("templates/vaccineType/" + filename);
-        Path path = resource.getFile().toPath();
-        return Files.readString(path);
-    }
-
 }

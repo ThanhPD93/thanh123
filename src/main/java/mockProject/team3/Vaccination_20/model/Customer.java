@@ -1,9 +1,6 @@
 package mockProject.team3.Vaccination_20.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,6 +30,7 @@ public class Customer {
     @Column(length = 100)
     private String fullName;
 
+    @Enumerated(EnumType.STRING)
     private Gender gender;
 
     @Column(length = 12)
