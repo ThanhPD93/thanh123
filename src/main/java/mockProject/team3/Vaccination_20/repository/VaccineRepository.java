@@ -12,4 +12,6 @@ public interface VaccineRepository extends JpaRepository<Vaccine, String> {
 
     //use for add-ir
     List<Vaccine> findAll();
+
+    List<Vaccine> findByVaccineType_VaccineTypeId(String vaccineTypeId);
 }

@@ -16,11 +16,11 @@ public interface InjectionResultService {
     List<InjectionResultDTO> getAllInjectionResults();
 
 //    //get data to dropdown
-    List<String> getAllPreventions();
     List<String> getAllInjectionPlaces();
 
 
     //add IR
     public InjectionResult addInjectionResult(CInjectionResultDTO dto);
 
+//    InjectionResult findInjectionResultById(String id);
 }

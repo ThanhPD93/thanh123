@@ -10,9 +10,10 @@ import java.time.LocalDate;
 public class CInjectionResultDTO {
     private String customerId;
     private String vaccineTypeName;
-	private String vaccineName;
+    private String vaccineName;
     private String injection;
     private LocalDate injectionDate;
     private LocalDate nextInjectionDate;
     private String injectionPlace;
+
 }

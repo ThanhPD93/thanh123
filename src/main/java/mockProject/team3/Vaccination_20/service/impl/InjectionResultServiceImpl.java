@@ -50,12 +50,7 @@ public class InjectionResultServiceImpl implements InjectionResultService {
     }
 
     //get data from file to dropdown
-    static final String PREVENTIONS_FILE_PATH = "src/main/resources/static/data/preventions.txt";
     static final String PLACES_FILE_PATH = "src/main/resources/static/data/places.txt";
-
-    public List<String> getAllPreventions() {
-        return readFile(PREVENTIONS_FILE_PATH);
-    }
 
     public List<String> getAllInjectionPlaces() {
         return readFile(PLACES_FILE_PATH);
@@ -73,26 +68,24 @@ public class InjectionResultServiceImpl implements InjectionResultService {
 
     //add
     public InjectionResult addInjectionResult(CInjectionResultDTO dto) {
-        System.out.println("Received DTO: " + dto); // Debugging line
+        System.out.println("Received DTO: " + dto);  // Debugging log
 
-        InjectionResult injectionResult = new InjectionResult();
-
-//        // Customer
         Customer customer = customerRepository.findById(dto.getCustomerId())
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
+        System.out.println("Customer found: " + customer);  // Debug log
 
-//        // Vaccine
         Vaccine vaccine = vaccineRepository.findById(dto.getVaccineName())
                 .orElseThrow(() -> new RuntimeException("Vaccine not found"));
+        System.out.println("Vaccine found: " + vaccine);  // Debug log
 
-        // vaccine type name
         VaccineType vaccineType = vaccineTypeRepository.findById(dto.getVaccineTypeName())
                 .orElseThrow(() -> new RuntimeException("Vaccine type not found"));
+        System.out.println("VaccineType found: " + vaccineType);  // Debug log
 
-        // Set value
+        // Set and save InjectionResult
+        InjectionResult injectionResult = new InjectionResult();
         injectionResult.setCustomer(customer);
         injectionResult.setVaccineFromInjectionResult(vaccine);
-        injectionResult.setPrevention(dto.getVaccineTypeName());
         injectionResult.setNumberOfInjection(dto.getInjection());
         injectionResult.setInjectionDate(dto.getInjectionDate());
         injectionResult.setNextInjectionDate(dto.getNextInjectionDate());
@@ -100,5 +93,11 @@ public class InjectionResultServiceImpl implements InjectionResultService {
 
         return injectionResultRepository.save(injectionResult);
     }
+
+//    @Override
+//    public InjectionResult findInjectionResultById(String id) {
+//        return injectionResultRepository.findByInjectionResultId(id);
+//    }
+
 
 }

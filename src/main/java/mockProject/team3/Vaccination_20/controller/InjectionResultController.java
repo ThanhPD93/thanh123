@@ -4,7 +4,11 @@ package mockProject.team3.Vaccination_20.controller;
 import mockProject.team3.Vaccination_20.dto.CInjectionResultDTO;
 import mockProject.team3.Vaccination_20.dto.InjectionResultDTO;
 import mockProject.team3.Vaccination_20.model.InjectionResult;
+import mockProject.team3.Vaccination_20.repository.CustomerRepository;
+import mockProject.team3.Vaccination_20.repository.InjectionResultRepository;
+import mockProject.team3.Vaccination_20.repository.VaccineRepository;
 import mockProject.team3.Vaccination_20.service.InjectionResultService;
+import mockProject.team3.Vaccination_20.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 
@@ -25,6 +29,15 @@ public class InjectionResultController {
 
     @Autowired
     private InjectionResultService injectionResultService;
+
+    @Autowired
+    private CustomerRepository customerRepository;
+
+    @Autowired
+    private VaccineRepository vaccineRepository;
+
+    @Autowired
+    private InjectionResultRepository injectionResultRepository;
 
     //call
     @GetMapping("/getAjax")
@@ -49,12 +62,6 @@ public class InjectionResultController {
         return injectionResultService.findBySearchWithPagination(searchInput, page, size);
     }
 
-//    //load data from vaccine type name
-//    @GetMapping("/vaccine-type-name")
-//    public ResponseEntity<List<String>> getAllPreventions() {
-//        List<String> preventions = injectionResultService.getAllPreventions();
-//        return new ResponseEntity<>(preventions, HttpStatus.OK);
-//    }
 
     //load data from file injection place
     @GetMapping("/places")
@@ -65,16 +72,56 @@ public class InjectionResultController {
 
     //add
     @PostMapping("/add")
-    public ResponseEntity<?> addInjectionResult(@RequestBody CInjectionResultDTO injectionResultDto) {
-        try {
-            InjectionResult result = injectionResultService.addInjectionResult(injectionResultDto);
-            return new ResponseEntity<>(result, HttpStatus.CREATED);
-        } catch (RuntimeException e) {
-            // Log the error message and return a meaningful response
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    public ResponseEntity<ApiResponse<InjectionResult>> addInjectionResult(@RequestBody CInjectionResultDTO injectionResultDto) {
+        InjectionResult savedResult = injectionResultService.addInjectionResult(injectionResultDto);
+        ApiResponse<InjectionResult> response;
+
+        if (savedResult != null) {
+            response = new ApiResponse<>(1, "Injection result added successfully", savedResult);
+        } else {
+            response = new ApiResponse<>(0, "Failed to add injection result", null);
         }
+
+        return ResponseEntity.ok(response);
     }
 
+    //-------------
+//    @GetMapping("/detail/{id}")
+//    public ResponseEntity<CInjectionResultDTO> getInjectionResultById(@PathVariable String id) {
+//        InjectionResult injectionResult = injectionResultService.findInjectionResultById(id);
+//        if (injectionResult != null) {
+//            CInjectionResultDTO dto = new CInjectionResultDTO();
+//            dto.setCustomerId(injectionResult.getCustomer().getCustomerId());
+//            dto.setVaccineTypeName(injectionResult.getVaccineFromInjectionResult().getVaccineType().getVaccineTypeName());
+//            dto.setVaccineName(injectionResult.getVaccineFromInjectionResult().getVaccineName());
+//            dto.setInjection(String.valueOf(injectionResult.getNumberOfInjection()));
+//            dto.setInjectionDate(injectionResult.getInjectionDate());
+//            dto.setNextInjectionDate(injectionResult.getNextInjectionDate());
+//            dto.setInjectionPlace(injectionResult.getInjectionPlace());
+//            return ResponseEntity.ok(dto);
+//        } else {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
+//
+//    @PutMapping("/update/{id}")
+//    public ResponseEntity<InjectionResult> updateInjectionResult(@PathVariable String id, @RequestBody CInjectionResultDTO dto) {
+//        InjectionResult injectionResult = injectionResultService.findInjectionResultById(id);
+//        if (injectionResult == null) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        // Update properties
+//        injectionResult.setCustomer(customerRepository.findById(dto.getCustomerId()).orElse(null));
+//        injectionResult.setVaccineFromInjectionResult(vaccineRepository.findById(dto.getVaccineName()).orElse(null));
+//        injectionResult.setNumberOfInjection((dto.getInjection()));
+//        injectionResult.setInjectionDate(dto.getInjectionDate());
+//        injectionResult.setNextInjectionDate(dto.getNextInjectionDate());
+//        injectionResult.setInjectionPlace(dto.getInjectionPlace());
+//
+//        // Save updated injectionResult
+//        InjectionResult updatedInjectionResult = injectionResultRepository.save(injectionResult);
+//        return ResponseEntity.ok(updatedInjectionResult);
+//    }
 
 }
 
