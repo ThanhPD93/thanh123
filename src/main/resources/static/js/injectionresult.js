@@ -15,7 +15,7 @@ function findAllInjectionResultsWithPagination(page, pageSize) {
                         <td class="text-center check-boxes"><input type="checkbox"></td>
                         <td class="text-start"><a class="link-offset-2 link-underline link-underline-opacity-0" href="#">${result.customerInfo}</a></td>
                         <td class="text-start">${result.vaccineName}</td>
-                        <td class="text-start">${result.prevention}</td>
+                        <td class="text-start">${result.vaccineTypeName}</td>
                         <td>${result.numberOfInjection}</td>
                         <td>${result.injectionDate}</td>
                         <td>${result.nextInjectionDate}</td>
@@ -152,11 +152,11 @@ function loadCustomers() {
 }
 
 // Function to load vaccine types
-function loadVaccineTypes() {
+function loadVaccines() {
     fetch('/vaccine/v-for-add-ir')
         .then(response => response.json())
         .then(vaccines => {
-            const vaccineSelect = document.getElementById('vaccinetype');
+            const vaccineSelect = document.getElementById('vaccinename');
             vaccineSelect.innerHTML = '<option selected>--Select Vaccine--</option>';
 
             vaccines.forEach(vaccine => {
@@ -169,23 +169,24 @@ function loadVaccineTypes() {
         .catch(error => console.error('Error loading vaccines:', error));
 }
 //load prevention from file
-function loadPreventions() {
-    fetch('/injection-result/preventions')
+function loadVaccineTypeName() {
+    fetch('/vaccine-type/vt-for-add-ir')
         .then(response => response.json())
-        .then(preventions => {
-            const preventionSelect = document.getElementById('prevention');
-            preventionSelect.innerHTML = '<option value="">--Select Prevention--</option>'; // Clear previous options
-            preventions.forEach(prevention => {
+        .then(vaccineType => {
+            const vaccineTypeSelect = document.getElementById('vaccinetypename');
+            vaccineTypeSelect.innerHTML = '<option selected>--Select Vaccine Type Name--</option>';
+
+            vaccineType.forEach(vaccineType => {
                 const option = document.createElement('option');
-                option.value = prevention;
-                option.textContent = prevention;
-                preventionSelect.appendChild(option);
+                option.value = vaccineType.id;
+                option.text = vaccineType.name;
+                vaccineTypeSelect.appendChild(option);
             });
         })
-        .catch(error => console.error('Error loading preventions:', error));
+        .catch(error => console.error('Error loading vaccines:', error));
 }
 //load injection place from file
-function loadInjectionPlaces() {
+function loadInjectionPlace() {
     fetch('/injection-result/places')
         .then(response => response.json())
         .then(places => {
@@ -204,9 +205,9 @@ function loadInjectionPlaces() {
 // Call all the functions to load data when the page loads
 document.addEventListener('DOMContentLoaded', function() {
     loadCustomers();
-    loadVaccineTypes();
-    loadInjectionPlaces();
-    loadPreventions();
+    loadVaccineTypeName()
+    loadVaccines();
+    loadInjectionPlace();
 });
 
 
@@ -216,8 +217,8 @@ function addInjectionResult(event) {
 
     // Get form values
     const customerId = document.getElementById('customer').value;
-    const prevention = document.getElementById('prevention').value;
-    const vaccineTypeId = document.getElementById('vaccinetype').value;
+    const vaccineTypeName = document.getElementById('vaccinetypename').value;
+    const vaccineName = document.getElementById('vaccinename').value;
     const injection = document.getElementById('injection').value;
     const injectionDate = document.getElementById('injectiondate').value;
     const nextInjectionDate = document.getElementById('nextinjectiondate').value;
@@ -226,8 +227,8 @@ function addInjectionResult(event) {
     // Create the data object
     const data = {
         customerId: customerId,
-        prevention: prevention,
-        vaccineTypeId: vaccineTypeId,
+        vaccineTypeName: vaccineTypeName,
+        vaccineName: vaccineName,
         injection: injection,
         injectionDate: injectionDate,
         nextInjectionDate: nextInjectionDate,

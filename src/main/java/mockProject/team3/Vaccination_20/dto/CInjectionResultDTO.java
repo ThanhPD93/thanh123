@@ -9,8 +9,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class CInjectionResultDTO {
     private String customerId;
-    private String prevention;
-    private String vaccineTypeId;
+    private String vaccineTypeName;
+	private String vaccineName;
     private String injection;
     private LocalDate injectionDate;
     private LocalDate nextInjectionDate;

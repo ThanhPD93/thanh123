@@ -49,12 +49,13 @@ public class InjectionResultController {
         return injectionResultService.findBySearchWithPagination(searchInput, page, size);
     }
 
-    //load data from file prevention
-    @GetMapping("/preventions")
-    public ResponseEntity<List<String>> getAllPreventions() {
-        List<String> preventions = injectionResultService.getAllPreventions();
-        return new ResponseEntity<>(preventions, HttpStatus.OK);
-    }
+//    //load data from vaccine type name
+//    @GetMapping("/vaccine-type-name")
+//    public ResponseEntity<List<String>> getAllPreventions() {
+//        List<String> preventions = injectionResultService.getAllPreventions();
+//        return new ResponseEntity<>(preventions, HttpStatus.OK);
+//    }
+
     //load data from file injection place
     @GetMapping("/places")
     public ResponseEntity<List<String>> getAllInjectionPlaces() {

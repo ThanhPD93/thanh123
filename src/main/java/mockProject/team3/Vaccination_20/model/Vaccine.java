@@ -39,8 +39,8 @@ public class Vaccine {
     @Column(length = 100)
     private String vaccineName;
 
-    @Column(length = 36)
-    private String vaccineTypeId;
+//    @Column(length = 36)
+//    private String vaccineTypeId;
 
     //relationship
     @OneToMany(mappedBy = "vaccineFromInjectionResult")

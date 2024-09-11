@@ -5,9 +5,11 @@ import mockProject.team3.Vaccination_20.dto.InjectionResultDTO;
 import mockProject.team3.Vaccination_20.model.Customer;
 import mockProject.team3.Vaccination_20.model.InjectionResult;
 import mockProject.team3.Vaccination_20.model.Vaccine;
+import mockProject.team3.Vaccination_20.model.VaccineType;
 import mockProject.team3.Vaccination_20.repository.CustomerRepository;
 import mockProject.team3.Vaccination_20.repository.InjectionResultRepository;
 import mockProject.team3.Vaccination_20.repository.VaccineRepository;
+import mockProject.team3.Vaccination_20.repository.VaccineTypeRepository;
 import mockProject.team3.Vaccination_20.service.InjectionResultService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,6 +36,8 @@ public class InjectionResultServiceImpl implements InjectionResultService {
 
     @Autowired
     private CustomerRepository customerRepository;
+    @Autowired
+    private VaccineTypeRepository vaccineTypeRepository;
 
     //show all
     public List<InjectionResultDTO> getAllInjectionResults() {
@@ -68,24 +72,27 @@ public class InjectionResultServiceImpl implements InjectionResultService {
     }
 
     //add
-
     public InjectionResult addInjectionResult(CInjectionResultDTO dto) {
         System.out.println("Received DTO: " + dto); // Debugging line
 
         InjectionResult injectionResult = new InjectionResult();
 
-        // Customer
+//        // Customer
         Customer customer = customerRepository.findById(dto.getCustomerId())
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
 
-        // Vaccine
-        Vaccine vaccine = vaccineRepository.findById(dto.getVaccineTypeId())
+//        // Vaccine
+        Vaccine vaccine = vaccineRepository.findById(dto.getVaccineName())
                 .orElseThrow(() -> new RuntimeException("Vaccine not found"));
+
+        // vaccine type name
+        VaccineType vaccineType = vaccineTypeRepository.findById(dto.getVaccineTypeName())
+                .orElseThrow(() -> new RuntimeException("Vaccine type not found"));
 
         // Set value
         injectionResult.setCustomer(customer);
         injectionResult.setVaccineFromInjectionResult(vaccine);
-        injectionResult.setPrevention(dto.getPrevention());
+        injectionResult.setPrevention(dto.getVaccineTypeName());
         injectionResult.setNumberOfInjection(dto.getInjection());
         injectionResult.setInjectionDate(dto.getInjectionDate());
         injectionResult.setNextInjectionDate(dto.getNextInjectionDate());
@@ -93,6 +100,5 @@ public class InjectionResultServiceImpl implements InjectionResultService {
 
         return injectionResultRepository.save(injectionResult);
     }
-
 
 }

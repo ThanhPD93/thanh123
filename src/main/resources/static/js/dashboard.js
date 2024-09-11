@@ -26,10 +26,9 @@
              document.getElementById('ajax-content').innerHTML = data;
              findAllInjectionResultsWithPagination(0, 10);
              loadCustomers();
-             loadVaccineTypes();
-             loadPreventions();
-             loadInjectionPlaces();
+             loadVaccineTypeName()
+             loadVaccines();
+             loadInjectionPlace();
          })
          .catch(error => console.error('Error fetching document:', error));
  }
-

@@ -22,14 +22,25 @@ public interface InjectionResultRepository extends JpaRepository<InjectionResult
             "JOIN ir.vaccineFromInjectionResult v")
     List<InjectionResultDTO> findAllInjectionResults();
 
+//    @Query("SELECT new mockProject.team3.Vaccination_20.dto.InjectionResultDTO(" +
+//            "CONCAT(c.customerId, ' - ', c.fullName, ' - ', c.dateOfBirth), " +
+//            "v.vaccineName, ir.prevention, ir.numberOfInjection, ir.injectionDate, ir.nextInjectionDate) " +
+//            "FROM InjectionResult ir " +
+//            "JOIN ir.customer c " +
+//            "JOIN ir.vaccineFromInjectionResult v " +
+//            "WHERE c.fullName LIKE %:searchInput% OR c.customerId LIKE %:searchInput%")
+//    Page<InjectionResultDTO> findAllWithPagination(@Param("searchInput") String searchInput, Pageable pageable);
+
     @Query("SELECT new mockProject.team3.Vaccination_20.dto.InjectionResultDTO(" +
             "CONCAT(c.customerId, ' - ', c.fullName, ' - ', c.dateOfBirth), " +
-            "v.vaccineName, ir.prevention, ir.numberOfInjection, ir.injectionDate, ir.nextInjectionDate) " +
+            "v.vaccineName, vt.vaccineTypeName, ir.numberOfInjection, ir.injectionDate, ir.nextInjectionDate) " +
             "FROM InjectionResult ir " +
             "JOIN ir.customer c " +
             "JOIN ir.vaccineFromInjectionResult v " +
+            "JOIN v.vaccineType vt " +
             "WHERE c.fullName LIKE %:searchInput% OR c.customerId LIKE %:searchInput%")
     Page<InjectionResultDTO> findAllWithPagination(@Param("searchInput") String searchInput, Pageable pageable);
+
 
 //    @Query("SELECT DISTINCT i.prevention FROM InjectionResult i")
 //    List<String> findAllPreventions();

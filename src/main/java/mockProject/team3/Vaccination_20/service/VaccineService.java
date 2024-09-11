@@ -8,5 +8,4 @@ public interface VaccineService {
 
     //use for add-ir
     List<Vaccine> getAllVaccines();
-
 }
