@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Employee Create</title>
+    <style>
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+        }
+    </style>
+    <link rel="stylesheet" href="/static/css/bootstrap/bootstrap.min.css">
+</head>
+<body class="bg-body-secondary">
+<div class="container mt-3 bg-light p-3">
+    <h4>Personal Information</h4><br>
+    <form id="add-customer-form" onsubmit="return checkCapcha();">
+        <!-- Row 1 -->
+        <div class="d-flex justify-content-between mb-4">
+            <!--Customer Full name-->
+            <div class="col-4">
+                <label class="form-label fw-medium">Full name<span class="text-danger">(*)</span></label>
+                <div class="input-group">
+                    <img src="/images/icons/people.png" class="input-group-text border-0">
+                    <input type="text" class="form-control text-uppercase" id="customerFullName" required>
+                </div>
+            </div>
+            <!--Customer Date of Birth-->
+            <div class="col-4">
+                <label class="form-label fw-medium">Date of Birth<span class="text-danger">(*)</span></label>
+                <div class="input-group">
+                    <img src="/images/icons/calendar.png" class="input-group-text border-0">
+                    <input type="date" class="form-control" id="customerDateOfBirth">
+                </div>
+            </div>
+            <!--gender-->
+            <div class="col-3">
+                <label class="form-label fw-medium">Gender</label>
+                <div class="input-group">
+                    <img src="/images/icons/gender.png" class="input-group-text border-0">
+                    <div class="mt-2">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="gender" id="gender-male" value="MALE" checked>
+                            <label class="form-check-label" for="gender-male">Male</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="gender" id="gender-female" value="FEMALE">
+                            <label class="form-check-label" for="gender-female">Female</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Row 2 -->
+        <div class="d-flex justify-content-between mb-4">
+            <!--Identity Card-->
+            <div class="col-4">
+                <label class="form-label fw-medium">Identity card<span class="text-danger">(*)</span></label>
+                <div class="input-group">
+                    <img src="/images/icons/people.png" class="input-group-text border-0">
+                    <input type="text" class="form-control text-uppercase" id="customerIdentityCard" required>
+                </div>
+            </div>
+            <!--Address-->
+            <div class="col-4">
+                <label class="form-label fw-medium">Address<span class="text-danger">(*)</span></label>
+                <div class="input-group">
+                    <img src="/images/icons/location.png" class="input-group-text border-0">
+                    <input type="text" class="form-control" id="customerAddress" required>
+                </div>
+            </div>
+            <!--Customer ID-->
+            <div class="col-3">
+                <label class="form-label fw-medium">Customer ID<span class="text-danger">(*)</span></label>
+                <div class="input-group">
+                    <img src="/images/icons/email.png" class="input-group-text border-0">
+                    <input type="text" class="form-control" id="customerId" required>
+                </div>
+            </div>
+        </div>
+        <div id="ajax-grey-spacing"></div>
+        <div class="container mt-3 bg-light p-3">
+            <h4>Account Information</h4><br>
+            <!-- Row 1 -->
+            <div class="d-flex justify-content-between mb-4">
+                <!--username-->
+                <div class="col-4">
+                    <label class="form-label fw-medium">Username<span class="text-danger">(*)</span></label>
+                    <div class="input-group">
+                        <img src="/images/icons/people.png" class="input-group-text border-0">
+                        <input type="text" class="form-control text-uppercase" id="customerUsername" required>
+                    </div>
+                </div>
+                <!--Password-->
+                <div class="col-4">
+                    <label class="form-label fw-medium">Password<span class="text-danger">(*)</span></label>
+                    <div class="input-group">
+                        <img src="/images/icons/people.png" class="input-group-text border-0">
+                        <input type="password" class="form-control" id="customerPassword" required>
+                    </div>
+                </div>
+                <!--Password confirm-->
+                <div class="col-3">
+                    <label class="form-label fw-medium">Password Confirm<span class="text-danger">(*)</span></label>
+                    <div class="input-group">
+                        <img src="/images/icons/people.png" class="input-group-text border-0">
+                        <input type="password" class="form-control" id="customerPasswordConfirm" required>
+                    </div>
+                </div>
+            </div>
+            <!-- Row 2 -->
+            <div class="d-flex justify-content-between mb-4">
+                <!--email-->
+                <div class="col-4">
+                    <label class="form-label fw-medium">Email<span class="text-danger">(*)</span></label>
+                    <div class="input-group">
+                        <img src="/images/icons/email.png" class="input-group-text border-0">
+                        <input type="email" class="form-control" id="customerEmail" required>
+                    </div>
+                </div>
+                <!--phone-->
+                <div class="col-4">
+                    <label class="form-label fw-medium">Phone<span class="text-danger">(*)</span></label>
+                    <div class="input-group">
+                        <img src="/images/icons/old-typical-phone.png" class="input-group-text border-0">
+                        <input type="number" class="form-control" id="customerPhone" required>
+                    </div>
+                </div>
+                <!--empty-->
+                <div class="col-3"></div>
+            </div>
+            <!-- Row 3 -->
+            <div class="d-flex justify-content-between mb-4">
+                <!--Capcha-->
+                <div class="col-4">
+                    <label class="form-label fw-medium">Capcha<span class="text-danger">(*)</span></label>
+                    <div class="input-group">
+                        <img src="/images/icons/email.png" class="input-group-text border-0">
+                        <input type="text" class="form-control" id="customerCapcha" required>
+                    </div>
+                </div>
+                <!--Capcha code-->
+                <div class="col-4">
+                    <label class="form-label fw-medium">Code</label>
+                    <div class="input-group">
+                        <img src="/images/icons/building.png" class="input-group-text border-0">
+                        <input type="text" class="form-control text-capitalize" id="customerCapchaCode" readonly>
+                        <button type="button" onclick="randomizeCapcha()">Reset</button>
+                    </div>
+                </div>
+                <!--empty-->
+                <div class="col-3"></div>
+            </div>
+            <!-- Row 4: buttons -->
+            <div class="d-flex">
+                <div class="me-2">
+                    <button class="btn btn-success" style="width: 100px;" type="submit">Save</button>
+                </div>
+                <div class="me-2">
+                    <button class="btn btn-info text-white" style="width: 100px;" type="button" onclick="randomizeCapchaWithReset()">Reset</button>
+                </div>
+                <div>
+                    <a class="btn btn-warning text-white" href="#" onclick="fetchCustomer('customer-list.html')" style="width: 100px;">Cancel</a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>

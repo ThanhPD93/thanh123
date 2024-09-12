@@ -57,7 +57,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<ApiResponse<List<LResponseEmployee>>> listEmployees(Model model) {
+    public ResponseEntity<ApiResponse<List<LResponseEmployee>>> listEmployees() {
         List<LResponseEmployee> employees = employeeService.getAll();
 
         ApiResponse<List<LResponseEmployee>> response;
