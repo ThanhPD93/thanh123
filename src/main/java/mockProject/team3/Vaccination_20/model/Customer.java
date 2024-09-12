@@ -4,6 +4,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,26 +26,31 @@ public class Customer {
     @Column(length = 36)
     private String customerId;
 
+    @Column(nullable = false)
 	private String address;
 
+    @Column(nullable = false)
     private LocalDate dateOfBirth;
 
-    @Column(length = 100)
+    @Column(length = 100, nullable = false)
     private String email;
 
-    @Column(length = 100)
+    @Column(length = 100, nullable = false)
     private String fullName;
 
+    @Column(nullable = false)
     private Gender gender;
 
-    @Column(length = 12)
+    @Column(length = 12, nullable = false)
     private String identityCard;
 
+    @Column(nullable = false)
 	private String password;
 
-    @Column(length = 20)
+    @Column(length = 20, nullable = false)
     private String phone;
 
+    @Column(nullable = false)
     private String username;
 
     //relationship
