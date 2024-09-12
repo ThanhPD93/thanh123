@@ -1,0 +1,13 @@
+.page-link {
+    cursor: pointer;
+}
+
+.customer-id-hidden {
+	display: none;
+}
+
+#ajax-grey-spacing {
+	width: 100%;
+	height: 30px;
+	background-color: #e9e9e9;
+}
