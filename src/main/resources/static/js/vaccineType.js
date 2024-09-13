@@ -128,8 +128,8 @@ function fetchVaccineType(filename) {
             document.getElementById('ajax-content').innerHTML = data;
             if(filename === "vaccine-type-list.html") {
                 findAllVaccineTypeWithPagination(0,10);
-                document.getElementById("title").innerHTML="VACCINE TYPE LIST";
-            }else document.getElementById("title").innerHTML="CREATE VACCINE TYPE";
+                document.getElementById("ajax-title").innerHTML="VACCINE TYPE LIST";
+            }else document.getElementById("ajax-title").innerHTML="CREATE VACCINE TYPE";
         })
         .catch(error => console.error('Error fetching document:', error));
 }
@@ -162,6 +162,7 @@ function addVaccineType() {
     } else {
         sendVaccineTypeData(vaccineType);
     }
+    document.getElementById('add-vaccine-type').reset();
 }
 
 function sendVaccineTypeData(vaccineType) {

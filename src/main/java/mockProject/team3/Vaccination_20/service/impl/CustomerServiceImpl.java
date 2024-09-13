@@ -74,5 +74,4 @@ public class CustomerServiceImpl implements CustomerService {
                 .orElseThrow(() -> new RuntimeException("Error at findByIdService"));
         return modelMapper.map(customer, CustomerFindByIdDto.class);
     }
-
 }
