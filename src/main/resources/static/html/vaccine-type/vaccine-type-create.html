@@ -12,35 +12,34 @@
         }
     </style>
 </head>
-<body class="bg-body-secondary">
-<h3 class="text-center">VACCINE TYPE CREATE</h3>
-<div class="container mt-3 bg-light p-3 shadow">
+<body class="bg-body-secondary shadow">
+<div class="container mt-3 bg-light p-3 ">
     <h3 class="text-center"></h3>
-    <form >
+    <form id="add-vaccine-type" onsubmit="addVaccineType();">
         <!--        row 1-->
         <div class="d-flex justify-content-between mb-4">
             <div class="col-4">
                 <label class="form-label fw-medium">Vaccine Type Code <span class="text-danger">(*)</span></label>
                 <div class="input-group">
                     <img src="/images/icons/vaccine.png" class="input-group-text border-0">
-                    <input type="text" class="form-control">
+                    <input type="text" class="form-control" id="vaccineTypeId" maxlength="50" required>
                 </div>
             </div>
             <div class="col-4">
                 <label class="form-label fw-medium">Vaccine Type Name <span class="text-danger">(*)</span></label>
                 <div class="input-group">
                     <img src="/images/icons/vaccine.png" class="input-group-text border-0">
-                    <input type="text" class="form-control">
+                    <input type="text" class="form-control" id="vaccineTypeName" maxlength="50" required>
                 </div>
             </div>
             <div class="col-3">
-                <label class="form-label fw-medium">Active <span class="text-danger">(*)</span></label>
+                <label class="form-label fw-medium">Status <span class="text-danger">(*)</span></label>
                 <div class="input-group">
                     <img src="/images/icons/vaccine.png" class="input-group-text border-0">
                     <div class="mt-2">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" name="gender" id="gender-male" value="male">
-                            <label class="form-check-label" for="gender-male"></label>
+                            <input class="form-check-input" type="checkbox" name="status" id="status" value="ACTIVE" disabled checked >
+                            <label class="form-check-label" >Active</label>
                         </div>
 
                     </div>
@@ -50,10 +49,12 @@
         <!--        row 2-->
         <div class="d-flex justify-content-between mb-4">
             <div class="col-10">
-                <label class="form-label fw-medium">Date of Birth <span class="text-danger">(*)</span></label>
+                <label class="form-label fw-medium">Description <span class="text-danger">(*)</span></label>
                 <div class="input-group">
-                    <img src="/images/icons/calendar.png" class="input-group-text border-0">
-                    <input type="text" class="form-control">
+                    <div>
+                        <img src="/images/icons/calendar.png" class="input-group-text border-0">
+                    </div>
+                    <textarea type="text" class="form-control" id="vaccineTypeDescription" maxlength="200" rows="5" style="resize: none;" required></textarea>
                 </div>
             </div>
         </div>
@@ -63,26 +64,27 @@
                 <label class="form-label fw-medium">Image</label>
                 <div class="input-group">
                     <img src="/images/icons/image.png" class="input-group-text border-0">
-                    <input type="file" class="form-control" id="inputGroupFile02">
+                    <input type="file" class="form-control" id="image" onchange="previewImage()" >
                 </div>
             </div>
         </div>
         <!--row 5 show image-->
         <div class="d-flex col-4 justify-content-center mb-4">
             <div>
-                <img src="/images/profile.png" alt="Image" style="width: 100px; height: 100px;">
+                <img src="#" alt="Image" id="image-preview" style="width: 100px; height: 100px; display: none;">
             </div>
         </div>
         <!--            row 6 : buttons-->
-        <div class="d-flex col-4 justify-content-center">
-            <div class="me-2">
-                <button type="submit" class="btn btn-success"  style="width: 100px;">Save</button>
+        <div class="d-flex col-4 m-auto">
+            <div class="me-2 ">
+                <button type="submit" class="btn btn-success"  style="width: 100px;" >Save</button>
             </div>
             <div class="me-2">
-                <button type="reset" class="btn btn-info text-white" style="width: 100px;">Reset</button>
+                <button type="button" class="btn btn-info text-white" style="width: 100px;"
+                        onclick="resetVaccineTypeInput()">Reset</button>
             </div>
             <div>
-                <button type="reset" class="btn btn-warning text-white" style="width: 100px;">Cancel</button>
+                <button type="reset" class="btn btn-warning text-white" style="width: 100px;" onclick="fetchVaccineType('vaccine-type-list.html')">Cancel</button>
             </div>
         </div>
     </form>
