@@ -112,14 +112,16 @@ function deleteSelectedCustomer() {
     });
 }
 
-function randomizeCapcha() {
-    const capchaCode = Math.floor(10000 + Math.random() * 90000);
-    $("#customerCapchaCode").val(capchaCode);
+function randomizeCaptcha() {
+    const captchaCode = Math.floor(10000 + Math.random() * 90000);
+    $("#customerCaptchaCode").val(captchaCode);
 }
 
-function randomizeCapchaWithReset() {
+function randomizeCaptchaWithReset() {
+	const customerId = $("#customerId")[0].value;
 	$("#add-customer-form")[0].reset();
-	randomizeCapcha();
+	$("#customerId")[0].value = customerId;
+	randomizeCaptcha();
 }
 
 function checkPassword() {
@@ -132,15 +134,15 @@ function checkPassword() {
 	}
 }
 
-function checkCapcha() {
+function checkCaptcha() {
 	if(checkPassword() === 0) {
 		return;
 	}
-	if($("#customerCapcha").val() === $("#customerCapchaCode").val()) {
+	if($("#customerCaptcha").val() === $("#customerCaptchaCode").val()) {
 		addCustomer();
 		fetchCustomer("customer-create.html");
 	} else {
-		alert("Capcha does not match!, please try again");
+		alert("Captcha does not match!, please try again");
 	}
 }
 
@@ -167,7 +169,9 @@ function addCustomer() {
     	contentType: "application/json",
     	data: JSON.stringify(customer),
     	dataType: "text",
-    	success: function(data) {alert(data)},
+    	success: function(data) {
+    		alert(data);
+    	},
     	error: function(error) {
     		alert("error fetching data for /customer/add");
     		alert(error);

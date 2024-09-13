@@ -14,7 +14,7 @@
 <body class="bg-body-secondary">
 <div class="container mt-3 bg-light p-3">
     <h4>Personal Information</h4><br>
-    <form id="add-customer-form" onsubmit="return checkCapcha();">
+    <form id="add-customer-form" onsubmit="checkCaptcha();">
         <!-- Row 1 -->
         <div class="d-flex justify-content-between mb-4">
             <!--Customer Full name-->
@@ -131,21 +131,21 @@
             </div>
             <!-- Row 3 -->
             <div class="d-flex justify-content-between mb-4">
-                <!--Capcha-->
+                <!--Captcha-->
                 <div class="col-4">
-                    <label class="form-label fw-medium">Capcha<span class="text-danger">(*)</span></label>
+                    <label class="form-label fw-medium">Captcha<span class="text-danger">(*)</span></label>
                     <div class="input-group">
                         <img src="/images/icons/email.png" class="input-group-text border-0">
-                        <input type="text" class="form-control" id="customerCapcha" required>
+                        <input type="text" class="form-control" id="customerCaptcha" required>
                     </div>
                 </div>
-                <!--Capcha code-->
+                <!--Captcha code-->
                 <div class="col-4">
                     <label class="form-label fw-medium">Code</label>
                     <div class="input-group">
                         <img src="/images/icons/building.png" class="input-group-text border-0">
-                        <input type="text" class="form-control text-capitalize" id="customerCapchaCode" readonly>
-                        <button type="button" onclick="randomizeCapcha()">Reset</button>
+                        <input type="text" class="form-control text-capitalize" id="customerCaptchaCode" readonly>
+                        <button type="button" onclick="randomizeCaptcha()">Reset</button>
                     </div>
                 </div>
                 <!--empty-->
@@ -157,7 +157,7 @@
                     <button class="btn btn-success" style="width: 100px;" type="submit">Save</button>
                 </div>
                 <div class="me-2">
-                    <button class="btn btn-info text-white" style="width: 100px;" type="button" onclick="randomizeCapchaWithReset()">Reset</button>
+                    <button class="btn btn-info text-white" style="width: 100px;" type="button" onclick="randomizeCaptchaWithReset()">Reset</button>
                 </div>
                 <div>
                     <a class="btn btn-warning text-white" href="#" onclick="fetchCustomer('customer-list.html')" style="width: 100px;">Cancel</a>

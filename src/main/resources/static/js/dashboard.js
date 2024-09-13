@@ -41,7 +41,7 @@ function fetchCustomer(filename) {
             } else {
                 $("#ajax-title").html("REGISTER CUSTOMER INFORMATION");
                 $.getScript("/js/customer.js");
-                randomizeCapcha();
+                randomizeCaptcha();
             }
         },
         error: function(jqxhr, textStatus, errorThrown) {

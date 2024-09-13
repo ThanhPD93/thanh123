@@ -83,22 +83,6 @@ public class EmployeeController {
         return ResponseEntity.ok(response);
     }
 
-    // update
-//    @PutMapping("/update")
-//    public ResponseEntity<ApiResponse<DResponseEmployee>> updateEmployee(@RequestBody URequestEmployee uRequestEmployee) {
-//        DResponseEmployee dResponseEmployee = employeeService.updateEmployee(uRequestEmployee);
-//
-//        ApiResponse<DResponseEmployee> response;
-//        if (dResponseEmployee != null) {
-//            response = new ApiResponse<>(1, "Employee updated successfully", dResponseEmployee);
-//        } else {
-//            response = new ApiResponse<>(0, "Failed to update employee", null);
-//        }
-//
-//        return ResponseEntity.ok(response);
-//    }
-
-
     @GetMapping("/image/{id}")
     public ResponseEntity<byte[]> getEmployeeImage(@PathVariable String id) {
         Employee employee = employeeService.findById(id);
@@ -117,20 +101,6 @@ public class EmployeeController {
             return ResponseEntity.notFound().build();
         }
     }
-
-//    @DeleteMapping("/delete")
-//    public ResponseEntity<String> deleteEmployees(@RequestBody List<String> employeeIds) {
-//        if (employeeIds == null || employeeIds.isEmpty()) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No data deleted!");
-//        }
-//
-//        try {
-//            employeeService.deleteEmployees(employeeIds);
-//            return ResponseEntity.ok("Employees deleted successfully");
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred: " + e.getMessage());
-//        }
-//    }
 
     @DeleteMapping("/delete")
     public ResponseEntity<ApiResponse<String>> deleteEmployees(@RequestBody List<String> employeeIds) {
