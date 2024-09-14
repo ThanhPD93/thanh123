@@ -15,8 +15,8 @@ import java.util.UUID;
 public class InjectionResult {
 	@Id
     @Column(length = 36)
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID injectionResultId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String injectionResultId;
 
     private LocalDate injectionDate;
 
@@ -31,10 +31,10 @@ public class InjectionResult {
     private String prevention;
 
     //relationship
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Customer customer;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Vaccine vaccineFromInjectionResult;
 
 

@@ -86,6 +86,10 @@
                     </select>
                 </div>
             </div>
+            <!-- Hidden Injection ID -->
+            <div class="col-2" >
+                    <input type="text" id="injectionresultid" disabled>
+            </div>
         </div>
         <!-- Row 4: Buttons -->
         <div class="d-flex">
@@ -93,7 +97,7 @@
                 <button type="submit" class="btn btn-success" style="width: 100px;">Save</button>
             </div>
             <div class="me-2">
-                <button type="button" class="btn btn-info text-white" style="width: 100px;" onclick="resetInput()">Reset</button>
+                <button type="button" class="btn btn-info text-white" style="width: 100px;" onclick="resetInputInjectionresult()">Reset</button>
             </div>
             <div>
                 <a class="btn btn-warning text-white" href="#" onclick="fetchInjectionResult('injection-result-list.html')" style="width: 100px;">Cancel</a>

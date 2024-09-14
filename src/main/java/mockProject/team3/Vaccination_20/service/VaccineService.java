@@ -13,4 +13,6 @@ public interface VaccineService {
     List<Vaccine> getAllVaccines();
 
     List<Vaccine> getVaccinesByType(String vaccineTypeId);
+
+    Vaccine findByName(String vaccineName);
 }

@@ -1,7 +1,9 @@
 package mockProject.team3.Vaccination_20.service.impl;
 
+import jakarta.transaction.Transactional;
 import mockProject.team3.Vaccination_20.dto.CInjectionResultDTO;
 import mockProject.team3.Vaccination_20.dto.InjectionResultDTO;
+import mockProject.team3.Vaccination_20.dto.UInjectionResultDTO;
 import mockProject.team3.Vaccination_20.model.Customer;
 import mockProject.team3.Vaccination_20.model.InjectionResult;
 import mockProject.team3.Vaccination_20.model.Vaccine;
@@ -11,6 +13,8 @@ import mockProject.team3.Vaccination_20.repository.InjectionResultRepository;
 import mockProject.team3.Vaccination_20.repository.VaccineRepository;
 import mockProject.team3.Vaccination_20.repository.VaccineTypeRepository;
 import mockProject.team3.Vaccination_20.service.InjectionResultService;
+import mockProject.team3.Vaccination_20.utils.ApiResponse;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +26,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 
@@ -38,6 +43,8 @@ public class InjectionResultServiceImpl implements InjectionResultService {
     private CustomerRepository customerRepository;
     @Autowired
     private VaccineTypeRepository vaccineTypeRepository;
+    @Autowired
+    private ModelMapper modelMapper;
 
     //show all
     public List<InjectionResultDTO> getAllInjectionResults() {
@@ -68,19 +75,19 @@ public class InjectionResultServiceImpl implements InjectionResultService {
 
     //add
     public InjectionResult addInjectionResult(CInjectionResultDTO dto) {
-        System.out.println("Received DTO: " + dto);  // Debugging log
+//        System.out.println("Received DTO: " + dto);  // Debugging log
 
         Customer customer = customerRepository.findById(dto.getCustomerId())
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
-        System.out.println("Customer found: " + customer);  // Debug log
+//        System.out.println("Customer found: " + customer);  // Debug log
 
         Vaccine vaccine = vaccineRepository.findById(dto.getVaccineName())
                 .orElseThrow(() -> new RuntimeException("Vaccine not found"));
-        System.out.println("Vaccine found: " + vaccine);  // Debug log
+//        System.out.println("Vaccine found: " + vaccine);  // Debug log
 
         VaccineType vaccineType = vaccineTypeRepository.findById(dto.getVaccineTypeName())
                 .orElseThrow(() -> new RuntimeException("Vaccine type not found"));
-        System.out.println("VaccineType found: " + vaccineType);  // Debug log
+//        System.out.println("VaccineType found: " + vaccineType);  // Debug log
 
         // Set and save InjectionResult
         InjectionResult injectionResult = new InjectionResult();
@@ -90,14 +97,53 @@ public class InjectionResultServiceImpl implements InjectionResultService {
         injectionResult.setInjectionDate(dto.getInjectionDate());
         injectionResult.setNextInjectionDate(dto.getNextInjectionDate());
         injectionResult.setInjectionPlace(dto.getInjectionPlace());
+        injectionResult.setInjectionResultId(dto.getInjectionResultId());
 
         return injectionResultRepository.save(injectionResult);
     }
 
-//    @Override
-//    public InjectionResult findInjectionResultById(String id) {
-//        return injectionResultRepository.findByInjectionResultId(id);
-//    }
+    //detail
+    @Override
+    public UInjectionResultDTO getInjectionResultById(String id) {
+        InjectionResult injectionResult = injectionResultRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("InjectionResult not found"));
 
+        UInjectionResultDTO dtoDetail = new UInjectionResultDTO();
+        dtoDetail.setInjectionResultId(injectionResult.getInjectionResultId());
+        dtoDetail.setCustomerId(injectionResult.getCustomer().getCustomerId());
+        dtoDetail.setVaccineId(injectionResult.getVaccineFromInjectionResult().getVaccineId());
+        dtoDetail.setVaccineTypeId(injectionResult.getVaccineFromInjectionResult().getVaccineType().getVaccineTypeId());
+        dtoDetail.setInjection(injectionResult.getNumberOfInjection());
+        dtoDetail.setInjectionDate(injectionResult.getInjectionDate());
+        dtoDetail.setNextInjectionDate(injectionResult.getNextInjectionDate());
+        dtoDetail.setInjectionPlace(injectionResult.getInjectionPlace());
 
+        return dtoDetail;
+    }
+
+    //-------update
+    @Override
+    public UInjectionResultDTO updateInjectionResult(String injectionResultId, UInjectionResultDTO uInjectionResultDTO) {
+        InjectionResult existInjectionResult = injectionResultRepository.findById(injectionResultId)
+                .orElseThrow(() -> new RuntimeException("InjectionResult not found"));
+
+        UInjectionResultDTO dtoUpdate = new UInjectionResultDTO();
+        dtoUpdate.setInjectionResultId(injectionResultId);
+        dtoUpdate.setCustomerId(existInjectionResult.getCustomer().getCustomerId());
+        dtoUpdate.setVaccineId(existInjectionResult.getVaccineFromInjectionResult().getVaccineId());
+        dtoUpdate.setVaccineTypeId(existInjectionResult.getVaccineFromInjectionResult().getVaccineType().getVaccineTypeId());
+        dtoUpdate.setInjection(existInjectionResult.getNumberOfInjection());
+        dtoUpdate.setInjectionDate(existInjectionResult.getInjectionDate());
+        dtoUpdate.setNextInjectionDate(existInjectionResult.getNextInjectionDate());
+        dtoUpdate.setInjectionPlace(existInjectionResult.getInjectionPlace());
+        return dtoUpdate;
+    }
+
+    @Transactional
+    @Override
+    public void deleteInjectionResults(List<String> ids) {
+        for (String id : ids) {
+            injectionResultRepository.deleteById(id);
+        }
+    }
 }

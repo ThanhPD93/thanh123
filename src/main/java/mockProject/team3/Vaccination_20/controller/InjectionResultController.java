@@ -3,11 +3,16 @@ package mockProject.team3.Vaccination_20.controller;
 
 import mockProject.team3.Vaccination_20.dto.CInjectionResultDTO;
 import mockProject.team3.Vaccination_20.dto.InjectionResultDTO;
+import mockProject.team3.Vaccination_20.dto.UInjectionResultDTO;
+import mockProject.team3.Vaccination_20.model.Customer;
 import mockProject.team3.Vaccination_20.model.InjectionResult;
+import mockProject.team3.Vaccination_20.model.Vaccine;
 import mockProject.team3.Vaccination_20.repository.CustomerRepository;
 import mockProject.team3.Vaccination_20.repository.InjectionResultRepository;
 import mockProject.team3.Vaccination_20.repository.VaccineRepository;
+import mockProject.team3.Vaccination_20.service.CustomerService;
 import mockProject.team3.Vaccination_20.service.InjectionResultService;
+import mockProject.team3.Vaccination_20.service.VaccineService;
 import mockProject.team3.Vaccination_20.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -21,6 +26,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.UUID;
 
 
 @RestController
@@ -31,13 +37,10 @@ public class InjectionResultController {
     private InjectionResultService injectionResultService;
 
     @Autowired
-    private CustomerRepository customerRepository;
+    private CustomerService customerService;
 
     @Autowired
-    private VaccineRepository vaccineRepository;
-
-    @Autowired
-    private InjectionResultRepository injectionResultRepository;
+    private VaccineService vaccineService;
 
     //call
     @GetMapping("/getAjax")
@@ -85,43 +88,31 @@ public class InjectionResultController {
         return ResponseEntity.ok(response);
     }
 
-    //-------------
-//    @GetMapping("/detail/{id}")
-//    public ResponseEntity<CInjectionResultDTO> getInjectionResultById(@PathVariable String id) {
-//        InjectionResult injectionResult = injectionResultService.findInjectionResultById(id);
-//        if (injectionResult != null) {
-//            CInjectionResultDTO dto = new CInjectionResultDTO();
-//            dto.setCustomerId(injectionResult.getCustomer().getCustomerId());
-//            dto.setVaccineTypeName(injectionResult.getVaccineFromInjectionResult().getVaccineType().getVaccineTypeName());
-//            dto.setVaccineName(injectionResult.getVaccineFromInjectionResult().getVaccineName());
-//            dto.setInjection(String.valueOf(injectionResult.getNumberOfInjection()));
-//            dto.setInjectionDate(injectionResult.getInjectionDate());
-//            dto.setNextInjectionDate(injectionResult.getNextInjectionDate());
-//            dto.setInjectionPlace(injectionResult.getInjectionPlace());
-//            return ResponseEntity.ok(dto);
-//        } else {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
-//
-//    @PutMapping("/update/{id}")
-//    public ResponseEntity<InjectionResult> updateInjectionResult(@PathVariable String id, @RequestBody CInjectionResultDTO dto) {
-//        InjectionResult injectionResult = injectionResultService.findInjectionResultById(id);
-//        if (injectionResult == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        // Update properties
-//        injectionResult.setCustomer(customerRepository.findById(dto.getCustomerId()).orElse(null));
-//        injectionResult.setVaccineFromInjectionResult(vaccineRepository.findById(dto.getVaccineName()).orElse(null));
-//        injectionResult.setNumberOfInjection((dto.getInjection()));
-//        injectionResult.setInjectionDate(dto.getInjectionDate());
-//        injectionResult.setNextInjectionDate(dto.getNextInjectionDate());
-//        injectionResult.setInjectionPlace(dto.getInjectionPlace());
-//
-//        // Save updated injectionResult
-//        InjectionResult updatedInjectionResult = injectionResultRepository.save(injectionResult);
-//        return ResponseEntity.ok(updatedInjectionResult);
-//    }
+    //-detail
+    @GetMapping("/detail/{injectionResultId}")
+    public ResponseEntity<UInjectionResultDTO> getInjectionResult(@PathVariable String injectionResultId) {
+        UInjectionResultDTO uInjectionResultDTO = injectionResultService.getInjectionResultById(injectionResultId);
+        return ResponseEntity.ok(uInjectionResultDTO);
+    }
+
+    //update
+    @PutMapping("/update/{injectionResultId}")
+    public ResponseEntity<UInjectionResultDTO> updateInjectionResult(@PathVariable String injectionResultId, @RequestBody UInjectionResultDTO uInjectionResultDTO) {
+        UInjectionResultDTO updateInjectionResult = injectionResultService.updateInjectionResult(injectionResultId, uInjectionResultDTO);
+        return ResponseEntity.ok(updateInjectionResult);
+    }
+
+    //delete
+    @PostMapping("/delete")
+    public ResponseEntity<ApiResponse<Void>> deleteInjectionResults(@RequestBody List<String> ids) {
+        try {
+            injectionResultService.deleteInjectionResults(ids);
+            return ResponseEntity.ok(new ApiResponse<>(200, "Injection results deleted successfully.", null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse<>(500, "Error deleting injection results.", null));
+        }
+    }
 
 }
 

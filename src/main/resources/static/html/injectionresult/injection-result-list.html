@@ -44,6 +44,8 @@
                 <th class="bg-success text-white">
                     <input type="checkbox" id="mother-checkbox" onchange="checkAllBoxes()">
                 </th>
+                <!-- Add hidden column for injectionResultId -->
+                <th hidden>InjectionResultId</th>
                 <th class="bg-success text-white ">Customer</th>
                 <th class="bg-success text-white">Vaccine Name</th>
                 <th class="bg-success text-white">Vaccine Type Name</th>
@@ -76,94 +78,69 @@
         </div>
         <div class="me-2">
             <a type="button" class="update-button btn btn-warning text-white" href="#"
-               onclick="updateSelectedEmployee()">Update Injection Result</a>
+               onclick="updateSelectedInjectionResult()">Update Injection Result</a>
         </div>
         <div>
-            <a type="button" class=" btn btn-danger" id="deleteButton" onclick="deleteSelectedEmployee()">Delete Injection Result</a>
+            <a type="button" class=" btn btn-danger" id="deleteButton" onclick="deleteSelectedInjectionResults()">Delete Injection Result</a>
         </div>
     </div>
 </div>
 <!-- Modal -->
-<div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
+<div class="modal fade" id="injectionResultModal" tabindex="-1" aria-labelledby="injectionResultModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title " id="employeeModalLabel">INJECTION RESULT DETAILS</h4>
+                <h4 class="modal-title" id="injectionResultModalLabel">INJECTION RESULT DETAILS</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="col mb-3">
-                    <label class="form-label fw-medium">Employee ID</label>
+                    <label class="form-label fw-medium">Customer</label>
                     <div class="input-group">
                         <img src="/images/icons/people.png" class="input-group-text border-0">
-                        <input type="text" class="form-control text-uppercase" id="modalEmployeeId" disabled>
+                        <input type="text" class="form-control text-uppercase" id="modalCustomerInfo" disabled>
                     </div>
                 </div>
                 <div class="col mb-3">
-                    <label class="form-label fw-medium">Employee Name</label>
+                    <label class="form-label fw-medium">Vaccine Name</label>
                     <div class="input-group">
-                        <img src="/images/icons/people.png" class="input-group-text border-0">
-                        <input type="text" class="form-control text-capitalize" id="modalEmployeeName" disabled>
+                        <img src="/images/icons/vaccine.png" class="input-group-text border-0">
+                        <input type="text" class="form-control text-capitalize" id="modalVaccineName" disabled>
                     </div>
                 </div>
                 <div class="col mb-3">
-                    <label class="form-label fw-medium">Date of Birth</label>
+                    <label class="form-label fw-medium">Vaccine Type Name</label>
                     <div class="input-group">
                         <img src="/images/icons/calendar.png" class="input-group-text border-0">
-                        <input type="text" class="form-control" id="modalEmployeeDob" disabled>
+                        <input type="text" class="form-control" id="modalVaccineTypeName" disabled>
                     </div>
                 </div>
                 <div class="col mb-3">
-                    <label class="form-label fw-medium">Gender</label>
+                    <label class="form-label fw-medium">Injection</label>
                     <div class="input-group">
                         <img src="/images/icons/gender.png" class="input-group-text border-0">
-                        <input type="text" class="form-control" id="modalEmployeeGender" disabled>
+                        <input type="text" class="form-control" id="modalInjection" disabled>
                     </div>
                 </div>
                 <div class="col mb-3">
-                    <label class="form-label fw-medium">Phone</label>
+                    <label class="form-label fw-medium">Date of Injection</label>
                     <div class="input-group">
-                        <img src="/images/icons/old-typical-phone.png" class="input-group-text border-0">
-                        <input type="text" class="form-control" id="modalEmployeePhone" disabled>
+                        <img src="/images/icons/calendar.png" class="input-group-text border-0">
+                        <input type="text" class="form-control" id="modalInjectionDate" disabled>
                     </div>
                 </div>
                 <div class="col mb-3">
-                    <label class="form-label fw-medium">Address</label>
+                    <label class="form-label fw-medium">Next Injection Date</label>
+                    <div class="input-group">
+                        <img src="/images/icons/calendar.png" class="input-group-text border-0">
+                        <input type="text" class="form-control text-capitalize" id="modalNextInjectionDate" disabled>
+                    </div>
+                </div>
+                <div class="col mb-3">
+                    <label class="form-label fw-medium">Injection Place</label>
                     <div class="input-group">
                         <img src="/images/icons/location.png" class="input-group-text border-0">
-                        <input type="text" class="form-control text-capitalize" id="modalEmployeeAddress" disabled>
-                    </div>
-                </div>
-                <div class="col mb-3">
-                    <label class="form-label fw-medium">Email</label>
-                    <div class="input-group">
-                        <img src="/images/icons/email.png" class="input-group-text border-0">
-                        <input type="text" class="form-control" id="modalEmployeeEmail" disabled>
-                    </div>
-                </div>
-
-                <div class="col mb-3">
-                    <label class="form-label fw-medium">Position</label>
-                    <div class="input-group">
-                        <img src="/images/icons/email.png" class="input-group-text border-0">
-                        <input type="text" class="form-control" id="modalEmployeePosition" disabled>
-                    </div>
-                </div>
-
-                <div class="col mb-3">
-                    <label class="form-label fw-medium">Working Place</label>
-                    <div class="input-group">
-                        <img src="/images/icons/email.png" class="input-group-text border-0">
-                        <input type="text" class="form-control" id="modalWorkingPlace" disabled>
-                    </div>
-                </div>
-
-                <div class="col mb-3">
-                    <label class="form-label fw-medium">Image</label>
-                    <div class="d-flex">
-                        <div class="col">
-                            <img id="modalEmployeeImage" class="border border-black" src="" alt="Employee Image" style="height: 300px; width: 450px;">
-                        </div>
+                        <input type="text" class="form-control text-capitalize" id="modalInjectionPlace" disabled>
                     </div>
                 </div>
             </div>
@@ -173,6 +150,7 @@
         </div>
     </div>
 </div>
+
 
 </body>
 </html>

@@ -13,7 +13,8 @@ function findAllInjectionResultsWithPagination(page, pageSize) {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                         <td class="text-center check-boxes"><input type="checkbox"></td>
-                        <td class="text-start"><a class="link-offset-2 link-underline link-underline-opacity-0" href="#">${result.customerInfo}</a></td>
+                        <td hidden>${result.injectionResultId}</td>
+                        <td class="text-start"><a class="link-offset-2 link-underline link-underline-opacity-0" href="#" onclick="showInjectionResultDetails('${result.injectionResultId}')">${result.customerInfo}</a></td>
                         <td class="text-start">${result.vaccineName}</td>
                         <td class="text-start">${result.vaccineTypeName}</td>
                         <td>${result.numberOfInjection}</td>
@@ -94,7 +95,6 @@ function updatePaginationControlsIR(currentPage, totalPages, pageSize, totalElem
 }
 
 //--search
-
 function searchInjectionResults(page) {
     const query = document.getElementById('searchInput').value;
     const currentPageSize = parseInt(document.getElementById("dropdownMenuButton").innerHTML, 10);
@@ -109,6 +109,7 @@ function searchInjectionResults(page) {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td class="text-center check-boxes "><input type="checkbox"></td>
+                    <td hidden>${result.injectionResultId}</td>
                     <td class="text-start"><a class="link-offset-2 link-underline link-underline-opacity-0" href="#">${result.customerInfo}</a></td>
                     <td class="text-start">${result.vaccineName}</td>
                     <td class="text-start">${result.vaccineTypeName}</td>
@@ -150,6 +151,7 @@ function loadCustomers() {
         })
         .catch(error => console.error('Error loading customers:', error));
 }
+
 
 // Load vaccine types and initially hide the vaccine names dropdown
 function loadVaccineTypeName() {
@@ -245,7 +247,7 @@ function addInjectionResult(event) {
     const injectionDate = document.getElementById('injectiondate').value;
     const nextInjectionDate = document.getElementById('nextinjectiondate').value;
     const injectionPlace = document.getElementById('injectionplace').value;
-
+    const injectionResultId = document.getElementById('injectionresultid').value;
     // Create the data object
     const data = {
         customerId: customerId, // Send only the customerId to the server
@@ -254,7 +256,8 @@ function addInjectionResult(event) {
         injection: injection,
         injectionDate: injectionDate,
         nextInjectionDate: nextInjectionDate,
-        injectionPlace: injectionPlace
+        injectionPlace: injectionPlace,
+        injectionResultId: injectionResultId
     };
 
     // Send data to the server
@@ -284,152 +287,197 @@ function addInjectionResult(event) {
         });
 }
 
-//---------------------------------
+//--update
+function updateSelectedInjectionResult() {
+    const checkbox = document.querySelectorAll('#injection-result-list-content input[type="checkbox"]:checked');
 
-// function populateFormWithInjectionResult(data) {
-//     document.getElementById('customer').value = data.customerId;
-//     document.getElementById('vaccinetypename').value = data.vaccineTypeName;
-//     document.getElementById('vaccinename').value = data.vaccineName;
-//     document.getElementById('injection').value = data.injection;
-//     document.getElementById('injectiondate').value = data.injectionDate;
-//     document.getElementById('nextinjectiondate').value = data.nextInjectionDate;
-//     document.getElementById('injectionplace').value = data.injectionPlace;
-// }
+    if (checkbox.length !== 1) {
+        alert("Please select only one injection result");
+        return;
+    }
+    // Check if the selected row exists and retrieve the hidden ID
+    const selectedRow = checkbox[0].closest('tr');
+    const injectionResultId = selectedRow.querySelector('td[hidden]').textContent.trim(); // Hidden ID
+
+    if (!injectionResultId) {
+        console.error('Injection Result ID not found.');
+        return;
+    }
+    console.log('Selected injectionResultId:', injectionResultId);
+    fetchUpdateInjectionResult('injection-result-create.html', injectionResultId);  // Pass ID to the update handler
+}
+
+
+// Function to update injection result details in the form
+function updateInjectionResultDetail(injectionResultId) {
+    fetch(`/injection-result/detail/` + injectionResultId)
+        .then(response => response.json())
+        .then(injectionResult => {
+            // Populate form fields with the injection result data
+            document.getElementById('injectionresultid').value = injectionResult.injectionResultId;
+            document.getElementById('injection').value = injectionResult.injection;
+            document.getElementById('injectiondate').value = injectionResult.injectionDate;
+            document.getElementById('nextinjectiondate').value = injectionResult.nextInjectionDate;
+            document.getElementById('injectionplace').value = injectionResult.injectionPlace;
+
+            // Load customers, vaccine types, vaccines, and injection places first, then set the values
+            loadCustomers(() => {
+                document.getElementById('customer').value = injectionResult.customerId;
+            });
+            loadVaccineTypeName(() => {
+                document.getElementById('vaccinetypename').value = injectionResult.vaccineTypeId;
+            });
+            loadVaccines(injectionResult.vaccineTypeId, () => {
+                document.getElementById('vaccinename').value = injectionResult.vaccineId;
+            });
+            loadInjectionPlace();
+        })
+        .catch(error => console.error('Error fetching injection result data', error));
+}
+//show detail on modal
+// function showInjectionResultDetails(injectionResultId) {
+//     // Fetch employee details by employeeId
+//     fetch(`/injection-result/detail/` + injectionResultId)
+//         .then(response => response.json())  // Assuming the response is in JSON format
+//         .then(injectionResult => {
+//             // Populate the modal fields with employee data
+//             document.getElementById('modalCustomerInfo').value = injectionResult.customerId;
+//             document.getElementById('modalInjection').value = injectionResult.injection;
+//             document.getElementById('modalInjectionDate').value = injectionResult.injectionDate;
+//             document.getElementById('modalNextInjectionDate').value = injectionResult.nextInjectionDate;
+//             document.getElementById('modalInjectionPlace').value = injectionResult.injectionPlace;
 //
-// // Modify this function to handle both adding and updating
-// function addInjectionResult(event) {
-//     event.preventDefault(); // Prevent default form submission
-//
-//     const form = document.getElementById('add-injection-result-form');
-//     const data = {
-//         customerId: form.customer.value,
-//         vaccineTypeName: form.vaccinetypename.value,
-//         vaccineName: form.vaccinename.value,
-//         injection: form.injection.value,
-//         injectionDate: form.injectiondate.value,
-//         nextInjectionDate: form.nextinjectiondate.value,
-//         injectionPlace: form.injectionplace.value
-//     };
-//
-//     // Determine whether we are adding or updating
-//     if (form.dataset.updateId) {
-//         // Update logic
-//         fetch(`/injection-result/update/${form.dataset.updateId}`, {
-//             method: 'PUT',
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
-//             body: JSON.stringify(data)
+//             // Show the modal
+//             var modal = new bootstrap.Modal(document.getElementById('injectionResulModal'));
+//             modal.show();
 //         })
-//             .then(response => response.json())
-//             .then(updatedResult => {
-//                 alert('Injection Result updated successfully');
-//                 // Refresh the list or clear the form
-//                 resetForm();
-//             })
-//             .catch(error => console.error('Error updating InjectionResult:', error));
-//     } else {
-//         // Add logic
-//         fetch('/injection-result/add', {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
-//             body: JSON.stringify(data)
-//         })
-//             .then(response => response.json())
-//             .then(result => {
-//                 alert('Injection Result added successfully');
-//                 // Refresh the list or clear the form
-//                 resetForm();
-//             })
-//             .catch(error => console.error('Error adding InjectionResult:', error));
-//     }
+//         .catch(error => {
+//             console.error('Error fetching injection result details:', error);
+//             alert('Failed to load injection result details. Please try again.');
+//         });
 // }
-//
-// function resetForm() {
-//     document.getElementById('add-injection-result-form').reset();
-//     document.getElementById('add-injection-result-form').removeAttribute('data-update-id'); // Clear the update ID
-//     // Hide the form or reset other states if necessary
-// }
-//
-// //-----------
-// function populateFormWithInjectionResult(data) {
-//     document.getElementById('customer').value = data.customerId;
-//     document.getElementById('vaccinetypename').value = data.vaccineTypeName;
-//
-//     // Trigger change event to load vaccines based on selected vaccine type
-//     document.getElementById('vaccinetypename').dispatchEvent(new Event('change'));
-//
-//     // Wait for vaccines to be loaded, then set vaccine name
-//     setTimeout(() => {
-//         document.getElementById('vaccinename').value = data.vaccineName;
-//     }, 500); // Adjust timeout as necessary for data loading
-//     document.getElementById('injection').value = data.injection;
-//     document.getElementById('injectiondate').value = data.injectionDate;
-//     document.getElementById('nextinjectiondate').value = data.nextInjectionDate;
-//     document.getElementById('injectionplace').value = data.injectionPlace;
-//
-//     // Set form mode to update
-//     const form = document.getElementById('add-injection-result-form');
-//     form.dataset.updateId = data.id; // Store the ID for the update
-// }
-//
-// function updateSelectedInjectionResult() {
-//     const checkboxes = document.querySelectorAll('#injection-result-list input[type="checkbox"]:checked');
-//
-//     if (checkboxes.length !== 1) {
-//         alert("Please select exactly one Injection Result.");
-//         return;
-//     }
-//
-//     const selectedId = checkboxes[0].closest('tr').dataset.id; // Assumes each row has a data-id attribute
-//
-//     fetch(`/injection-result/detail/${selectedId}`)
-//         .then(response => response.json())
-//         .then(data => {
-//             populateFormWithInjectionResult(data);
-//         })
-//         .catch(error => console.error('Error fetching InjectionResult details:', error));
-// }
-//
-//
-// function saveInjectionResult(event) {
-//     event.preventDefault(); // Prevent default form submission
-//
-//     const form = document.getElementById('add-injection-result-form');
-//     const data = {
-//         customerId: form.customer.value,
-//         vaccineTypeName: form.vaccinetypename.value,
-//         vaccineName: form.vaccinename.value,
-//         injection: form.injection.value,
-//         injectionDate: form.injectiondate.value,
-//         nextInjectionDate: form.nextinjectiondate.value,
-//         injectionPlace: form.injectionplace.value
-//     };
-//
-//     const updateId = form.dataset.updateId;
-//
-//     fetch(`/injection-result/update/${updateId}`, {
-//         method: 'PUT',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify(data)
-//     })
-//         .then(response => response.json())
-//         .then(updatedResult => {
-//             alert('Injection Result updated successfully');
-//             // Optionally refresh the list or clear the form
-//             resetForm();
-//         })
-//         .catch(error => console.error('Error updating InjectionResult:', error));
-// }
-//
-// function resetForm() {
-//     document.getElementById('add-injection-result-form').reset();
-//     document.getElementById('add-injection-result-form').removeAttribute('data-update-id'); // Clear the update ID
-//     // Hide the form or reset other states if necessary
-// }
+// Function to fetch and show injection result details in a modal
+function showInjectionResultDetails(injectionResultId) {
+    // Fetch injection result details by ID
+    fetch(`/injection-result/detail/` + injectionResultId)
+        .then(response => response.json())
+        .then(injectionResult => {
+            // Populate the modal fields with the injection result data
+            document.getElementById('modalInjection').value = injectionResult.injection;
+            document.getElementById('modalInjectionDate').value = injectionResult.injectionDate;
+            document.getElementById('modalNextInjectionDate').value = injectionResult.nextInjectionDate;
+            document.getElementById('modalInjectionPlace').value = injectionResult.injectionPlace;
+            // Fetch customer details
+            // fetch(`/customer/detail/` + injectionResult.customerId)
+            //     .then(response => response.json())
+            //     .then(customer => {
+            //         document.getElementById('modalCustomerInfo').value = `${customer.firstName} ${customer.lastName}`; // Adjust based on your customer fields
+            //     })
+            //     .catch(error => console.error('Error fetching customer details:', error));
+            //
+            // // Fetch vaccine details
+            // fetch(`/vaccine/detail/` + injectionResult.vaccineId)
+            //     .then(response => response.json())
+            //     .then(vaccine => {
+            //         document.getElementById('modalVaccineName').value = vaccine.vaccineName;
+            //     })
+            //     .catch(error => console.error('Error fetching vaccine details:', error));
+            //
+            // // Fetch vaccine type details
+            // fetch(`/vaccine-type/detail/` + injectionResult.vaccineTypeId)
+            //     .then(response => response.json())
+            //     .then(vaccineType => {
+            //         document.getElementById('modalVaccineTypeName').value = vaccineType.vaccineTypeName;
+            //     })
+            //     .catch(error => console.error('Error fetching vaccine type details:', error));
+
+            // Show the modal
+            var modal = new bootstrap.Modal(document.getElementById('injectionResultModal'));
+            modal.show();
+        })
+        .catch(error => {
+            console.error('Error fetching injection result details:', error);
+            alert('Failed to load injection result details. Please try again.');
+        });
+}
+
+// delete
+function deleteSelectedInjectionResults() {
+    // Get all checked checkboxes
+    const checkboxes = document.querySelectorAll('#injection-result-list-content input[type="checkbox"]:checked');
+
+    if (checkboxes.length === 0) {
+        alert("Please select at least one injection result");
+        return;
+    }
+
+    // Gather IDs of selected injection results
+    const idsToDelete = Array.from(checkboxes).map(checkbox => {
+        const row = checkbox.closest('tr');
+        return row.querySelector('td[hidden]').textContent.trim(); // Hidden ID
+    });
+
+    if (idsToDelete.length === 0) {
+        console.error('No IDs found for deletion.');
+        return;
+    }
+
+    // Confirm deletion
+    if (!confirm(`Are you sure you want to delete ${idsToDelete.length} injection result(s)?`)) {
+        return;
+    }
+
+    // Send delete request
+    fetch('/injection-result/delete', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(idsToDelete)
+    })
+        .then(response => response.json())
+        .then(result => {
+            if (result.code === 200) { // Assuming 200 indicates success
+                alert('Deletion successful');
+                fetchInjectionResult('injection-result-list.html'); // Reload the list
+            } else {
+                alert('Deletion failed: ' + result.description);
+            }
+        })
+        .catch(error => console.error('Error deleting injection results:', error));
+}
+
+
+//reset button
+function resetInputInjectionresult() {
+    // Get all the fields
+    const injectionResultId = document.getElementById('injectionresultid');
+    const injection = document.getElementById('injection');
+    const injectionDate = document.getElementById('injectiondate');
+
+    // Get all dropdown lists
+    const customerDropdown = document.getElementById('customer');
+    const vaccineTypeDropdown = document.getElementById('vaccinetypename');
+    const vaccineNameDropdown = document.getElementById('vaccinename');
+    const placeOfInjectionDropdown = document.getElementById('injectionplace');
+
+    // Reset only fields that are not disabled
+    if (!injectionResultId.disabled) injectionResultId.value = '';
+    if (!injection.disabled) injection.value = '';
+    if (!injectionDate.disabled) injectionDate.value = '';
+
+    // Reset dropdown lists to their default value (usually the first option or an empty option)
+    if (!customerDropdown.disabled) customerDropdown.selectedIndex = 0; // Set to the first option
+    if (!vaccineTypeDropdown.disabled) vaccineTypeDropdown.selectedIndex = 0; // Set to the first option
+    if (!vaccineNameDropdown.disabled) vaccineNameDropdown.selectedIndex = 0; // Set to the first option
+    if (!placeOfInjectionDropdown.disabled) placeOfInjectionDropdown.selectedIndex = 0; // Set to the first option
+}
+
+
+
+
+
+
+
 
 

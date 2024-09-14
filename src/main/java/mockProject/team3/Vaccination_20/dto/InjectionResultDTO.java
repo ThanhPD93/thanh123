@@ -8,6 +8,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class InjectionResultDTO {
+    private String injectionResultId;
     private String customerInfo; // customerId - fullName - dateOfBirth
     private String vaccineName;
     private String vaccineTypeName;//

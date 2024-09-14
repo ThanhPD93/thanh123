@@ -8,4 +8,6 @@ public interface CustomerService {
 
     //for add-ir
     public List<Customer> getAllCustomers();
+
+    Customer findById(String customerId);
 }

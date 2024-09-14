@@ -31,6 +31,11 @@ public class VaccineServiceImpl implements VaccineService {
         return vaccineRepository.findAll();
     }
 
+    @Override
+    public Vaccine findByName(String vaccineName) {
+        return null;
+    }
+
     public List<Vaccine> getAllVaccines() {
         return vaccineRepository.findAll();
     }
