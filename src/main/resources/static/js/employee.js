@@ -96,50 +96,8 @@ function updateSelectedEmployee() {
     fetchUpdateEmployee('employee-create.html', employeeId);
 }
 
-//------delete
-// async function deleteSelectedEmployee() {
-//     const checkboxes = document.querySelectorAll('#employee-list-content input[type="checkbox"]:checked')
-//     if(checkboxes.length == 0) {
-//         alert("Please select at least one employee to delete");
-//         return;
-//     }
-//     const employeeIds = Array.from(checkboxes).map(checkbox => {
-//         return checkbox.closest('tr').querySelector('td:nth-child(2)').textContent.trim();
-//     });
-//     console.log(employeeIds);
-//     const confirmed = confirm("Are you sure you want to delete the selected employees?");
-//     if (!confirmed) {
-//         return;
-//     }
-//     try {
-//         // Gửi request DELETE đến backend
-//         const response = await fetch('/employee/delete', {
-//             method: 'DELETE', // Hoặc 'DELETE' nếu backend yêu cầu
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
-//             body: JSON.stringify(employeeIds)
-//         });
-//
-//         const result = await response.json();
-//
-//         if (response.ok) {
-//             // Xử lý kết quả nếu thành công
-//             alert("Employees deleted successfully!");
-//             // Cập nhật danh sách nhân viên trên giao diện người dùng nếu cần
-//             location.reload(); // Tải lại trang để cập nhật
-//         } else {
-//             // Xử lý lỗi từ server
-//             alert("Error deleting employees: " + result.message);
-//         }
-//     } catch (error) {
-//         // Xử lý lỗi khi gửi request
-//         alert("An error occurred: " + error.message);
-//     }
-// }
-
-async function deleteSelectedEmployee() {
-    const checkboxes = document.querySelectorAll('#employee-list-content input[type="checkbox"]:checked');
+function deleteSelectedEmployee() {
+    const checkboxes = $("#employee-list-content input[type='checkbox']:checked");
     if (checkboxes.length === 0) {
         alert("Please select at least one employee to delete");
         return;
@@ -148,36 +106,30 @@ async function deleteSelectedEmployee() {
     const employeeIds = Array.from(checkboxes).map(checkbox => {
         return checkbox.closest('tr').querySelector('td:nth-child(2)').textContent.trim();
     });
-    console.log(employeeIds);
 
     const confirmed = confirm("Are you sure you want to delete the selected employees?");
     if (!confirmed) {
         return;
     }
 
-    try {
-        const response = await fetch('/employee/delete', {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(employeeIds)
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-            alert(result.description);
-            location.reload();
-        } else {
-            alert("Error deleting employees: " + result.description);
-        }
-    } catch (error) {
-        alert("An error occurred: " + error.message);
-    }
+	$.ajax({
+		url: "/employee/delete",
+		method: "DELETE",
+		contentType: "application/json",
+		data: JSON.stringify(employeeIds),
+		dataType: "json",
+		success: function(apiResponse) {
+            if (apiResponse.code === 200) {
+                alert(apiResponse.description);
+                $.getScript("/js/employee.js");
+                findAllEmployeeWithPagination(0,10);
+            } else {
+                alert("Error deleting employees: " + apiResponse.description);
+            }
+		},
+		error: function(error) {alert("An error occurred: " + error.message);}
+	});
 }
-
-
 //---update
 function updateEmployeeDetail(employeeId) {
     fetch(`/employee/detail/` + employeeId)
