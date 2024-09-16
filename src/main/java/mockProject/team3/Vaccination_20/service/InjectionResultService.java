@@ -1,9 +1,9 @@
 package mockProject.team3.Vaccination_20.service;
 
 
-import mockProject.team3.Vaccination_20.dto.CInjectionResultDTO;
-import mockProject.team3.Vaccination_20.dto.InjectionResultDTO;
-import mockProject.team3.Vaccination_20.dto.UInjectionResultDTO;
+import mockProject.team3.Vaccination_20.dto.injectionresult.CInjectionResultDTO;
+import mockProject.team3.Vaccination_20.dto.injectionresult.InjectionResultDTO;
+import mockProject.team3.Vaccination_20.dto.injectionresult.UInjectionResultDTO;
 import mockProject.team3.Vaccination_20.model.InjectionResult;
 import org.springframework.data.domain.Page;
 

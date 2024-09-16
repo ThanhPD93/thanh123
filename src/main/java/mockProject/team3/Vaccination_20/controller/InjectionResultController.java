@@ -1,15 +1,10 @@
 package mockProject.team3.Vaccination_20.controller;
 
 
-import mockProject.team3.Vaccination_20.dto.CInjectionResultDTO;
-import mockProject.team3.Vaccination_20.dto.InjectionResultDTO;
-import mockProject.team3.Vaccination_20.dto.UInjectionResultDTO;
-import mockProject.team3.Vaccination_20.model.Customer;
+import mockProject.team3.Vaccination_20.dto.injectionresult.CInjectionResultDTO;
+import mockProject.team3.Vaccination_20.dto.injectionresult.InjectionResultDTO;
+import mockProject.team3.Vaccination_20.dto.injectionresult.UInjectionResultDTO;
 import mockProject.team3.Vaccination_20.model.InjectionResult;
-import mockProject.team3.Vaccination_20.model.Vaccine;
-import mockProject.team3.Vaccination_20.repository.CustomerRepository;
-import mockProject.team3.Vaccination_20.repository.InjectionResultRepository;
-import mockProject.team3.Vaccination_20.repository.VaccineRepository;
 import mockProject.team3.Vaccination_20.service.CustomerService;
 import mockProject.team3.Vaccination_20.service.InjectionResultService;
 import mockProject.team3.Vaccination_20.service.VaccineService;
@@ -26,7 +21,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.UUID;
 
 
 @RestController

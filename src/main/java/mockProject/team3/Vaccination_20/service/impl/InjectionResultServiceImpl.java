@@ -1,9 +1,9 @@
 package mockProject.team3.Vaccination_20.service.impl;
 
 import jakarta.transaction.Transactional;
-import mockProject.team3.Vaccination_20.dto.CInjectionResultDTO;
-import mockProject.team3.Vaccination_20.dto.InjectionResultDTO;
-import mockProject.team3.Vaccination_20.dto.UInjectionResultDTO;
+import mockProject.team3.Vaccination_20.dto.injectionresult.CInjectionResultDTO;
+import mockProject.team3.Vaccination_20.dto.injectionresult.InjectionResultDTO;
+import mockProject.team3.Vaccination_20.dto.injectionresult.UInjectionResultDTO;
 import mockProject.team3.Vaccination_20.model.Customer;
 import mockProject.team3.Vaccination_20.model.InjectionResult;
 import mockProject.team3.Vaccination_20.model.Vaccine;
@@ -13,7 +13,6 @@ import mockProject.team3.Vaccination_20.repository.InjectionResultRepository;
 import mockProject.team3.Vaccination_20.repository.VaccineRepository;
 import mockProject.team3.Vaccination_20.repository.VaccineTypeRepository;
 import mockProject.team3.Vaccination_20.service.InjectionResultService;
-import mockProject.team3.Vaccination_20.utils.ApiResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,7 +25,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 

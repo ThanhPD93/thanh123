@@ -1,6 +1,6 @@
 package mockProject.team3.Vaccination_20.repository;
 
-import mockProject.team3.Vaccination_20.dto.InjectionResultDTO;
+import mockProject.team3.Vaccination_20.dto.injectionresult.InjectionResultDTO;
 import mockProject.team3.Vaccination_20.model.InjectionResult;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +14,7 @@ import java.util.List;
 @Repository
 public interface InjectionResultRepository extends JpaRepository<InjectionResult, String> {
 
-    @Query("SELECT new mockProject.team3.Vaccination_20.dto.InjectionResultDTO("+
+    @Query("SELECT new mockProject.team3.Vaccination_20.dto.injectionresult.InjectionResultDTO("+
             "ir.injectionResultId," +
             "CONCAT(c.customerId, ' - ', c.fullName, ' - ', c.dateOfBirth), " +
             "v.vaccineName, ir.prevention, ir.numberOfInjection, ir.injectionDate, ir.nextInjectionDate) " +
@@ -24,7 +24,7 @@ public interface InjectionResultRepository extends JpaRepository<InjectionResult
     List<InjectionResultDTO> findAllInjectionResults();
 
 
-    @Query("SELECT new mockProject.team3.Vaccination_20.dto.InjectionResultDTO(" +
+    @Query("SELECT new mockProject.team3.Vaccination_20.dto.injectionresult.InjectionResultDTO(" +
             "ir.injectionResultId," +
             "CONCAT(c.customerId, ' - ', c.fullName, ' - ', c.dateOfBirth), " +
             "v.vaccineName, vt.vaccineTypeName, ir.numberOfInjection, ir.injectionDate, ir.nextInjectionDate) " +

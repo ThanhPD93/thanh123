@@ -26,6 +26,7 @@ function fetchUpdateEmployee(filename, employeeId) {
      .catch(error => console.error('Error fetching document:', error));
 }
 
+
 //--------INJECTION RESULT LIST
  function fetchInjectionResult(filename) {
      fetch(`/injection-result/getAjax?filename=${filename}`)
@@ -37,21 +38,9 @@ function fetchUpdateEmployee(filename, employeeId) {
              loadCustomers();
              loadVaccineTypeName();
              loadInjectionPlace();
-
-
              // Add an event listener to the vaccine type dropdown after it's loaded
-             document.getElementById('vaccinetypename').addEventListener('change', function() {
-                 const selectedVaccineTypeId = this.value;
-                 const vaccineSelect = document.getElementById('vaccinename');
+             document.getElementById('vaccinetypename').addEventListener("change", filterVaccineName);
 
-                 // Clear previous vaccine names and hide dropdown if no vaccine type is selected
-                 vaccineSelect.innerHTML = '<option selected>--Select Vaccine--</option>';
-                 vaccineSelect.style.display = 'none';
-
-                 if (selectedVaccineTypeId) {
-                     loadVaccines(selectedVaccineTypeId);
-                 }
-             });
          })
          .catch(error => console.error('Error fetching document:', error));
  }

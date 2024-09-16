@@ -80,9 +80,6 @@ public class CustomerServiceImpl implements CustomerService {
         return modelMapper.map(customer, CustomerFindByIdDto.class);
     }
 
-    @Autowired
-    private CustomerRepository customerRepository;
-
     public List<Customer> getAllCustomers() {
         return customerRepository.findAll();
     }

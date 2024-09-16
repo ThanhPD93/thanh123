@@ -124,16 +124,6 @@ function searchInjectionResults(page) {
         .catch(error => console.error('Error fetching injection results data:', error));
 }
 
-//check all
-// function checkAllInjectionResultBoxes() {
-//     const selectAllCheckbox = document.getElementById('mother-checkbox');
-//     const checkboxes = document.querySelectorAll('.check-boxes input[type="checkbox"]');
-//     checkboxes.forEach(function (checkbox) {
-//         checkbox.checked = selectAllCheckbox.checked;
-//     });
-// }
-
-
 // Function to load customers
 function loadCustomers() {
     fetch('/customer/c-for-add-ir')
@@ -191,23 +181,18 @@ function loadVaccines(vaccineTypeId) {
 }
 
 // Event listener for vaccine type dropdown change
-document.getElementById('vaccinetypename').addEventListener('change', function() {
-    const selectedVaccineTypeId = this.value;
-    const vaccineSelect = document.getElementById('vaccinename');
+    function filterVaccineName(){
+        const selectedVaccineTypeId = this.value;
+        const vaccineSelect = document.getElementById('vaccinename');
 
-    // Clear previous vaccine names and hide dropdown if no vaccine type is selected
-    vaccineSelect.innerHTML = '<option selected>--Select Vaccine--</option>';
-    vaccineSelect.style.display = 'none';
+        // Clear previous vaccine names and hide dropdown if no vaccine type is selected
+        vaccineSelect.innerHTML = '<option selected>--Select Vaccine--</option>';
+        vaccineSelect.style.display = 'none';
 
-    if (selectedVaccineTypeId) {
-        loadVaccines(selectedVaccineTypeId);
+        if (selectedVaccineTypeId) {
+            loadVaccines(selectedVaccineTypeId);
+        }
     }
-});
-
-// Initial load of vaccine types on page load
-document.addEventListener('DOMContentLoaded', function() {
-    loadVaccineTypeName();
-});
 
 //load injection place from file
 function loadInjectionPlace() {
@@ -225,14 +210,6 @@ function loadInjectionPlace() {
         })
         .catch(error => console.error('Error loading places:', error));
 }
-
-// // Call all the functions to load data when the page loads
-document.addEventListener('DOMContentLoaded', function() {
-    loadCustomers();
-    loadVaccineTypeName()
-    loadVaccines();
-    loadInjectionPlace();
-});
 
 
 //add
@@ -307,7 +284,6 @@ function updateSelectedInjectionResult() {
     fetchUpdateInjectionResult('injection-result-create.html', injectionResultId);  // Pass ID to the update handler
 }
 
-
 // Function to update injection result details in the form
 function updateInjectionResultDetail(injectionResultId) {
     fetch(`/injection-result/detail/` + injectionResultId)
@@ -321,41 +297,20 @@ function updateInjectionResultDetail(injectionResultId) {
             document.getElementById('injectionplace').value = injectionResult.injectionPlace;
 
             // Load customers, vaccine types, vaccines, and injection places first, then set the values
-            loadCustomers(() => {
-                document.getElementById('customer').value = injectionResult.customerId;
-            });
-            loadVaccineTypeName(() => {
-                document.getElementById('vaccinetypename').value = injectionResult.vaccineTypeId;
-            });
-            loadVaccines(injectionResult.vaccineTypeId, () => {
-                document.getElementById('vaccinename').value = injectionResult.vaccineId;
-            });
-            loadInjectionPlace();
+            // loadCustomers(() => {
+            //     document.getElementById('customer').value = injectionResult.customerId;
+            // });
+            // loadVaccineTypeName(() => {
+            //     document.getElementById('vaccinetypename').value = injectionResult.vaccineTypeId;
+            // });
+            // loadVaccines(injectionResult.vaccineTypeId, () => {
+            //     document.getElementById('vaccinename').value = injectionResult.vaccineId;
+            // });
+            // loadInjectionPlace();
         })
         .catch(error => console.error('Error fetching injection result data', error));
 }
-//show detail on modal
-// function showInjectionResultDetails(injectionResultId) {
-//     // Fetch employee details by employeeId
-//     fetch(`/injection-result/detail/` + injectionResultId)
-//         .then(response => response.json())  // Assuming the response is in JSON format
-//         .then(injectionResult => {
-//             // Populate the modal fields with employee data
-//             document.getElementById('modalCustomerInfo').value = injectionResult.customerId;
-//             document.getElementById('modalInjection').value = injectionResult.injection;
-//             document.getElementById('modalInjectionDate').value = injectionResult.injectionDate;
-//             document.getElementById('modalNextInjectionDate').value = injectionResult.nextInjectionDate;
-//             document.getElementById('modalInjectionPlace').value = injectionResult.injectionPlace;
-//
-//             // Show the modal
-//             var modal = new bootstrap.Modal(document.getElementById('injectionResulModal'));
-//             modal.show();
-//         })
-//         .catch(error => {
-//             console.error('Error fetching injection result details:', error);
-//             alert('Failed to load injection result details. Please try again.');
-//         });
-// }
+
 // Function to fetch and show injection result details in a modal
 function showInjectionResultDetails(injectionResultId) {
     // Fetch injection result details by ID
@@ -367,29 +322,30 @@ function showInjectionResultDetails(injectionResultId) {
             document.getElementById('modalInjectionDate').value = injectionResult.injectionDate;
             document.getElementById('modalNextInjectionDate').value = injectionResult.nextInjectionDate;
             document.getElementById('modalInjectionPlace').value = injectionResult.injectionPlace;
+
             // Fetch customer details
-            // fetch(`/customer/detail/` + injectionResult.customerId)
-            //     .then(response => response.json())
-            //     .then(customer => {
-            //         document.getElementById('modalCustomerInfo').value = `${customer.firstName} ${customer.lastName}`; // Adjust based on your customer fields
-            //     })
-            //     .catch(error => console.error('Error fetching customer details:', error));
-            //
-            // // Fetch vaccine details
-            // fetch(`/vaccine/detail/` + injectionResult.vaccineId)
-            //     .then(response => response.json())
-            //     .then(vaccine => {
-            //         document.getElementById('modalVaccineName').value = vaccine.vaccineName;
-            //     })
-            //     .catch(error => console.error('Error fetching vaccine details:', error));
-            //
-            // // Fetch vaccine type details
-            // fetch(`/vaccine-type/detail/` + injectionResult.vaccineTypeId)
-            //     .then(response => response.json())
-            //     .then(vaccineType => {
-            //         document.getElementById('modalVaccineTypeName').value = vaccineType.vaccineTypeName;
-            //     })
-            //     .catch(error => console.error('Error fetching vaccine type details:', error));
+            fetch(`/customer/detail/` + injectionResult.customerInfoId)
+                .then(response => response.json())
+                .then(customer => {
+                    document.getElementById('modalCustomerInfo').value = `${customer.customerInfoId}-${customer.customerInfoFullName}-${customer.customerInfoDateOfBirth}`; // Adjust based on your customer fields
+                })
+                .catch(error => console.error('Error fetching customer details:', error));
+
+            // Fetch vaccine details
+            fetch(`/vaccine/detail/` + injectionResult.vaccineInfoId)
+                .then(response => response.json())
+                .then(vaccine => {
+                    document.getElementById('modalVaccineName').value = vaccine.vaccineName;
+                })
+                .catch(error => console.error('Error fetching vaccine details:', error));
+
+            // Fetch vaccine type details
+            fetch(`/vaccine-type/detail/` + injectionResult.vaccineTypeInfoId)
+                .then(response => response.json())
+                .then(vaccineType => {
+                    document.getElementById('modalVaccineTypeName').value = vaccineType.vaccineTypeName;
+                })
+                .catch(error => console.error('Error fetching vaccine type details:', error));
 
             // Show the modal
             var modal = new bootstrap.Modal(document.getElementById('injectionResultModal'));

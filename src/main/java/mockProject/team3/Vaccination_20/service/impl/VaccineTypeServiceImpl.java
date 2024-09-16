@@ -3,18 +3,23 @@ import jakarta.persistence.EntityNotFoundException;
 import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.CRequestVaccineType;
 import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.DResponseVaccineType;
 
+import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.FindAllResponseVaccineType;
 import mockProject.team3.Vaccination_20.model.Vaccine;
 import mockProject.team3.Vaccination_20.model.VaccineType;
 import mockProject.team3.Vaccination_20.repository.VaccineTypeRepository;
 import mockProject.team3.Vaccination_20.service.VaccineTypeService;
 import mockProject.team3.Vaccination_20.utils.Status;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
@@ -112,12 +117,22 @@ public class VaccineTypeServiceImpl implements VaccineTypeService {
     }
 
     @Override
-    public Page<VaccineType> findBySearchWithPagination(String searchInput, int page, int size) {
-        Pageable pageable = PageRequest.of(page,size);
-        if (searchInput.trim().isEmpty()) {
-            return vaccineTypeRepository.findAll(pageable);
+    public Page<FindAllResponseVaccineType> findBySearchWithPagination(String searchInput, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        // Check if searchInput is empty or null
+        if (StringUtils.hasText(searchInput)) {
+            // Perform search query with pagination
+            Page<VaccineType> vaccineTypePage = vaccineTypeRepository.findBySearch(searchInput, pageable);
+            List<FindAllResponseVaccineType> responseVaccineTypes = modelMapper.map(vaccineTypePage.getContent(), new TypeToken<List<FindAllResponseVaccineType>>() {}.getType());
+            return new PageImpl<>(responseVaccineTypes, pageable, vaccineTypePage.getTotalElements());
         } else {
-            return vaccineTypeRepository.findBySearch(searchInput, pageable);
+            // Return all results with pagination when no searchInput
+            Page<VaccineType> vaccineTypePage = vaccineTypeRepository.findAll(pageable);
+            List<FindAllResponseVaccineType> responseVaccineTypes = modelMapper.map(vaccineTypePage.getContent(), new TypeToken<List<FindAllResponseVaccineType>>() {}.getType());
+            return new PageImpl<>(responseVaccineTypes, pageable, vaccineTypePage.getTotalElements());
         }
     }
+
+
 }
