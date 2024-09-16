@@ -1,13 +1,11 @@
 package mockProject.team3.Vaccination_20.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import mockProject.team3.Vaccination_20.utils.Status;
 
 import java.util.List;
 
@@ -26,6 +24,13 @@ public class VaccineType {
 
     @Column(length = 50)
     private String vaccineTypeName;
+
+    @Column(length = 50)
+    private Status status;
+
+    @Lob
+    @Column(columnDefinition = "MEDIUMBLOB")
+    private byte[] vaccineTypeImage;
 
     //relationship
     @OneToMany(mappedBy = "vaccineType")

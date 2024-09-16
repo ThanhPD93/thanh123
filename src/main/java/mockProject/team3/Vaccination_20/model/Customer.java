@@ -20,27 +20,32 @@ public class Customer {
     @Column(length = 36)
     private String customerId;
 
+    @Column(nullable = false)
 	private String address;
 
+    @Column(nullable = false)
     private LocalDate dateOfBirth;
 
-    @Column(length = 100)
+    @Column(length = 100, nullable = false)
     private String email;
 
-    @Column(length = 100)
+    @Column(length = 100, nullable = false)
     private String fullName;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @Column(length = 12)
+    @Column(length = 12, nullable = false)
     private String identityCard;
 
+    @Column(nullable = false)
 	private String password;
 
-    @Column(length = 20)
+    @Column(length = 20, nullable = false)
     private String phone;
 
+    @Column(nullable = false)
     private String username;
 
     //relationship
