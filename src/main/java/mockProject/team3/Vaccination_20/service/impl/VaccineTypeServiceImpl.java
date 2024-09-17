@@ -4,10 +4,10 @@ import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.CRequestVaccineType;
 import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.DResponseVaccineType;
 
 import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.FindAllResponseVaccineType;
-import mockProject.team3.Vaccination_20.model.Vaccine;
 import mockProject.team3.Vaccination_20.model.VaccineType;
 import mockProject.team3.Vaccination_20.repository.VaccineTypeRepository;
 import mockProject.team3.Vaccination_20.service.VaccineTypeService;
+import mockProject.team3.Vaccination_20.utils.InjectionScheduleStatus;
 import mockProject.team3.Vaccination_20.utils.Status;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -19,16 +19,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
 @Service
 public class VaccineTypeServiceImpl implements VaccineTypeService {
 
-	@Autowired
-    private  VaccineTypeRepository vaccineTypeRepository;
+    @Autowired
+    private VaccineTypeRepository vaccineTypeRepository;
 
     @Autowired
     private ModelMapper modelMapper;
