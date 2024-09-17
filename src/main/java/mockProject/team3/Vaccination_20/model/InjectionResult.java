@@ -1,16 +1,11 @@
 package mockProject.team3.Vaccination_20.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.stereotype.Controller;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.Type;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Entity
 @AllArgsConstructor
@@ -20,6 +15,7 @@ import java.time.LocalDate;
 public class InjectionResult {
 	@Id
     @Column(length = 36)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String injectionResultId;
 
     private LocalDate injectionDate;
@@ -35,10 +31,11 @@ public class InjectionResult {
     private String prevention;
 
     //relationship
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Customer customer;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Vaccine vaccineFromInjectionResult;
+
 
 }

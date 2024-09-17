@@ -13,6 +13,9 @@ import java.util.List;
 
 @Repository
 public interface VaccineTypeRepository extends JpaRepository<VaccineType, String> {
+
+    //use for add-ir
+	List<VaccineType> findAll();
     VaccineType findByVaccineTypeId(String vaccineTypeId);
 
     @Query("SELECT vt FROM VaccineType vt WHERE " +

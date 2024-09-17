@@ -6,6 +6,8 @@ import mockProject.team3.Vaccination_20.dto.customerDto.CustomerFindByIdRequestD
 import mockProject.team3.Vaccination_20.dto.customerDto.CustomerListResponseDto;
 import mockProject.team3.Vaccination_20.model.Customer;
 import mockProject.team3.Vaccination_20.repository.CustomerRepository;
+import mockProject.team3.Vaccination_20.model.Customer;
+import mockProject.team3.Vaccination_20.repository.CustomerRepository;
 import mockProject.team3.Vaccination_20.service.CustomerService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -15,10 +17,13 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
+import java.util.List;
 
 @Service
 public class CustomerServiceImpl implements CustomerService {
@@ -73,5 +78,14 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Error at findByIdService"));
         return modelMapper.map(customer, CustomerFindByIdDto.class);
+    }
+
+    public List<Customer> getAllCustomers() {
+        return customerRepository.findAll();
+    }
+
+    @Override
+    public Customer findByIdIR(String customerId) {
+        return customerRepository.findCustomerByCustomerId(customerId);
     }
 }

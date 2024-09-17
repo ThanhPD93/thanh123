@@ -57,6 +57,7 @@ public class SecurityConfig {
                         .deleteCookies("JSESSIONID")
                         .permitAll()
                 )
+                .httpBasic(Customizer.withDefaults())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .accessDeniedPage("/access-denied.html")
                         .authenticationEntryPoint((request, response, authException) -> {

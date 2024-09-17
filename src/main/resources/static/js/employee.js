@@ -55,7 +55,7 @@ function findAllEmployeeWithPagination(page, pageSize) {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td class="text-center check-boxes"><input type="checkbox" onchange="handleCheckboxChange()" class="check-select-box"></td>
-                    <td><a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-uppercase" onclick="showEmployeeDetails('${employee.employeeId}')">${employee.employeeId}</a></td>
+                    <td><a href="#" class="link-offset-2 link-underline link-underline-opacity-0" onclick="showEmployeeDetails('${employee.employeeId}')">${employee.employeeId}</a></td>
                     <td class="text-capitalize text-start">${employee.employeeName}</td>
                     <td class="text-start">${employee.dateOfBirth}</td>
                     <td class="text-start">${employee.gender}</td>

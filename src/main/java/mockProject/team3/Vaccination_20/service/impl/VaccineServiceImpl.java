@@ -5,6 +5,9 @@ import mockProject.team3.Vaccination_20.model.Vaccine;
 import mockProject.team3.Vaccination_20.model.VaccineType;
 import mockProject.team3.Vaccination_20.repository.VaccineRepository;
 import mockProject.team3.Vaccination_20.repository.VaccineTypeRepository;
+import mockProject.team3.Vaccination_20.model.Vaccine;
+import mockProject.team3.Vaccination_20.repository.VaccineRepository;
+import mockProject.team3.Vaccination_20.repository.VaccineTypeRepository;
 import mockProject.team3.Vaccination_20.service.VaccineService;
 import mockProject.team3.Vaccination_20.utils.VaccineStatus;
 import org.apache.poi.ss.usermodel.*;
@@ -14,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,6 +30,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+
+import java.util.List;
 
 @Service
 public class VaccineServiceImpl implements VaccineService {
@@ -178,6 +185,34 @@ public class VaccineServiceImpl implements VaccineService {
         }
         // If the cell is not a date, log or handle the case appropriately
         throw new IllegalArgumentException("Cell does not contain a valid date");
+    }
+
+
+    @Autowired
+    private VaccineRepository vaccineRepository;
+
+    @Autowired
+    private VaccineTypeRepository vaccineTypeRepository;
+
+//    @Override
+//    public List<Vaccine> getAllVaccines() {
+//        return vaccineRepository.findAll();
+//    }
+
+    public List<Vaccine> getVaccinesByType(String vaccineTypeId) {
+        if (vaccineTypeId != null) {
+            return vaccineRepository.findByVaccineType_VaccineTypeId(vaccineTypeId);
+        }
+        return vaccineRepository.findAll();
+    }
+
+    @Override
+    public Vaccine findByName(String vaccineName) {
+        return null;
+    }
+
+    public List<Vaccine> getAllVaccines() {
+        return vaccineRepository.findAll();
     }
 
 }

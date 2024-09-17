@@ -26,7 +26,7 @@ public class VaccineType {
     private String vaccineTypeName;
 
     @Column(length = 50)
-    private Status status;
+    private Status vaccineTypeStatus;
 
     @Lob
     @Column(columnDefinition = "MEDIUMBLOB")
