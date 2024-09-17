@@ -22,7 +22,7 @@ public interface VaccineService {
     VaccineDto createVaccine(VaccineDto vaccineDto);
     VaccineDto updateVaccine(String vaccineId, VaccineDto vaccineDto);
     void changeStatusVaccine(List<String> vaccineIds);
-    void importVaccineFromExcel(MultipartFile file) throws IOException;
+    List<String> importVaccineFromExcel(MultipartFile file) throws IOException;
 
     //use for add-ir
     List<Vaccine> getAllVaccines();

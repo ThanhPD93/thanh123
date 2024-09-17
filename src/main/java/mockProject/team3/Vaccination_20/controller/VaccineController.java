@@ -100,11 +100,25 @@ public class VaccineController {
 
     @PostMapping("/import/excel")
     public ResponseEntity<String> importFromExcel(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please upload a valid Excel file.");
+        }
         try {
-            vaccineService.importVaccineFromExcel(file);
-            return ResponseEntity.ok("Vaccines imported successfully");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to import data: " + e.getMessage());
+            List<String> notifications = vaccineService.importVaccineFromExcel(file); // Get notifications from service
+
+            // Create the response message
+            StringBuilder responseMessage = new StringBuilder("File uploaded and data imported successfully.");
+            if (!notifications.isEmpty()) {
+                responseMessage.append(" However, the following issues were found:\n");
+                for (String notification : notifications) {
+                    responseMessage.append(notification).append("\n");
+                }
+            }
+
+            return ResponseEntity.status(HttpStatus.OK).body(responseMessage.toString());
+
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload and import file.");
         }
     }
     @Autowired

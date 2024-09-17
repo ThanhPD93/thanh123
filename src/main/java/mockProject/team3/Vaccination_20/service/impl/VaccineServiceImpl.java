@@ -9,7 +9,7 @@ import mockProject.team3.Vaccination_20.model.Vaccine;
 import mockProject.team3.Vaccination_20.repository.VaccineRepository;
 import mockProject.team3.Vaccination_20.repository.VaccineTypeRepository;
 import mockProject.team3.Vaccination_20.service.VaccineService;
-import mockProject.team3.Vaccination_20.utils.VaccineStatus;
+import mockProject.team3.Vaccination_20.utils.Status;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
@@ -28,8 +28,6 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 import java.util.List;
@@ -48,7 +46,6 @@ public class VaccineServiceImpl implements VaccineService {
     @Override
     public VaccineDto createVaccine(VaccineDto vaccineDto) {
         Vaccine vaccine = modelMapper.map(vaccineDto, Vaccine.class);
-        vaccine.setStatus(VaccineStatus.ACTIVE);
         vaccine = vaccineRepository.save(vaccine);
         return modelMapper.map(vaccine, VaccineDto.class);
     }
@@ -102,102 +99,80 @@ public class VaccineServiceImpl implements VaccineService {
             selectedVaccine.setNumberOfInjection(selectedVaccine.getNumberOfInjection());
             selectedVaccine.setInjectionResults(selectedVaccine.getInjectionResults());
             selectedVaccine.setInjectionSchedule(selectedVaccine.getInjectionSchedule());
-            selectedVaccine.setStatus(VaccineStatus.INACTIVE);
+            selectedVaccine.setVaccineStatus(Status.INACTIVE);
             vaccineRepository.save(selectedVaccine);
         }
     }
 
-    @Override
-    public void importVaccineFromExcel(MultipartFile file) throws IOException {
-        List<Vaccine> vaccineList = new ArrayList<>();
-        try(InputStream inputStream = file.getInputStream();
-            Workbook workbook = new XSSFWorkbook(inputStream)) {
-            Sheet sheet = workbook.getSheetAt(0);
+    public List<String> importVaccineFromExcel(MultipartFile file) throws IOException {
+        InputStream inputStream = file.getInputStream();
+        Workbook workbook = new XSSFWorkbook(inputStream);
+        Sheet sheet = workbook.getSheetAt(0);
 
-            for (int i = 1; i <= sheet.getLastRowNum(); i++) {
-                Row row = sheet.getRow(i);
+        List<Vaccine> vaccines = new ArrayList<>();
+        List<String> notifications = new ArrayList<>(); // List to store notifications
 
-                Vaccine vaccine = new Vaccine();
+        for (int i = 1; i <= sheet.getLastRowNum(); i++) {
+            Row row = sheet.getRow(i);
 
-                // Convert numeric to string if necessary, and check if the cell is null
-                vaccine.setVaccineId(getCellValueAsString(row.getCell(0)));
-                vaccine.setVaccineUsage(getCellValueAsString(row.getCell(1)));
-                vaccine.setContraindication(getCellValueAsString(row.getCell(2)));
-                vaccine.setIndication(getCellValueAsString(row.getCell(3)));
+            if (row == null) {
+                continue; // Skip empty rows
+            }
 
-                Cell numberOfInjectionCell = row.getCell(4);
-                if (numberOfInjectionCell != null && numberOfInjectionCell.getCellType() == CellType.NUMERIC) {
-                    vaccine.setNumberOfInjection((int) numberOfInjectionCell.getNumericCellValue());
+            Vaccine vaccine = new Vaccine();
+
+            if (row.getCell(0) != null) {
+                vaccine.setVaccineId(row.getCell(0).getStringCellValue());
+            }
+            if (row.getCell(1) != null) {
+                vaccine.setContraindication(row.getCell(1).getStringCellValue());
+            }
+            if (row.getCell(2) != null) {
+                vaccine.setIndication(row.getCell(2).getStringCellValue());
+            }
+            if (row.getCell(3) != null) {
+                vaccine.setNumberOfInjection((int) row.getCell(3).getNumericCellValue());
+            }
+            if (row.getCell(4) != null) {
+                vaccine.setVaccineOrigin(row.getCell(4).getStringCellValue());
+            }
+            if (row.getCell(5) != null) {
+                vaccine.setTimeBeginNextInjection(row.getCell(5).getLocalDateTimeCellValue().toLocalDate());
+            }
+            if (row.getCell(6) != null) {
+                vaccine.setTimeEndNextInjection(row.getCell(6).getLocalDateTimeCellValue().toLocalDate());
+            }
+            if (row.getCell(7) != null) {
+                vaccine.setVaccineUsage(row.getCell(7).getStringCellValue());
+            }
+            if (row.getCell(8) != null) {
+                vaccine.setVaccineName(row.getCell(8).getStringCellValue());
+            }
+            if (row.getCell(9) != null) {
+                vaccine.setVaccineStatus(Status.valueOf(row.getCell(9).getStringCellValue()));
+            }
+
+            if (row.getCell(10) != null) {
+                String vaccineTypeId = row.getCell(10).getStringCellValue();
+                VaccineType vaccineType = vaccineTypeRepository.findById(vaccineTypeId).orElse(null);
+                if (vaccineType != null) {
+                    if (vaccineType.getVaccineTypeStatus() == Status.ACTIVE) {
+                        vaccine.setVaccineType(vaccineType);
+                        vaccines.add(vaccine); // Add to vaccines list
+                    } else {
+                        // Add a notification if vaccineTypeStatus is INACTIVE
+                        notifications.add("Cannot add vaccine at row " + (i + 1) + " because the vaccine type is inactive.");
+                    }
                 }
-
-                // Map the status from Excel to the enum
-//                String status = getCellValueAsString(row.getCell(5)).toUpperCase();
-                vaccine.setStatus(VaccineStatus.ACTIVE);
-
-                // Handle date parsing from Excel
-                vaccine.setTimeBeginNextInjection(convertExcelDateToLocalDate(row.getCell(6)));
-                vaccine.setTimeEndNextInjection(convertExcelDateToLocalDate(row.getCell(7)));
-
-                vaccine.setVaccineName(getCellValueAsString(row.getCell(8)));
-                vaccine.setVaccineOrigin(getCellValueAsString(row.getCell(9)));
-
-                // Fetch the VaccineType by ID
-                String vaccineTypeId = getCellValueAsString(row.getCell(10));
-                VaccineType vaccineType = vaccineTypeRepository.findById(vaccineTypeId)
-                        .orElseThrow(() -> new IllegalArgumentException("Invalid Vaccine Type ID: " + vaccineTypeId));
-                vaccine.setVaccineType(vaccineType);
-
-                vaccineList.add(vaccine);
             }
         }
-        vaccineRepository.saveAll(vaccineList);
+
+        // Save all valid vaccines
+        vaccineRepository.saveAll(vaccines);
+
+        workbook.close();
+        return notifications; // Return notifications to the controller
     }
-
-    private String getCellValueAsString(Cell cell) {
-        if (cell == null) {
-            return "";
-        }
-        switch (cell.getCellType()) {
-            case STRING:
-                return cell.getStringCellValue();
-            case NUMERIC:
-                if (DateUtil.isCellDateFormatted(cell)) {
-                    return cell.getDateCellValue().toString(); // Handle date values if needed
-                } else {
-                    return String.valueOf((int) cell.getNumericCellValue()); // Convert numeric to string
-                }
-            case BOOLEAN:
-                return String.valueOf(cell.getBooleanCellValue());
-            case FORMULA:
-                return cell.getCellFormula();
-            default:
-                return "";
-        }
-    }
-
-    private LocalDate convertExcelDateToLocalDate(Cell cell) {
-        if (cell == null) {
-            return null; // Handle blank cells
-        }
-        if (DateUtil.isCellDateFormatted(cell)) {
-            Date date = cell.getDateCellValue();
-            return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        }
-        // If the cell is not a date, log or handle the case appropriately
-        throw new IllegalArgumentException("Cell does not contain a valid date");
-    }
-
-
-    @Autowired
-    private VaccineRepository vaccineRepository;
-
-    @Autowired
-    private VaccineTypeRepository vaccineTypeRepository;
-
-//    @Override
-//    public List<Vaccine> getAllVaccines() {
-//        return vaccineRepository.findAll();
-//    }
 
     public List<Vaccine> getVaccinesByType(String vaccineTypeId) {
         if (vaccineTypeId != null) {
@@ -214,5 +189,4 @@ public class VaccineServiceImpl implements VaccineService {
     public List<Vaccine> getAllVaccines() {
         return vaccineRepository.findAll();
     }
-
 }

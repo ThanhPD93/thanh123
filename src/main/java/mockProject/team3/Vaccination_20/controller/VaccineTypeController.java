@@ -49,12 +49,11 @@ public class VaccineTypeController {
     private VaccineTypeRepository vaccineTypeRepository;
 
     @GetMapping("/findAllWithPagination")
-    public Page<VaccineType> findAllWithPagination(@RequestParam String searchInput,
+    public Page<FindAllResponseVaccineType> findAllWithPagination(@RequestParam String searchInput,
                                                    @RequestParam(defaultValue = "0") int page,
                                                    @RequestParam(defaultValue = "5") int size) {
         return vaccineTypeService.findBySearchWithPagination(searchInput, page, size);
     }
-
 
 
     @GetMapping("/getAjax")
@@ -77,7 +76,7 @@ public class VaccineTypeController {
         }).collect(Collectors.toList());
 
         return ResponseEntity.ok(vaccineTypeInfo);
-        }
+    }
 
     @PostMapping("/add")
     public ResponseEntity<ApiResponse<DResponseVaccineType>> addVaccineType(@RequestBody CRequestVaccineType cRequestVaccineType) {
@@ -107,7 +106,7 @@ public class VaccineTypeController {
         return ResponseEntity.ok(vaccineTypeInfo);
     }
 
-}
+
     @GetMapping("/detail/{vaccineTypeId}")
     public ResponseEntity<ApiResponse<VaccineTypeInfoDTO>> getVaccineTypeDetail(@PathVariable String vaccineTypeId) {
         Optional<VaccineType> vaccineTypeOptional = vaccineTypeRepository.findById(vaccineTypeId);
@@ -126,7 +125,7 @@ public class VaccineTypeController {
     public ResponseEntity<String> makeInactive(@RequestBody LResponseVaccineType lResponseVaccineType) {
         System.out.println("Inside CONTROLLER: " + lResponseVaccineType.getVaccineTypeListIds());
         int count = vaccineTypeService.makeInactive(lResponseVaccineType.getVaccineTypeListIds());
-        if(count != 0){
+        if (count != 0) {
             return ResponseEntity.ok("Make inactive " + count + " vaccine types successfully");
         }
         return ResponseEntity.ok("No vaccine type that is active");
@@ -150,5 +149,5 @@ public class VaccineTypeController {
                 .contentType(MediaType.IMAGE_JPEG)  // Or IMAGE_PNG based on your image type
                 .body(imageBytes);
     }
-
+}
 
