@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import mockProject.team3.Vaccination_20.utils.InjectionScheduleStatus;
 import mockProject.team3.Vaccination_20.utils.Status;
 
 import java.util.List;

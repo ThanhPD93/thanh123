@@ -1,6 +1,6 @@
 package mockProject.team3.Vaccination_20.utils;
 
-public enum Status {
+public enum VaccineTypeStatus {
     ACTIVE,
     INACTIVE
 }

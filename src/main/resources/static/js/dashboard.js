@@ -26,6 +26,25 @@ function fetchUpdateEmployee(filename, employeeId) {
      .catch(error => console.error('Error fetching document:', error));
 }
 
+function fetchInjectionSchedule(filename){
+    $.ajax({
+        url: "/injection-schedule/getAjax",
+        data: {
+            filename: filename
+        },
+        dataType: "text",
+        method: "GET",
+        success: function(data) {
+            document.getElementById('ajax-content').innerHTML = data;
+            $.getScript("/js/injectionSchedule.js");
+            findAllInjectionSchedule();
+        },
+        error: function() {
+            alert("error add fetchInjectionSchedule function");
+        }
+    });
+}
+
 //Vaccine Management
 function fetchVaccineList(filename) {
     fetch(`/vaccine/getAjax?filename=${filename}`)
