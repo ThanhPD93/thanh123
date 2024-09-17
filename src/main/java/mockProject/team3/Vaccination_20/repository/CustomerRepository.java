@@ -29,5 +29,8 @@ public interface CustomerRepository extends JpaRepository<Customer, String> {
             + "JOIN FETCH ir.vaccineFromInjectionResult v "
             + "WHERE c.customerId = :customerId")
     Customer findCustomerWithInjectionResultsAndVaccines(String customerId);
-}
 
+    //use for add-ir
+    List<Customer> findAll();
+    Customer findCustomerByCustomerId(String customerId);
+}

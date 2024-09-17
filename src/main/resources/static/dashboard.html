@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Dash Board</title>
@@ -15,7 +15,7 @@
     <div class="row">
         <div class="d-flex justify-content-between " style="background-color: rgb(0, 150, 136)">
             <div class="p-3">
-            <a><img style="width: 70px" src="/images/Logo-FPT.webp" alt="FPT"></a>
+                <a><img style="width: 70px" src="/images/Logo-FPT.webp" alt="FPT"></a>
             </div>
             <div class="p-3 align-baseline" >
                     <span> <img src="/images/loupe.png" alt="img"></span>
@@ -94,7 +94,7 @@
                     </a>
                     <div class="sub-menu collapse" id="vaccineType">
                         <a class="nav-link text-black" href="#" onclick="fetchVaccineType('vaccine-type-list.html')">
-                           Vaccine Type List
+                            Vaccine Type List
                         </a>
                         <a class="nav-link text-black" href="#" onclick="fetchVaccineType('vaccine-type-create.html')">
                             Create Vaccine Type
@@ -111,10 +111,10 @@
                     </a>
                     <div class="sub-menu collapse" id="vaccine">
                         <a class="nav-link text-black" href="#">
-                           Vaccine List
+                            Vaccine List
                         </a>
                         <a class="nav-link text-black" href="#">
-                           Create Vaccine
+                            Create Vaccine
                         </a>
                     </div>
                     <a class="nav-link text-black d-flex justify-content-between" href="#" data-bs-toggle="collapse" data-bs-target="#injectionSchedule"
@@ -128,12 +128,13 @@
                     </a>
                     <div class="sub-menu collapse" id="injectionSchedule">
                         <a class="nav-link text-black" href="#">
-                           Injection Schedule List
+                            Injection Schedule List
                         </a>
                         <a class="nav-link text-black" href="#">
-                           Create Injection Schedule
+                            Create Injection Schedule
                         </a>
                     </div>
+                    <!--                    injection result-->
                     <a class="nav-link text-black d-flex justify-content-between" href="#" data-bs-toggle="collapse" data-bs-target="#injectionResult"
                        aria-expanded="false" aria-controls="injectionResult">
                         <div>
@@ -144,13 +145,15 @@
                         </div>
                     </a>
                     <div class="sub-menu collapse" id="injectionResult">
-                        <a class="nav-link text-black" href="#">
+                        <a class="nav-link text-black" href="#" onclick="fetchInjectionResult('injection-result-list.html')">
                             Injection Result List
                         </a>
-                        <a class="nav-link text-black" href="#">
+                        <a class="nav-link text-black" href="#" onclick="fetchInjectionResult('injection-result-create.html')">
                             Create Injection Result
                         </a>
                     </div>
+
+                    <!--                    news-->
                     <a class="nav-link text-black d-flex justify-content-between" href="#" data-bs-toggle="collapse" data-bs-target="#news"
                        aria-expanded="false" aria-controls="news">
                         <div>
@@ -162,10 +165,10 @@
                     </a>
                     <div class="sub-menu collapse" id="news">
                         <a class="nav-link text-black " href="#" >
-                          Injection News List
+                            Injection News List
                         </a>
                         <a class="nav-link text-black" href="#">
-                           Create News Result
+                            Create News Result
                         </a>
                     </div>
                     <a class="nav-link text-black d-flex justify-content-between" href="#">
@@ -184,6 +187,7 @@
                 <h3 id="ajax-title">WELCOME TO VACCINE MANAGEMENT SYSTEM</h3>
             </div>
 
+
             <!-- div content for AJAX here -->
             <div class="row mx-2" id="ajax-content"></div>
         </div>
@@ -195,6 +199,7 @@
 <script src="/js/employee.js"></script>
 <script src="/js/customer.js"></script>
 <script src="/js/vaccineType.js"></script>
+<script src="/js/injectionresult.js"> </script>
 <script src="/js/dashboard.js"></script>
 </body>
 </html>
