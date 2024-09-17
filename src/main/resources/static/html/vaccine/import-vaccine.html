@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Import Vaccine</title>
+    <link rel="stylesheet" href="/static/css/bootstrap/bootstrap.min.css">
+</head>
+<body>
+<form id="importForm" onsubmit="importExcelFile(event)">
+    <div class="container mt-3 bg-light p-3">
+        <!-- Row1 -->
+        <div class="d-flex justify-content-between mb-4">
+            <div class="col-12">
+                <label class="form-label fw-medium">Import File</label>
+                <input type="file" class="form-control" id="importVaccine" name="file" required>
+            </div>
+        </div>
+        <!-- Row2 -->
+        <div class="d-flex flex-row mt-2">
+            <div class="me-2">
+                <button type="submit" class="btn btn-success" style="width: 100px;">Import</button>
+            </div>
+            <div class="me-2">
+                <button type="button" class="btn btn-info text-white" style="width: 100px;">Reset</button>
+            </div>
+            <div class="me-2">
+                <button type="button" class="btn btn-warning text-white" style="width: 100px;">Cancel</button>
+            </div>
+        </div>
+    </div>
+</form>
+</body>
+</html>

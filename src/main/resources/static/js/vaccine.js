@@ -25,7 +25,7 @@ function findAllVaccineWithPagination(page, pageSize){
                     <td class="text-start">${vaccine.vaccineType.vaccineTypeName}</td>
                     <td class="text-start">${vaccine.numberOfInjection}</td>
                     <td class="text-start">${vaccine.vaccineOrigin}</td>
-                    <td class="text-start">${vaccine.status}</td>
+                    <td class="text-start">${vaccine.vaccineStatus}</td>
                 `;
                 tableBody.appendChild(row);
             });
@@ -62,7 +62,7 @@ function search(page) {
                     <td class="text-start">${vaccine.vaccineType.vaccineTypeName}</td>
                     <td class="text-start">${vaccine.numberOfInjection}</td>
                     <td class="text-start">${vaccine.vaccineOrigin}</td>
-                    <td class="text-start">${vaccine.status}</td>
+                    <td class="text-start">${vaccine.vaccineStatus}</td>
                 `;
                 tableBody.appendChild(row);
             });
@@ -151,11 +151,11 @@ function loadVaccineTypeName() {
 
             vaccineTypes.forEach(vaccineType => {
                 const option = document.createElement('option');
-                // Adjust the structure to match DTO fields
+
                 option.value = JSON.stringify({
                     vaccineTypeId: vaccineType.id,
                     vaccineTypeName: vaccineType.name,
-                    vaccineTypeDescription: vaccineType.description || '' // Add description if available
+                    vaccineTypeDescription: vaccineType.description || ''
                 });
                 option.text = vaccineType.name;
                 vaccineTypeSelect.appendChild(option);
@@ -172,7 +172,7 @@ function addVaccine(event) {
     event.preventDefault();
 
     const vaccineType = JSON.parse(document.getElementById('vaccineTypeName').value);
-
+    const activeInput = document.querySelector('input[name = "vaccineStatus"]:checked');
     const data = {
         vaccineId: document.getElementById('vaccineId').value,
         vaccineName: document.getElementById('vaccineName').value,
@@ -183,7 +183,8 @@ function addVaccine(event) {
         contraindication: document.getElementById('vaccineContraindication').value,
         timeBeginNextInjection: document.getElementById('beginning-time').value,
         timeEndNextInjection: document.getElementById('ending-time').value,
-        vaccineOrigin: document.getElementById('vaccineOrigin').value
+        vaccineOrigin: document.getElementById('vaccineOrigin').value,
+        vaccineStatus: activeInput ? "ACTIVE" : "INACTIVE"
     };
     fetch('/vaccine/add', {
         method: 'POST',
@@ -250,6 +251,7 @@ function updateVaccineDetail(vaccineId){
             document.getElementById('beginning-time').value = vaccine.timeBeginNextInjection;
             document.getElementById('ending-time').value = vaccine.timeEndNextInjection;
             document.getElementById('vaccineOrigin').value = vaccine.vaccineOrigin;
+            document.getElementById('vaccineStatus').value = vaccine.vaccineStatus;
             loadVaccineTypeName();
         }).catch(error =>{
         console.error('Error fetching vaccine data', error);
@@ -281,7 +283,7 @@ async function changeStatusSelectedVaccines(){
 
         if(response.ok){
             alert(result.description);
-            location.reload();
+            findAllVaccineWithPagination(0,10);
         } else {
             alert("Error change vaccine status: " + result.description)
         }
@@ -312,4 +314,30 @@ function resetInput(){
     if(!timeEndNextInjection.disable) timeEndNextInjection.value = '';
     if(!vaccineOrigin.disable) vaccineOrigin.value = '';
     if(!vaccineUsage.disable) vaccineUsage.value = '';
+}
+//import file excel
+function importExcelFile(event){
+    event.preventDefault();
+
+    const fileInput = document.getElementById('importVaccine');
+    if (fileInput.files.length === 0) {
+        alert("Please select a file to upload.");
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+
+    fetch('/vaccine/import/excel', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.text())
+    .then(data => {
+        alert(data);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to upload and import file.');
+    });
 }

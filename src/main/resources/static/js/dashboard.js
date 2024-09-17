@@ -1,5 +1,6 @@
 
 // Ajax
+//Employee Management
 function fetchEmployee(filename) {
  fetch(`/employee/getAjax?filename=${filename}`)
      .then(response => response.text())
@@ -14,7 +15,6 @@ function fetchEmployee(filename) {
      })
      .catch(error => console.error('Error fetching document:', error));
 }
-
 function fetchUpdateEmployee(filename, employeeId) {
  fetch(`/employee/getAjax?filename=${filename}`)
      .then(response => response.text())
@@ -26,7 +26,7 @@ function fetchUpdateEmployee(filename, employeeId) {
      .catch(error => console.error('Error fetching document:', error));
 }
 
-
+//Vaccine Management
 function fetchVaccineList(filename) {
     fetch(`/vaccine/getAjax?filename=${filename}`)
     .then(response => response.text())
@@ -45,8 +45,6 @@ function fetchVaccineList(filename) {
     })
     .catch(error => console.error('Error fetching document:', error));
 }
-
-
 function fetchUpdateVaccine(filename, vaccineId){
     fetch(`/vaccine/getAjax?filename=${filename}`)
         .then(response => response.text())
@@ -55,6 +53,15 @@ function fetchUpdateVaccine(filename, vaccineId){
             $("#ajax-title")[0].innerHTML = "CREATE VACCINE";
             $.getScript("/js/vaccine.js");
             updateVaccineDetail(vaccineId);
+        })
+        .catch(error => console.error('Error fetching document:', error));
+}
+function fetchImportExcelFile(filename){
+    fetch(`/vaccine/getAjax?filename=${filename}`)
+        .then(response => response.text())
+        .then(data => {
+            $("#ajax-content")[0].innerHTML = data;
+            $("#ajax-title")[0].innerHTML = "IMPORT VACCINE";
         })
         .catch(error => console.error('Error fetching document:', error));
 }
@@ -108,6 +115,7 @@ function fetchUpdateVaccine(filename, vaccineId){
 
 
 
+//Customer management
 function fetchCustomer(filename) {
     $.ajax({
         url: "customer/getAjax",
