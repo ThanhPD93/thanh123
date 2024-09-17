@@ -12,5 +12,5 @@ public class FindAllResponseVaccineType {
     private String vaccineTypeId;
     private String vaccineTypeName;
     private String vaccineTypeDescription;
-    private Status status;
+    private Status vaccineTypeStatus;
 }

@@ -106,10 +106,10 @@ public class VaccineTypeServiceImpl implements VaccineTypeService {
             return 0;
         }
         for (VaccineType vaccineType : vaccineTypes) {
-            if(vaccineType.getStatus() == Status.INACTIVE) {
+            if(vaccineType.getVaccineTypeStatus() == Status.INACTIVE) {
                 continue;
             }
-            vaccineType.setStatus(Status.INACTIVE);
+            vaccineType.setVaccineTypeStatus(Status.INACTIVE);
             count++;
         }
         vaccineTypeRepository.saveAll(vaccineTypes);

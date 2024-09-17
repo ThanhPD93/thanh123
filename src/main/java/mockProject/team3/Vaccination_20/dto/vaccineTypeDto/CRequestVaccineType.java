@@ -17,5 +17,5 @@ public class CRequestVaccineType {
 
     private String vaccineTypeImage;
 
-    private String status;
+    private String vaccineTypeStatus;
 }
