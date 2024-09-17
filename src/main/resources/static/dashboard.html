@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Dash Board</title>
@@ -110,11 +110,11 @@
                         </div>
                     </a>
                     <div class="sub-menu collapse" id="vaccine">
-                        <a class="nav-link text-black" href="#">
-                            Vaccine List
+                        <a class="nav-link text-black" href="#"  onclick="fetchVaccineList('vaccine-list.html')">
+                           Vaccine List
                         </a>
-                        <a class="nav-link text-black" href="#">
-                            Create Vaccine
+                        <a class="nav-link text-black" href="#" onclick="fetchVaccineList('create-vaccine.html')">
+                           Create Vaccine
                         </a>
                     </div>
                     <a class="nav-link text-black d-flex justify-content-between" href="#" data-bs-toggle="collapse" data-bs-target="#injectionSchedule"
@@ -198,6 +198,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/js/employee.js"></script>
 <script src="/js/customer.js"></script>
+<script src="/js/vaccine.js"></script>
 <script src="/js/vaccineType.js"></script>
 <script src="/js/injectionresult.js"> </script>
 <script src="/js/dashboard.js"></script>

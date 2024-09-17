@@ -19,6 +19,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,14 +37,24 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
 @RestController
 @RequestMapping("/vaccine-type")
 public class VaccineTypeController {
 
     @Autowired
     private VaccineTypeService vaccineTypeService;
+
     @Autowired
     private VaccineTypeRepository vaccineTypeRepository;
+
+    @GetMapping("/findAllWithPagination")
+    public Page<FindAllResponseVaccineType> findAllWithPagination(@RequestParam String searchInput,
+                                                   @RequestParam(defaultValue = "0") int page,
+                                                   @RequestParam(defaultValue = "5") int size) {
+        return vaccineTypeService.findBySearchWithPagination(searchInput, page, size);
+    }
+
 
     @GetMapping("/getAjax")
     public String getDocument(@RequestParam String filename) throws IOException {
@@ -61,7 +76,7 @@ public class VaccineTypeController {
         }).collect(Collectors.toList());
 
         return ResponseEntity.ok(vaccineTypeInfo);
-        }
+    }
 
     @PostMapping("/add")
     public ResponseEntity<ApiResponse<DResponseVaccineType>> addVaccineType(@RequestBody CRequestVaccineType cRequestVaccineType) {
@@ -75,6 +90,22 @@ public class VaccineTypeController {
 
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/vt-for-add-vaccine")
+    public ResponseEntity<List<Map<String, String>>> getAllVaccineTypesForVaccineApi() {
+        List<VaccineType> vaccineTypes = vaccineTypeService.getAllVaccineTypes();
+
+        // Map only the needed fields
+        List<Map<String, String>> vaccineTypeInfo = vaccineTypes.stream().map(vaccineType -> {
+            Map<String, String> info = new HashMap<>();
+            info.put("id", String.valueOf(vaccineType.getVaccineTypeId()));
+            info.put("name", vaccineType.getVaccineTypeName());
+            return info;
+        }).collect(Collectors.toList());
+
+        return ResponseEntity.ok(vaccineTypeInfo);
+    }
+
 
     @GetMapping("/detail/{vaccineTypeId}")
     public ResponseEntity<ApiResponse<VaccineTypeInfoDTO>> getVaccineTypeDetail(@PathVariable String vaccineTypeId) {
@@ -94,7 +125,7 @@ public class VaccineTypeController {
     public ResponseEntity<String> makeInactive(@RequestBody LResponseVaccineType lResponseVaccineType) {
         System.out.println("Inside CONTROLLER: " + lResponseVaccineType.getVaccineTypeListIds());
         int count = vaccineTypeService.makeInactive(lResponseVaccineType.getVaccineTypeListIds());
-        if(count != 0){
+        if (count != 0) {
             return ResponseEntity.ok("Make inactive " + count + " vaccine types successfully");
         }
         return ResponseEntity.ok("No vaccine type that is active");
@@ -118,12 +149,5 @@ public class VaccineTypeController {
                 .contentType(MediaType.IMAGE_JPEG)  // Or IMAGE_PNG based on your image type
                 .body(imageBytes);
     }
-
-    @GetMapping("/findAllWithPagination")
-    public Page<FindAllResponseVaccineType> findAllWithPagination(@RequestParam String searchInput,
-                                                                  @RequestParam(defaultValue = "0") int page,
-                                                                  @RequestParam(defaultValue = "5") int size) {
-        return vaccineTypeService.findBySearchWithPagination(searchInput, page, size);
-    }
-
 }
+

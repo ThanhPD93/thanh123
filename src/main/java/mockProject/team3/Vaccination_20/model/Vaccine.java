@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import mockProject.team3.Vaccination_20.utils.Status;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -34,17 +36,19 @@ public class Vaccine {
     private LocalDate timeEndNextInjection;
 
     @Column(length = 200)
-    private String VaccineUsage;
+    private String vaccineUsage;
 
     @Column(length = 100)
     private String vaccineName;
 
+    private Status vaccineStatus;
 
     //relationship
     @OneToMany(mappedBy = "vaccineFromInjectionResult")
     private List<InjectionResult> injectionResults;
 
     @ManyToOne
+    @JoinColumn(name = "vaccineTypeId")
     private VaccineType vaccineType;
 
     @OneToMany(mappedBy = "vaccineFromInjectionSchedule")
