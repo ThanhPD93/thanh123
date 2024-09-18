@@ -1,18 +1,16 @@
 package mockProject.team3.Vaccination_20.service.impl;
 
+import mockProject.team3.Vaccination_20.dto.employeeDto.*;
 import mockProject.team3.Vaccination_20.model.Admin;
 import mockProject.team3.Vaccination_20.model.Employee;
 import mockProject.team3.Vaccination_20.repository.EmployeeRepository;
 import mockProject.team3.Vaccination_20.service.EmployeeService;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import jakarta.persistence.EntityNotFoundException;
-import mockProject.team3.Vaccination_20.dto.request.forcreate.CRequestEmployee;
-import mockProject.team3.Vaccination_20.dto.request.forupdate.URequestEmployee;
-import mockProject.team3.Vaccination_20.dto.response.fordetail.DResponseEmployee;
-import mockProject.team3.Vaccination_20.dto.response.forlist.LResponseEmployee;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -41,13 +39,16 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
     private String adminPassword;
 
     @Override
-    public Page<Employee> findBySearchWithPagination(String searchInput, int page, int size) {
+    public Page<FindAllResponseEmployee> findBySearch(String searchInput, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        if (searchInput.trim().equals("")) {
-            return employeeRepository.findAll(pageable);
+        Page<Employee> employeePage;
+        if (searchInput.trim().isEmpty()) {
+            employeePage = employeeRepository.findAll(pageable);
         } else {
-            return employeeRepository.findBySearch(searchInput, pageable);
+            employeePage = employeeRepository.findBySearch(searchInput, pageable);
         }
+        List<FindAllResponseEmployee> responseEmployees = modelMapper.map(employeePage.getContent(), new TypeToken<List<FindAllResponseEmployee>>(){}.getType());
+        return new PageImpl<>(responseEmployees, pageable, employeePage.getTotalElements());
     }
 
     @Override
@@ -60,23 +61,20 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         return employeeRepository.findAllBy();
     }
 
-//    @Override
-//    public DResponseEmployee addEmployee(CRequestEmployee cRequestEmployee) {
-//        Employee employee = modelMapper.map(cRequestEmployee, Employee.class);
-//        return modelMapper.map(employeeRepository.save(employee), DResponseEmployee.class);
-//    }
-
     @Override
-    public DResponseEmployee addEmployee(CRequestEmployee cRequestEmployee) {
+    public int addEmployee(CRequestEmployee cRequestEmployee) {
         Employee employee = employeeRepository.findByEmployeeId(cRequestEmployee.getEmployeeId());
+        boolean update = false;
+        if(employee != null) {
+            update = true;
+        }
         if(cRequestEmployee.getImage() == null && employee != null) {
-           byte[] currentImage = employeeRepository.findByEmployeeId(cRequestEmployee.getEmployeeId()).getImage();
+           byte[] currentImage = employee.getImage();
             employee = modelMapper.map(cRequestEmployee, Employee.class);
             employee.setImage(currentImage);
         } else {
             employee = modelMapper.map(cRequestEmployee, Employee.class);
         }
-
         if (cRequestEmployee.getImage() != null && !cRequestEmployee.getImage().isEmpty()) {
             try {
                 // Clean and decode the Base64 string
@@ -84,12 +82,15 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
                 byte[] decodedImage = Base64.getDecoder().decode(base64Image);
                 employee.setImage(decodedImage);
             } catch (IllegalArgumentException e) {
-                System.err.println("Failed to decode image: " + e.getMessage());
-                throw new RuntimeException("Invalid Base64 image data", e);
+                return 0;
             }
         }
         employee.setPassword(passwordEncoder.encode(employee.getPassword()));
-        return modelMapper.map(employeeRepository.save(employee), DResponseEmployee.class);
+        employeeRepository.save(employee);
+        if(update) {
+            return 2;
+        }
+        return 1;
     }
 
     @Override
@@ -124,9 +125,12 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
     }
 
     @Override
-    public Employee findById(String id) {
-        return employeeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Employee not found with id: " + id));
+    public DResponseEmployee findById(String id) {
+        Employee employee = employeeRepository.findById(id).get();
+//        employee.setPassword(passwordEncoder.);
+
+        DResponseEmployee dResponseEmployee = modelMapper.map(employee, DResponseEmployee.class);
+        return dResponseEmployee;
     }
 
     @Override

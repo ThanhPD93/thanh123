@@ -17,10 +17,10 @@
                     10
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#" onclick="findAllEmployeeWithPagination(0,10)">10</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="findAllEmployeeWithPagination(0,25)">25</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="findAllEmployeeWithPagination(0,50)">50</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="findAllEmployeeWithPagination(0,100)">100</a></li>
+                    <li><a class="dropdown-item" onclick="findAllEmployeeWithPagination(0,10)">10</a></li>
+                    <li><a class="dropdown-item" onclick="findAllEmployeeWithPagination(0,25)">25</a></li>
+                    <li><a class="dropdown-item" onclick="findAllEmployeeWithPagination(0,50)">50</a></li>
+                    <li><a class="dropdown-item" onclick="findAllEmployeeWithPagination(0,100)">100</a></li>
                 </ul>
             </div>
             <span>entries</span>
@@ -29,10 +29,8 @@
         <div class="search">
             <div class="d-flex">
                 <span class="me-2">Search:</span>
-                <input type="search" name="searchInput" id="searchInput" class="border-0 border-bottom border-info" style="outline: none;" onfocus="this.style.outline = 'none';" placeholder=". . .">
-                <button id="search-button" onclick="search(0)" class="rounded-5 border-0 bg-light">
-                    <img src="/images/icons/search.png">
-                </button>
+                <input type="search" name="searchInput" id="searchInput" class="border-0 border-bottom border-info" style="outline: none;" onfocus="this.style.outline = 'none';" placeholder=". . ."
+                oninput="search(0)">
             </div>
         </div>
     </div>
@@ -73,7 +71,7 @@
     <!--    3 buttons-->
     <div class="d-flex flex-row mt-2">
         <div class="me-2">
-            <a type="button" class="btn btn-success" href="#" onclick="fetchInjectionSchedule('injection-schedule-create.html')">New
+            <a type="button" class="btn btn-success" onclick="fetchInjectionSchedule('injection-schedule-create.html')">New
                 Injection Schedule</a>
         </div>
         <div class="me-2">

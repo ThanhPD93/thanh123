@@ -32,7 +32,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/customer")
+@RequestMapping("/api/customer")
 @CrossOrigin(origins = "*")
 public class CustomerController {
     @Autowired
@@ -48,27 +48,14 @@ public class CustomerController {
     }
 
     @GetMapping("/findAllCustomers")
-    public ResponseEntity<ApiResponse<Page<CustomerListResponseDto>>> findAllCustomers(
+    public ResponseEntity<Page<CustomerListResponseDto>> findAllCustomers(
             @RequestParam String searchInput,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size) {
 
         //method body
         Page<CustomerListResponseDto> customers = customerService.findByFullNameOrAddress(searchInput, page, size);
-        if (customers.isEmpty()) {
-            ApiResponse<Page<CustomerListResponseDto>> apiResponse = new ApiResponse<>(
-                    0,
-                    "No data found!",
-                    customers);
-            return ResponseEntity.ok(apiResponse);
-        } else {
-            System.out.println("checkpoint 2");
-            ApiResponse<Page<CustomerListResponseDto>> apiResponse = new ApiResponse<>(
-                    1,
-                    "Data found!",
-                    customers);
-            return ResponseEntity.ok(apiResponse);
-        }
+        return ResponseEntity.ok(customers);
     }
 
     @GetMapping("/getCurrentUsername")
@@ -120,8 +107,8 @@ public class CustomerController {
     }
 
     @GetMapping("/findById")
-    public ResponseEntity<CustomerFindByIdDto> findById(@RequestParam String id) {
-        return ResponseEntity.ok().body(customerService.findById(id));
+    public ResponseEntity<CustomerFindByIdDto> findById(@RequestParam String customerId) {
+        return ResponseEntity.ok().body(customerService.findById(customerId));
     }
 
     //------

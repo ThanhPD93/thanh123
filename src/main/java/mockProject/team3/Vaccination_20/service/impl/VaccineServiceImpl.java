@@ -35,10 +35,12 @@ public class VaccineServiceImpl implements VaccineService {
     private ModelMapper modelMapper;
 
     @Override
-    public VaccineDto createVaccine(VaccineDto vaccineDto) {
+    public int createVaccine(VaccineDto vaccineDto) {
         Vaccine vaccine = modelMapper.map(vaccineDto, Vaccine.class);
-        vaccine = vaccineRepository.save(vaccine);
-        return modelMapper.map(vaccine, VaccineDto.class);
+        VaccineType vaccineType = vaccineTypeRepository.findById(vaccineDto.getVaccineType()).get();
+        vaccine.setVaccineType(vaccineType);
+        vaccineRepository.save(vaccine);
+        return 1;
     }
 
     @Override

@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="/css/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap/bootstrap.min.css"/>
     <title>Vaccine Type Create</title>
     <!--    remove button up/down in input number-->
     <style>
@@ -15,7 +15,7 @@
 <body class="bg-body-secondary shadow">
 <div class="container mt-3 bg-light p-3 ">
     <h3 class="text-center"></h3>
-    <form id="add-vaccine-type" onsubmit="addVaccineType();">
+    <form id="add-vaccine-type" onsubmit="event.preventDefault(); addVaccineType();">
         <!--        row 1-->
         <div class="d-flex justify-content-between mb-4">
             <div class="col-4">
@@ -38,7 +38,7 @@
                     <img src="/images/icons/vaccine.png" class="input-group-text border-0">
                     <div class="mt-2">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" name="status" id="status" value="ACTIVE" disabled checked >
+                            <input class="form-check-input" type="checkbox" name="vaccineTypeStatus" id="vaccineTypeStatus" value="ACTIVE" disabled checked >
                             <label class="form-check-label" >Active</label>
                         </div>
 

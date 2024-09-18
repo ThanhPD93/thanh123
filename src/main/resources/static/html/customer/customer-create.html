@@ -14,7 +14,7 @@
 <body class="bg-body-secondary">
 <div class="container mt-3 bg-light p-3">
     <h4>Personal Information</h4><br>
-    <form id="add-customer-form" onsubmit="checkCaptcha();">
+    <form id="add-customer-form" onsubmit="event.preventDefault(); checkCaptcha();">
         <!-- Row 1 -->
         <div class="d-flex justify-content-between mb-4">
             <!--Customer Full name-->
@@ -160,7 +160,7 @@
                     <button class="btn btn-info text-white" style="width: 100px;" type="button" onclick="randomizeCaptchaWithReset()">Reset</button>
                 </div>
                 <div>
-                    <a class="btn btn-warning text-white" href="#" onclick="fetchCustomer('customer-list.html')" style="width: 100px;">Cancel</a>
+                    <a class="btn btn-warning text-white" onclick="fetchCustomer('customer-list.html')" style="width: 100px;">Cancel</a>
                 </div>
             </div>
         </div>

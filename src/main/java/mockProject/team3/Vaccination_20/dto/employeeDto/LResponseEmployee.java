@@ -1,4 +1,4 @@
-package mockProject.team3.Vaccination_20.dto.response.forlist;
+package mockProject.team3.Vaccination_20.dto.employeeDto;
 
 import mockProject.team3.Vaccination_20.utils.Gender;
 

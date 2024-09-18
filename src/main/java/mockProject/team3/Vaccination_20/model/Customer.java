@@ -33,7 +33,6 @@ public class Customer {
     private String fullName;
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
     private Gender gender;
 
     @Column(length = 12, nullable = false)

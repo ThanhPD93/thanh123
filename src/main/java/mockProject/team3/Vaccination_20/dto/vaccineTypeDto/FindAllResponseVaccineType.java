@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import mockProject.team3.Vaccination_20.utils.InjectionScheduleStatus;
+import mockProject.team3.Vaccination_20.utils.Status;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -12,5 +13,5 @@ public class FindAllResponseVaccineType {
     private String vaccineTypeId;
     private String vaccineTypeName;
     private String vaccineTypeDescription;
-    private InjectionScheduleStatus vaccineTypeStatus;
+    private Status vaccineTypeStatus;
 }

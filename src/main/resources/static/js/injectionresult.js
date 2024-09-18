@@ -1,9 +1,61 @@
+//from dashboard
+//--------INJECTION RESULT LIST
+ function fetchInjectionResult(filename) {
+     fetch(`/api/injection-result/getAjax?filename=${filename}`)
+         .then(response => response.text())
+         .then(data => {
+             document.getElementById('ajax-content').innerHTML = data;
+             // Initialize data loading functions after updating content
+             if(filename === "injection-result-list.html") {
+                 $("#ajax-title")[0].innerHTML = "INJECTION RESULT LIST";
+                 findAllInjectionResultsWithPagination(0, 10);
+                 loadCustomers();
+                 loadVaccineTypeName();
+                 loadInjectionPlace();
+             }
+             else {
+             	$("#ajax-title")[0].innerHTML = "CREATE INJECTION RESULT";
+                $('#vaccineTypeName')[0].addEventListener("change", filterVaccineName);
+             }
+
+
+          })
+          .catch(error => console.error('Error fetching document:', error));
+    }
+
+    //------------
+    function fetchUpdateInjectionResult(filename, injectionResultId) {
+      fetch(`/api/injection-result/getAjax?filename=${filename}`)
+          .then(response => response.text())
+          .then(data => {
+              document.getElementById('ajax-content').innerHTML = data;
+              updateInjectionResultDetail(injectionResultId);
+              loadCustomers();
+              loadVaccineTypeName();
+              loadInjectionPlace();
+              document.getElementById('vaccineTypeName').addEventListener('change', function() {
+                  const selectedVaccineTypeId = this.value;
+                  const vaccineSelect = document.getElementById('vaccinename');
+
+                  // Clear previous vaccine names and hide dropdown if no vaccine type is selected
+                  vaccineSelect.innerHTML = '<option selected>--Select Vaccine--</option>';
+                  vaccineSelect.style.display = 'none';
+
+                  if (selectedVaccineTypeId) {
+                      loadVaccines(selectedVaccineTypeId);
+                  }
+              });
+
+          })
+          .catch(error => console.error('Error fetching document:', error));
+    }
+
 //show list with pagination
 function findAllInjectionResultsWithPagination(page, pageSize) {
     const searchInputElement = document.getElementById('searchInput');
     const query = searchInputElement ? searchInputElement.value : '';
 
-    fetch(`/injection-result/findAllWithPagination?searchInput=${encodeURIComponent(query)}&page=${page}&size=${pageSize}`)
+    fetch(`/api/injection-result/findAllWithPagination?searchInput=${encodeURIComponent(query)}&page=${page}&size=${pageSize}`)
         .then(response => response.json())
         .then(injectionResults => {
             const tableBody = document.getElementById('injection-result-list-content');
@@ -99,7 +151,7 @@ function searchInjectionResults(page) {
     const query = document.getElementById('searchInput').value;
     const currentPageSize = parseInt(document.getElementById("dropdownMenuButton").innerHTML, 10);
 
-    fetch(`/injection-result/findAllWithPagination?searchInput=${encodeURIComponent(query)}&page=${page}&size=${currentPageSize}`)
+    fetch(`/api/injection-result/findAllWithPagination?searchInput=${encodeURIComponent(query)}&page=${page}&size=${currentPageSize}`)
         .then(response => response.json())
         .then(injectionResults => {
             const tableBody = document.getElementById('injection-result-list-content');
@@ -131,11 +183,10 @@ function loadCustomers() {
         .then(customers => {
             const customerSelect = document.getElementById('customer');
             customerSelect.innerHTML = '<option selected>--Select Customer--</option>';
-
             customers.forEach(customer => {
                 const option = document.createElement('option');
                 option.value = customer.id;
-                option.text = `${customer.id} - ${customer.name} - ${customer.dateOfBirth}`;
+                option.text = `${customer.id} - ${customer.name} - ${cus	tomer.dateOfBirth}`;
                 customerSelect.appendChild(option);
             });
         })
@@ -145,10 +196,10 @@ function loadCustomers() {
 
 // Load vaccine types and initially hide the vaccine names dropdown
 function loadVaccineTypeName() {
-    fetch('/vaccine-type/vt-for-add-ir')
+    fetch('/api/vaccine-type/vt-for-add-ir')
         .then(response => response.json())
         .then(vaccineTypes => {
-            const vaccineTypeSelect = document.getElementById('vaccinetypename');
+            const vaccineTypeSelect = document.getElementById('vaccineTypeName');
             vaccineTypeSelect.innerHTML = '<option selected>--Select Vaccine Type Name--</option>';
 
             vaccineTypes.forEach(vaccineType => {
@@ -194,11 +245,10 @@ function loadVaccines(vaccineTypeId) {
         }
     }
 
-//load injection place from file
 function loadInjectionPlace() {
-    fetch('/injection-result/places')
-        .then(response => response.json())
-        .then(places => {
+    $.ajax({
+        url: "/api/injection-result/places",
+        success: function(places) {
             const placeSelect = document.getElementById('injectionplace');
             placeSelect.innerHTML = '<option value="">--Select Place--</option>'; // Clear previous options
             places.forEach(place => {
@@ -207,10 +257,12 @@ function loadInjectionPlace() {
                 option.textContent = place;
                 placeSelect.appendChild(option);
             });
-        })
-        .catch(error => console.error('Error loading places:', error));
+        },
+        error: function(xhr) {
+            console.error("Error at /api/injection-result/places, error code: " + xhr.status);
+        }
+    });
 }
-
 
 //add
 function addInjectionResult(event) {
@@ -218,7 +270,7 @@ function addInjectionResult(event) {
 
     // Get form values
     const customerId = document.getElementById('customer').value.split(' - ')[0];  // Extract customerId only
-    const vaccineTypeName = document.getElementById('vaccinetypename').value;
+    const vaccineTypeName = document.getElementById('vaccineTypeName').value;
     const vaccineName = document.getElementById('vaccinename').value;
     const injection = document.getElementById('injection').value;
     const injectionDate = document.getElementById('injectiondate').value;
@@ -238,7 +290,7 @@ function addInjectionResult(event) {
     };
 
     // Send data to the server
-    fetch('/injection-result/add', {
+    fetch('/api/injection-result/add', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -286,7 +338,7 @@ function updateSelectedInjectionResult() {
 
 // Function to update injection result details in the form
 function updateInjectionResultDetail(injectionResultId) {
-    fetch(`/injection-result/detail/` + injectionResultId)
+    fetch(`/api/injection-result/detail/` + injectionResultId)
         .then(response => response.json())
         .then(injectionResult => {
             // Populate form fields with the injection result data
@@ -301,7 +353,7 @@ function updateInjectionResultDetail(injectionResultId) {
             //     document.getElementById('customer').value = injectionResult.customerId;
             // });
             // loadVaccineTypeName(() => {
-            //     document.getElementById('vaccinetypename').value = injectionResult.vaccineTypeId;
+            //     document.getElementById('vaccineTypeName').value = injectionResult.vaccineTypeId;
             // });
             // loadVaccines(injectionResult.vaccineTypeId, () => {
             //     document.getElementById('vaccinename').value = injectionResult.vaccineId;
@@ -314,7 +366,7 @@ function updateInjectionResultDetail(injectionResultId) {
 // Function to fetch and show injection result details in a modal
 function showInjectionResultDetails(injectionResultId) {
     // Fetch injection result details by ID
-    fetch(`/injection-result/detail/` + injectionResultId)
+    fetch(`/api/injection-result/detail/` + injectionResultId)
         .then(response => response.json())
         .then(injectionResult => {
             // Populate the modal fields with the injection result data
@@ -340,7 +392,7 @@ function showInjectionResultDetails(injectionResultId) {
                 .catch(error => console.error('Error fetching vaccine details:', error));
 
             // Fetch vaccine type details
-            fetch(`/vaccine-type/detail/` + injectionResult.vaccineTypeInfoId)
+            fetch(`/api/vaccine-type/detail/` + injectionResult.vaccineTypeInfoId)
                 .then(response => response.json())
                 .then(vaccineType => {
                     document.getElementById('modalVaccineTypeName').value = vaccineType.vaccineTypeName;
@@ -384,7 +436,7 @@ function deleteSelectedInjectionResults() {
     }
 
     // Send delete request
-    fetch('/injection-result/delete', {
+    fetch('/api/injection-result/delete', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -413,7 +465,7 @@ function resetInputInjectionresult() {
 
     // Get all dropdown lists
     const customerDropdown = document.getElementById('customer');
-    const vaccineTypeDropdown = document.getElementById('vaccinetypename');
+    const vaccineTypeDropdown = document.getElementById('vaccineTypeName');
     const vaccineNameDropdown = document.getElementById('vaccinename');
     const placeOfInjectionDropdown = document.getElementById('injectionplace');
 

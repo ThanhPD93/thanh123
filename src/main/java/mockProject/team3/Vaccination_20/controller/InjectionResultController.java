@@ -24,7 +24,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/injection-result")
+@RequestMapping("/api/injection-result")
 public class InjectionResultController {
 
     @Autowired

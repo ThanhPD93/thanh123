@@ -23,32 +23,38 @@ public class Employee implements UserDetails {
     @Column(length = 36)
     private String employeeId;
 
+    @Column(nullable = false)
     private String address;
 
+    @Column(nullable = false)
     private LocalDate dateOfBirth;
 
-    @Column(length = 100)
+    @Column(length = 100, nullable = false)
     private String email;
 
-    @Column(length = 100)
+    @Column(length = 100, nullable = false)
     private String employeeName;
 
+    @Column(nullable = false)
     private Gender gender;
 
     @Lob
-    @Column(columnDefinition = "MEDIUMBLOB")
+    @Column(columnDefinition = "MEDIUMBLOB", nullable = false)
     private byte[] image;
 
+    @Column(nullable = false)
     private String password;
 
-    @Column(length = 20)
+    @Column(length = 20, nullable = false)
     private String phone;
 
-    @Column(length = 100)
+    @Column(length = 100, nullable = false)
     private String position;
 
+    @Column(nullable = false)
     private String username;
 
+    @Column(nullable = false)
     private String workingPlace;
 
     @Override

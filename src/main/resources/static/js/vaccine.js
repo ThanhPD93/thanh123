@@ -1,3 +1,41 @@
+//from dashboard
+function fetchVaccineList(filename) {
+    fetch(`/api/vaccine/getAjax?filename=${filename}`)
+    .then(response => response.text())
+    .then(data => {
+        document.getElementById('ajax-content').innerHTML = data;
+        if (filename === "vaccine-list.html"){
+            $("#ajax-title")[0].innerHTML = "VACCINE LIST";
+            findAllVaccineWithPagination(0,1);
+        } else {
+            $("#ajax-title")[0].innerHTML = "CREATE VACCINE";
+            loadVaccineTypeName();
+        }
+
+    })
+    .catch(error => console.error('Error fetching document:', error));
+}
+function fetchUpdateVaccine(filename, vaccineId){
+    fetch(`/api/vaccine/getAjax?filename=${filename}`)
+        .then(response => response.text())
+        .then(data => {
+            $("#ajax-content")[0].innerHTML = data;
+            $("#ajax-title")[0].innerHTML = "CREATE VACCINE";
+            updateVaccineDetail(vaccineId);
+        })
+        .catch(error => console.error('Error fetching document:', error));
+}
+function fetchImportExcelFile(filename){
+    fetch(`/api/vaccine/getAjax?filename=${filename}`)
+        .then(response => response.text())
+        .then(data => {
+            $("#ajax-content")[0].innerHTML = data;
+            $("#ajax-title")[0].innerHTML = "IMPORT VACCINE";
+        })
+        .catch(error => console.error('Error fetching document:', error));
+}
+
+
 //show list with pagination
 function findAllVaccineWithPagination(page, pageSize){
     const searchInputElement = document.getElementById('searchInput');
@@ -5,7 +43,7 @@ function findAllVaccineWithPagination(page, pageSize){
     const query = searchInputElement ? searchInputElement.value : '';
 //    console.log('Search input element:', searchInputElement);
     $.ajax({
-        url: "/vaccine/search",
+        url: "/api/vaccine/search",
         data: {
           searchInput: query,
           page: page,
@@ -43,7 +81,7 @@ function search(page) {
     const currentPageSize = parseInt(document.getElementById("dropdownMenuButton").innerHTML, 10);
 
     $.ajax({
-        url: "/vaccine/search",
+        url: "/api/vaccine/search",
         data: {
           searchInput: query,
           page: page,
@@ -142,7 +180,7 @@ function updatePaginationControls(currentPage, totalPages, pageSize, totalElemen
 //---------------------
 //create new vaccine
 function loadVaccineTypeName() {
-    fetch('/vaccine-type/vt-for-add-vaccine')
+    fetch('/api/vaccine-type/vt-for-add-vaccine')
         .then(response => response.json())
         .then(vaccineTypes => {
             const vaccineTypeSelect = document.getElementById('vaccineTypeName');
@@ -171,49 +209,38 @@ function loadVaccineTypeName() {
 function addVaccine(event) {
     event.preventDefault();
 
-    const vaccineType = JSON.parse(document.getElementById('vaccineTypeName').value);
     const activeInput = document.querySelector('input[name = "vaccineStatus"]:checked');
-    const data = {
+    const vaccine = {
         vaccineId: document.getElementById('vaccineId').value,
-        vaccineName: document.getElementById('vaccineName').value,
-        vaccineType: vaccineType,
-        numberOfInjection: document.getElementById('numberOfInjection').value,
-        vaccineUsage: document.getElementById('vaccineUsage').value,
-        indication: document.getElementById('vaccineIndication').value,
         contraindication: document.getElementById('vaccineContraindication').value,
+        indication: document.getElementById('vaccineIndication').value,
+        numberOfInjection: document.getElementById('numberOfInjection').value,
+        vaccineOrigin: document.getElementById('vaccineOrigin').value,
         timeBeginNextInjection: document.getElementById('beginning-time').value,
         timeEndNextInjection: document.getElementById('ending-time').value,
-        vaccineOrigin: document.getElementById('vaccineOrigin').value,
-        vaccineStatus: activeInput ? "ACTIVE" : "INACTIVE"
+        vaccineUsage: document.getElementById('vaccineUsage').value,
+        vaccineName: document.getElementById('vaccineName').value,
+        vaccineStatus: activeInput ? "ACTIVE" : "INACTIVE",
+        vaccineType: document.getElementById('vaccineTypeName').value
     };
-    fetch('/vaccine/add', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => {
-        if (response.ok) {
-            return response.json();
-        } else {
-            return response.text().then(text => {
-                throw new Error(text || 'Failed to add vaccine.');
-            });
-        }
-    })
-    .then(result => {
-        alert('Vaccine added successfully!');
-        document.getElementById('add-vaccine-form').reset();
-    })
-    .catch(error => {
-        console.error('Error adding vaccine:', error);
-        alert('Failed to add vaccine. Please try again.');
+console.log(vaccine);
+
+    $.ajax({
+    	url: "/api/vaccine/add",
+    	method: "POST",
+    	contentType: "application/json",
+    	data: JSON.stringify(vaccine),
+    	success: function(stringData) {
+    		alert(stringData);
+    		document.getElementById('add-vaccine-form').reset();
+    	},
+    	error: function(xhr) {
+    		console.error("error at /api/vaccine/add, error code: " + xhr.status);
+    	}
     });
 }
 //---------------------
 //handle checkbox for vaccineId
-let selectedVaccineId = null;
 function handleCheckboxChange() {
     const checkboxes = document.querySelectorAll('.check-select-box');
     const updateButton = document.querySelector('.update-button');
@@ -237,7 +264,7 @@ function updateSelectedVaccine(){
     fetchUpdateVaccine('create-vaccine.html', vaccineId);
 }
 function updateVaccineDetail(vaccineId){
-    fetch(`/vaccine/detail/` + vaccineId)
+    fetch(`/api/vaccine/detail/` + vaccineId)
         .then(response => response.json())
         .then(vaccine => {
             document.getElementById('vaccineId').value = vaccine.vaccineId;
@@ -271,7 +298,7 @@ async function changeStatusSelectedVaccines(){
     console.log(vaccineIds);
 
     try{
-        const response = await fetch('/vaccine/change-status', {
+        const response = await fetch('/api/vaccine/change-status', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -328,7 +355,7 @@ function importExcelFile(event){
     const formData = new FormData();
     formData.append('file', fileInput.files[0]);
 
-    fetch('/vaccine/import/excel', {
+    fetch('/api/vaccine/import/excel', {
         method: 'POST',
         body: formData
     })

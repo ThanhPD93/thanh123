@@ -19,7 +19,7 @@ public interface VaccineService {
     Page<VaccineDto> getVaccineList(int page, int size);
     Page<VaccineDto> getVaccineListBySearchInput(String searchInput, int page, int size);
     VaccineDto getVaccineById(String vaccineId);
-    VaccineDto createVaccine(VaccineDto vaccineDto);
+    int createVaccine(VaccineDto vaccineDto);
     VaccineDto updateVaccine(String vaccineId, VaccineDto vaccineDto);
     void changeStatusVaccine(List<String> vaccineIds);
     List<String> importVaccineFromExcel(MultipartFile file) throws IOException;

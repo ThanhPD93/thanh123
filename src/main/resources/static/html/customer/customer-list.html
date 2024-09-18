@@ -17,10 +17,10 @@
                     10
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#" onclick="dropdownPageSize(10); listCustomers(0)">10</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="dropdownPageSize(25); listCustomers(0)">25</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="dropdownPageSize(50); listCustomers(0)">50</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="dropdownPageSize(100); listCustomers(0)">100</a></li>
+                    <li><a class="dropdown-item" onclick="dropdownPageSize(10); listCustomers(0)">10</a></li>
+                    <li><a class="dropdown-item" onclick="dropdownPageSize(25); listCustomers(0)">25</a></li>
+                    <li><a class="dropdown-item" onclick="dropdownPageSize(50); listCustomers(0)">50</a></li>
+                    <li><a class="dropdown-item" onclick="dropdownPageSize(100); listCustomers(0)">100</a></li>
                 </ul>
             </div>
             <span>entries</span>
@@ -29,10 +29,8 @@
         <div class="search">
             <div class="d-flex">
                 <span class="me-2">Search:</span>
-                <input type="search" name="searchInput" id="searchInput" class="border-0 border-bottom border-info" style="outline: none;" onfocus="this.style.outline = 'none';" placeholder=". . .">
-                <button id="search-button" onclick="listCustomers(0)" class="rounded-5 border-0 bg-light">
-                    <img src="/images/icons/search.png">
-                </button>
+                <input type="search" name="searchInput" id="searchInput" class="border-0 border-bottom border-info" style="outline: none;" onfocus="this.style.outline = 'none';" placeholder=". . ."
+                       oninput="listCustomers(0)">
             </div>
         </div>
     </div>
@@ -73,12 +71,12 @@
     <!--    3 buttons-->
     <div class="d-flex flex-row mt-2">
         <div class="me-2">
-            <a type="button" class="btn btn-success" href="#" onclick="fetchCustomer('customer-create.html')">
+            <a type="button" class="btn btn-success" onclick="fetchCustomer('customer-create.html')">
                 Register
             </a>
         </div>
         <div class="me-2">
-            <a type="button" class="update-button btn btn-warning text-white" href="#" onclick="updateSelectedCustomer()">
+            <a type="button" class="update-button btn btn-warning text-white" onclick="updateSelectedCustomer()">
                 Update Customer
             </a>
         </div>
@@ -98,6 +96,13 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <div class="col mb-3">
+                    <label class="form-label fw-medium">ID</label>
+                    <div class="input-group">
+                        <img src="/images/icons/people.png" class="input-group-text border-0">
+                        <input type="text" class="form-control text-uppercase" id="modalCustomerId" disabled>
+                    </div>
+                </div>
                 <div class="col mb-3">
                     <label class="form-label fw-medium">Full name</label>
                     <div class="input-group">

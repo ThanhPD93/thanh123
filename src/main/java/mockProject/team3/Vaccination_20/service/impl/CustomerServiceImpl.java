@@ -4,7 +4,9 @@ import mockProject.team3.Vaccination_20.dto.customerDto.CustomerAddRequestDto;
 import mockProject.team3.Vaccination_20.dto.customerDto.CustomerFindByIdDto;
 import mockProject.team3.Vaccination_20.dto.customerDto.CustomerFindByIdRequestDto;
 import mockProject.team3.Vaccination_20.dto.customerDto.CustomerListResponseDto;
+import mockProject.team3.Vaccination_20.dto.employeeDto.FindAllResponseEmployee;
 import mockProject.team3.Vaccination_20.model.Customer;
+import mockProject.team3.Vaccination_20.model.Employee;
 import mockProject.team3.Vaccination_20.repository.CustomerRepository;
 import mockProject.team3.Vaccination_20.model.Customer;
 import mockProject.team3.Vaccination_20.repository.CustomerRepository;
@@ -38,19 +40,13 @@ public class CustomerServiceImpl implements CustomerService {
     public Page<CustomerListResponseDto> findByFullNameOrAddress(String searchInput, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Customer> customers;
-
         if (searchInput.trim().isEmpty()) {
             customers = customerRepository.findAll(pageable);
         } else {
-            customers = customerRepository.findBySearch(searchInput, pageable);
+            customers = customerRepository.findBySearch(searchInput,pageable);
         }
-
-        // Map the content (a List of Customers) to CustomerListResponseDto
-        List<CustomerListResponseDto> customerListResponseDtos = modelMapper.map(customers.getContent(),
-                new TypeToken<List<CustomerListResponseDto>>(){}.getType());
-
-        // Return a new PageImpl using the mapped content
-        return new PageImpl<>(customerListResponseDtos, pageable, customers.getTotalElements());
+        List<CustomerListResponseDto> responseCustomers = modelMapper.map(customers.getContent(), new TypeToken<List<CustomerListResponseDto>>(){}.getType());
+        return new PageImpl<>(responseCustomers, pageable, customers.getTotalElements());
     }
 
     @Override
