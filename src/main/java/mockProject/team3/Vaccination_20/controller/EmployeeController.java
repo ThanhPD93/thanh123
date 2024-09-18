@@ -1,18 +1,24 @@
 package mockProject.team3.Vaccination_20.controller;
 
-import mockProject.team3.Vaccination_20.dto.request.forcreate.CRequestEmployee;
-import mockProject.team3.Vaccination_20.dto.response.fordetail.DResponseEmployee;
-import mockProject.team3.Vaccination_20.dto.response.forlist.LResponseEmployee;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import mockProject.team3.Vaccination_20.dto.employeeDto.CRequestEmployee;
+import mockProject.team3.Vaccination_20.dto.employeeDto.DResponseEmployee;
+import mockProject.team3.Vaccination_20.dto.employeeDto.FindAllResponseEmployee;
+import mockProject.team3.Vaccination_20.dto.employeeDto.LResponseEmployee;
 import mockProject.team3.Vaccination_20.model.Employee;
 import mockProject.team3.Vaccination_20.service.EmployeeService;
-import mockProject.team3.Vaccination_20.utils.ApiResponse;
+import mockProject.team3.Vaccination_20.utils.MSG;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -21,99 +27,105 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/employee")
+@RequestMapping("/api/employee")
 public class EmployeeController {
     @Autowired
     EmployeeService employeeService;
 
+    @Operation(summary = "Using ajax to load content dynamically")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "ajax html code loaded successfully!"),
+            @ApiResponse(responseCode = "400", description = "ajax file name must not be empty!"),
+            @ApiResponse(responseCode = "404", description = "ajax path could not find file!")
+    })
     @GetMapping("/getAjax")
-    public String getDocument(@RequestParam String filename) throws IOException {
+    public ResponseEntity<String> getDocument(@RequestParam String filename) throws IOException {
+        // if user input filename that is empty or null -> return response 400 and appropriate message
+        if(filename == null || filename.isEmpty()) {
+            return ResponseEntity.badRequest().body(MSG.MSG31.getMessage());
+        }
         ClassPathResource resource = new ClassPathResource("static/html/employee/" + filename);
         Path path = resource.getFile().toPath();
-        return Files.readString(path);
+        // if the path to the file cannot find the file -> return 404
+        if (!Files.exists(path)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(MSG.MSG32.getMessage());
+        } else {
+            // if file found, return response 200 and the file
+            return ResponseEntity.ok(Files.readString(path));
+        }
     }
 
+	@Operation(summary = "fetch an employee from database by employee ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "found an employee by employee ID provided"),
+            @ApiResponse(responseCode = "404", description = "employee not found by employee ID provided")
+    })
+    @GetMapping("/findById")
+    public ResponseEntity<DResponseEmployee> findById(@RequestParam String employeeId) {
+        DResponseEmployee employee = employeeService.findById(employeeId);
+        if (employee == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(employee);
+    }
+
+    @Operation(summary = "find all employees or search employees and put in a pagination list for display")
+    @ApiResponse(responseCode = "200", description = "Pagination list of employees found!")
     @GetMapping("/findAll")
-    public List<Employee> findAll() {
-        return employeeService.findAll();
+    public ResponseEntity<Page<FindAllResponseEmployee>> findAll(@RequestParam String searchInput,
+                                                                 @RequestParam(defaultValue = "0") int page,
+                                                                 @RequestParam(defaultValue = "5") int size) {
+        return ResponseEntity.ok(employeeService.findBySearch(searchInput, page, size));
     }
 
 
-//    @PutMapping("/update")
-//    public ResponseEntity<DResponseEmployee> updateEmployee(@RequestBody URequestEmployee uRequestEmployee){
-//        DResponseEmployee dResponseEmployee = employeeService.updateEmployee(uRequestEmployee);
-//        return ResponseEntity.ok().body(dResponseEmployee);
-//    }
-
-    //show list employee
-    @GetMapping("/findAllWithPagination")
-    public Page<Employee> findAllWithPagination(@RequestParam String searchInput,
-                                                @RequestParam(defaultValue = "0") int page,
-                                                @RequestParam(defaultValue = "5") int size) {
-        return employeeService.findBySearchWithPagination(searchInput, page, size);
-    }
-
-    @GetMapping("/list")
-    public ResponseEntity<ApiResponse<List<LResponseEmployee>>> listEmployees() {
-        List<LResponseEmployee> employees = employeeService.getAll();
-
-        ApiResponse<List<LResponseEmployee>> response;
-        if (employees.isEmpty()) {
-            response = new ApiResponse<>(0, "Not Found!", new ArrayList<>());
-        } else {
-            response = new ApiResponse<>(1, "Success", employees);
-        }
-
-        return ResponseEntity.ok(response);
-    }
-    //add employee
+    @Operation(summary = "Add a new employee or update an existing one")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(type = "string", example = "image base64 is not in correct format, failed!"))),
+        @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(type = "string", example = "New employee added successfully! or employee updated successfully!")))
+    })
     @PostMapping("/add")
-    public ResponseEntity<ApiResponse<DResponseEmployee>> addEmployee(@RequestBody CRequestEmployee cRequestEmployee) {
-        DResponseEmployee dResponseEmployee = employeeService.addEmployee(cRequestEmployee);
-        ApiResponse<DResponseEmployee> response;
-        if (dResponseEmployee != null) {
-            response = new ApiResponse<>(1, "Employee added successfully", dResponseEmployee);
-        } else {
-            response = new ApiResponse<>(0, "Failed to add employee", null);
+    public ResponseEntity<String> addEmployee(@Valid @RequestBody CRequestEmployee cRequestEmployee) {
+        int serviceResponse = employeeService.addEmployee(cRequestEmployee);
+        if(serviceResponse == 0) {
+            return ResponseEntity.badRequest().body("image base64 is not in correct format, failed!");
         }
-
-        return ResponseEntity.ok(response);
+        else if(serviceResponse == 1) {
+            return ResponseEntity.ok().body("New employee added successfully!");
+        }
+        else {
+            return ResponseEntity.ok().body("employee updated successfully!");
+        }
     }
 
+    @Operation(summary = "return a picture (in byte[] format)")
+    @ApiResponse(responseCode = "200", description = "picture return successfully!")
     @GetMapping("/image/{id}")
     public ResponseEntity<byte[]> getEmployeeImage(@PathVariable String id) {
-        Employee employee = employeeService.findById(id);
+        Employee employee = employeeService.findEmployeeById(id);
         byte[] imageBytes = employee.getImage();
 
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_JPEG)  // Or IMAGE_PNG based on your image type
                 .body(imageBytes);
     }
-    @GetMapping("/detail/{id}")
-    public ResponseEntity<Employee> getEmployeeById(@PathVariable String id) {
-        Employee employee = employeeService.findEmployeeById(id);
-        if (employee != null) {
-            return ResponseEntity.ok(employee);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
 
+    @Operation(summary = "delete one or more employees by employee IDs")
+    @ApiResponse(responseCode = "200", description = "delete success!")
     @DeleteMapping("/delete")
-    public ResponseEntity<ApiResponse<String>> deleteEmployees(@RequestBody List<String> employeeIds) {
+    public ResponseEntity<String> deleteEmployees(@RequestBody List<String> employeeIds) {
         if (employeeIds == null || employeeIds.isEmpty()) {
-            return ResponseEntity.badRequest().body(new ApiResponse<>(400, "No data deleted!", null));
+            return ResponseEntity.badRequest().body("No data deleted!");
         }
 
         try {
             employeeService.deleteEmployees(employeeIds);
-            return ResponseEntity.ok(new ApiResponse<>(200, "Employees deleted successfully", null));
+            return ResponseEntity.ok("Employees deleted successfully");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>(500, "An error occurred: " + e.getMessage(), null));
+                    .body("An error occurred");
         }
     }
 

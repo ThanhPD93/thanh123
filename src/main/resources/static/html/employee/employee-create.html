@@ -18,19 +18,18 @@
         <div class="d-flex justify-content-between mb-4">
             <!--employee ID-->
             <div class="col-4">
-                <label class="form-label fw-medium">Employee ID <span class="text-danger">*</span></label>
+                <label class="form-label fw-medium">Employee ID <span class="text-danger">(*)</span></label>
                 <div class="input-group">
                     <img src="/images/icons/people.png" class="input-group-text border-0">
-                    <input type="text" class="form-control text-uppercase" id="employeeId" placeholder="ID09AZ..." required>
+                    <input type="text" class="form-control" id="employeeId" maxlength="12" required>
                 </div>
             </div>
             <!--employee name-->
             <div class="col-4">
-                <label class="form-label fw-medium">Employee Name <span class="text-danger">*</span></label>
+                <label class="form-label fw-medium">Employee Name <span class="text-danger">(*)</span></label>
                 <div class="input-group">
                     <img src="/images/icons/people.png" class="input-group-text border-0">
-                    <input type="text" class="form-control text-capitalize" id="employeeName" placeholder="
-David Copperfield..." required>
+                    <input type="text" class="form-control text-capitalize" id="employeeName" maxlength="100" required>
                 </div>
             </div>
             <!--gender-->
@@ -56,7 +55,7 @@ David Copperfield..." required>
         <div class="d-flex justify-content-between mb-4">
             <!--date of birth-->
             <div class="col-4">
-                <label class="form-label fw-medium">Date of Birth <span class="text-danger">*</span></label>
+                <label class="form-label fw-medium">Date of Birth <span class="text-danger">(*)</span></label>
                 <div class="input-group">
                     <img src="/images/icons/calendar.png" class="input-group-text border-0">
                     <input type="date" class="form-control" id="dateOfBirth">
@@ -64,18 +63,18 @@ David Copperfield..." required>
             </div>
             <!--phone-->
             <div class="col-4">
-                <label class="form-label fw-medium">Phone <span class="text-danger">*</span></label>
+                <label class="form-label fw-medium">Phone <span class="text-danger">(*)</span></label>
                 <div class="input-group">
                     <img src="/images/icons/old-typical-phone.png" class="input-group-text border-0">
-                    <input type="number" class="form-control" id="phone" placeholder="0988xxxx88" required>
+                    <input type="number" class="form-control" id="phone" maxlength="50">
                 </div>
             </div>
             <!--address-->
             <div class="col-3">
-                <label class="form-label fw-medium">Address <span class="text-danger">*</span></label>
+                <label class="form-label fw-medium">Address <span class="text-danger">(*)</span></label>
                 <div class="input-group">
                     <img src="/images/icons/location.png" class="input-group-text border-0">
-                    <input type="text" class="form-control text-capitalize" id="address" placeholder="Metuchen, NewJersey, US..." required>
+                    <input type="text" class="form-control text-capitalize" id="address" maxlength="100">
                 </div>
             </div>
         </div>
@@ -83,10 +82,10 @@ David Copperfield..." required>
         <div class="d-flex justify-content-between mb-4">
             <!--email-->
             <div class="col-4">
-                <label class="form-label fw-medium">Email <span class="text-danger">*</span></label>
+                <label class="form-label fw-medium">Email <span class="text-danger">(*)</span></label>
                 <div class="input-group">
                     <img src="/images/icons/email.png" class="input-group-text border-0">
-                    <input type="email" class="form-control" id="email" placeholder="Email@domain..." required>
+                    <input type="email" class="form-control" id="email" maxlength="100" required>
                 </div>
             </div>
             <!--working place-->
@@ -94,7 +93,7 @@ David Copperfield..." required>
                 <label class="form-label fw-medium">Working Place</label>
                 <div class="input-group">
                     <img src="/images/icons/building.png" class="input-group-text border-0">
-                    <input type="text" class="form-control text-capitalize" id="workingPlace" placeholder="Metuchen, NewJersey, US...">
+                    <input type="text" class="form-control text-capitalize" id="workingPlace" maxlength="100" required>
                 </div>
             </div>
             <!--position-->
@@ -102,7 +101,7 @@ David Copperfield..." required>
                 <label class="form-label fw-medium">Position</label>
                 <div class="input-group">
                     <img src="/images/icons/employee.png" class="input-group-text border-0">
-                    <input type="text" class="form-control text-capitalize" id="position" placeholder="Manager...">
+                    <input type="text" class="form-control text-capitalize" id="position" maxlength="100" required>
                 </div>
             </div>
         </div>
@@ -113,23 +112,23 @@ David Copperfield..." required>
                 <label class="form-label fw-medium">Image</label>
                 <div class="input-group">
                     <img src="/images/icons/image.png" class="input-group-text border-0">
-                    <input type="file" class="form-control" id="image" onchange="previewImage()">
+                    <input type="file" class="form-control" id="image" onchange="previewImage()" required>
                 </div>
             </div>
             <!--username-->
             <div class="col-4">
-                <label class="form-label fw-medium">Username <span class="text-danger">*</span></label>
+                <label class="form-label fw-medium">Username <span class="text-danger">(*)</span></label>
                 <div class="input-group">
                     <img src="/images/icons/id-card.png" class="input-group-text border-0">
-                    <input type="text" class="form-control" id="username" placeholder="Username01..." required>
+                    <input type="text" class="form-control" id="username" required>
                 </div>
             </div>
             <!--password-->
             <div class="col-3">
-                <label class="form-label fw-medium">Password <span class="text-danger">*</span></label>
+                <label class="form-label fw-medium">Password <span class="text-danger">(*)</span></label>
                 <div class="input-group">
                     <img src="/images/icons/password.png" class="input-group-text border-0">
-                    <input type="password" class="form-control" id="password" placeholder="P4ssw0rd..." required>
+                    <input type="password" class="form-control" id="password" required>
                     <button type="button" class="toggle-password border border-start-0 rounded-end"
                             onclick="togglePassword()" id="toggle-button">
                         <img src="/images/icons/eye.png" alt="" id="toggle-icon">
@@ -151,11 +150,11 @@ David Copperfield..." required>
                 </div>
                 <div class="me-2">
                     <button type="button" class="btn btn-info text-white" style="width: 100px;"
-                            onclick="resetInput()">Reset
+                            onclick="resetEmployeeInput()">Reset
                     </button>
                 </div>
                 <div>
-                    <a class="btn btn-warning text-white" href="#" onclick="fetchEmployee('employee-list.html')"
+                    <a class="btn btn-warning text-white" onclick="fetchEmployee('employee-list.html')"
                        style="width: 100px;">Cancel</a>
                 </div>
             </div>

@@ -43,8 +43,7 @@
 </head>
 <body>
 <div class="container my-5">
-    <h1 class="text-center mb-4">CREATE INJECTION SCHEDULE</h1>
-    <form onsubmit="addInjectionSchedule()" id="injection-schedule-create-form">
+    <form onsubmit="event.preventDefault(); addInjectionSchedule();" id="injection-schedule-create-form">
         <div class="row">
             <div class="form-group">
                 <label for="vaccine" class="form-label">Vaccine<span class="text-danger">(*)</span>:</label>
@@ -76,7 +75,7 @@
         <div class="btn-group">
             <button type="submit" class="btn btn-success">Save</button>
             <button type="button" class="btn btn-info text-white" onclick="resetInjectionSchedule()">Reset</button>
-            <a class="btn btn-warning text-white" href="#" onclick="fetchInjectionSchedule('injection-schedule-list.html')">Cancel</a>
+            <a class="btn btn-warning text-white" onclick="fetchInjectionSchedule('injection-schedule-list.html')">Cancel</a>
         </div>
     </form>
 </div>

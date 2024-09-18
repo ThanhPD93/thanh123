@@ -1,10 +1,30 @@
-function listCustomers (currentPage) {
-	const query = $("#searchInput").val();
-    const currentPageSize = parseInt($("#dropdownMenuButton").html(), 10);
-//    console.log(currentPageSize);
+function fetchCustomer(filename) {
+    $.ajax({
+        url: "/api/customer/getAjax",
+        data: { filename: filename },
+        dataType: "text",
+        success: function(data) {
+            // Inject the response content into the DOM
+            $("#ajax-content")[0].innerHTML = data;
+            if (filename === "customer-list.html") {
+                $("#ajax-title").html("INJECTION CUSTOMER LIST");
+                listCustomers(0);
+            } else {
+                $("#ajax-title").html("REGISTER CUSTOMER INFORMATION");
+                randomizeCaptcha();
+            }
+        },
+        error: function(jqxhr, textStatus, errorThrown) {
+            console.error("AJAX error:", textStatus, errorThrown);
+        }
+    });
+}
 
+function listCustomers(currentPage) {
+	const query = $("#searchInput")[0].value;
+    const currentPageSize = parseInt($("#dropdownMenuButton").html(), 10);
 	$.ajax({
-		url: "/customer/findAllCustomers",
+		url: "/api/customer/findAllCustomers",
 		data: {
 			searchInput: query,
 			page: currentPage,
@@ -12,9 +32,7 @@ function listCustomers (currentPage) {
 		},
 		method: "GET",
 		dataType: "json",
-		success: function(apiResponse) {
-			const customers = apiResponse.data;
-			if(apiResponse.code === 1) {
+		success: function(customers) {
                 $("#customer-list-content").html("");
                 customers.content.forEach(customer => {
                     const row = `
@@ -39,9 +57,6 @@ function listCustomers (currentPage) {
                                                 customers.totalPages,
                                                 currentPageSize,
                                                 customers.totalElements);
-			} else {
-                alert(apiResponse.description);
-            }
 		},
 		error: function(jqXHR, errorThrown) {
             console.error('Error fetching customer data:', jqXHR.statusText, errorThrown);
@@ -93,7 +108,7 @@ function deleteSelectedCustomer() {
         return;
     }
     $.ajax({
-        url: "/customer/delete",
+        url: "/api/customer/delete",
         method: "DELETE",
         contentType: "application/json",
         data: JSON.stringify(customerIds),
@@ -140,7 +155,7 @@ function checkCaptcha() {
 	}
 	if($("#customerCaptcha").val() === $("#customerCaptchaCode").val()) {
 		addCustomer();
-		fetchCustomer("customer-create.html");
+		$("#add-customer-form")[0].reset();
 	} else {
 		alert("Captcha does not match!, please try again");
 	}
@@ -161,20 +176,18 @@ function addCustomer() {
             username: $('#customerUsername').val(),
             password: $('#customerPassword').val(),
         };
-    console.log(customer);
-
     $.ajax({
-    	url: "/customer/add",
+    	url: "/api/customer/add",
     	method: "POST",
     	contentType: "application/json",
     	data: JSON.stringify(customer),
-    	dataType: "text",
-    	success: function(data) {
-    		alert(data);
+    	success: function(stringData) {
+    		alert(stringData);
     	},
-    	error: function(error) {
-    		alert("error fetching data for /customer/add");
-    		alert(error);
+    	error: function(xhr) {
+    		alert("error fetching data for /api/customer/add");
+    		alert(xhr.status);
+    		alert(xhr.statusText);
     	}
     });
 }
@@ -186,10 +199,9 @@ function updateSelectedCustomer() {
 		return;
 	}
 	const customerId = checkbox[0].closest('tr').querySelector('td:nth-child(1)').textContent;
-	$.getScript("/js/dashboard.js");
 	fetchCustomer("customer-create.html");
 	$.ajax({
-        url: "/customer/findById",
+        url: "/api/customer/findById",
         data: {id: customerId},
         dataType: "json",
         success: function(customer) {
@@ -209,7 +221,31 @@ function updateSelectedCustomer() {
             $("#customerEmail")[0].value = customer.email;
             $("#customerPhone")[0].value = customer.phone;
         },
-        error: function() {alert("error at /customer/findById")}
+        error: function() {alert("error at /api/customer/findById")}
     });
+}
 
+function showCustomerDetails(id) {
+	$.ajax({
+		url: "/api/customer/findById",
+		data: {customerId: id},
+		success: function(customer) {
+		alert(customer.customerId);
+			$("#modalCustomerId")[0].value = customer.customerId;
+			$("#modalCustomerFullName")[0].value = customer.customerName;
+			$("#modalCustomerDob")[0].value = customer.dateOfBirth;
+			$("#modalCustomerGender")[0].value = customer.gender;
+			$("#modalCustomerIdentityCard")[0].value = customer.identityCard;
+			$("#modalCustomerAddress")[0].value = customer.address;
+			$("#modalCustomerEmail")[0].value = customer.email;
+			$("#modalCustomerPhone")[0].value = customer.phone;
+			// Show the modal
+            var modal = new bootstrap.Modal(document.getElementById('customerModal'));
+            modal.show();
+		},
+		error: function(xhr) {
+			console.log("error at /api/customer/findById/{id}: ", xhr.responseText);
+			alert("error at /api/customer/findById/{id}");
+		}
+	});
 }

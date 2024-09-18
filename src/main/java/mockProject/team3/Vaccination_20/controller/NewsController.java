@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/news")
+@RequestMapping("/api/news")
 public class NewsController {
 	@Autowired
     private NewsService newsService;

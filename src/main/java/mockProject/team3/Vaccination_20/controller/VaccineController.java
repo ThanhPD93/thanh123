@@ -33,7 +33,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/vaccine")
+@RequestMapping("/api/vaccine")
 //@CrossOrigin(origins = "*")
 public class VaccineController {
     @Autowired
@@ -47,10 +47,9 @@ public class VaccineController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<VaccineDto> createVaccine(@RequestBody VaccineDto vaccineDto) {
-        System.out.println("Received VaccineDto: " + vaccineDto);
-        VaccineDto createdVaccine = vaccineService.createVaccine(vaccineDto);
-        return new ResponseEntity<>(createdVaccine, HttpStatus.CREATED);
+    public ResponseEntity<String> createVaccine(@RequestBody VaccineDto vaccineDto) {
+        int result = vaccineService.createVaccine(vaccineDto);
+        return ResponseEntity.ok("add new vaccine success!");
     }
 
     @GetMapping("/list")

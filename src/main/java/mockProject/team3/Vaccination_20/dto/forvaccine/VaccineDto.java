@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import mockProject.team3.Vaccination_20.utils.InjectionScheduleStatus;
+import mockProject.team3.Vaccination_20.utils.Status;
 
 import java.time.LocalDate;
 
@@ -22,6 +23,6 @@ public class VaccineDto {
     private LocalDate timeEndNextInjection;
     private String vaccineUsage;
     private String vaccineName;
-    private InjectionScheduleStatus vaccineStatus;
-    private VaccineTypeDtoForVaccine vaccineType;
+    private Status vaccineStatus;
+    private String vaccineType;
 }

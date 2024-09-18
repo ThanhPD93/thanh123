@@ -1,6 +1,7 @@
 package mockProject.team3.Vaccination_20.service.impl;
 
 import jakarta.annotation.PostConstruct;
+import mockProject.team3.Vaccination_20.dto.customerDto.CustomerListResponseDto;
 import mockProject.team3.Vaccination_20.dto.injectionScheduleDto.InjectionScheduleDto;
 import mockProject.team3.Vaccination_20.dto.injectionScheduleDto.SaveRequestInjectionSchedule;
 import mockProject.team3.Vaccination_20.dto.injectionScheduleDto.VaccineDto;
@@ -14,6 +15,10 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -41,14 +46,17 @@ public class InjectionScheduleServiceImpl implements InjectionScheduleService {
     }
 
     @Override
-    public List<InjectionScheduleDto> findAll() {
-        List<InjectionSchedule> injectionSchedules = injectionScheduleRepository.findAll();
-        List<InjectionScheduleDto> injectionScheduleDtos = modelMapper.map(
-                injectionSchedules,
-                new TypeToken<List<InjectionScheduleDto>>() {}.getType()
-        );
-
-        return injectionScheduleDtos;
+    public Page<InjectionScheduleDto> findBySearch(String searchInput, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<InjectionSchedule> injectionSchedules;
+        if (searchInput.trim().isEmpty()) {
+            injectionSchedules = injectionScheduleRepository.findAll(pageable);
+        }
+        else {
+            injectionSchedules = injectionScheduleRepository.findBySearch(searchInput, pageable);
+        }
+        List<InjectionScheduleDto> injectionScheduleDtos = modelMapper.map(injectionSchedules.getContent(), new TypeToken<List<InjectionScheduleDto>>(){}.getType());
+    	return new PageImpl<>(injectionScheduleDtos, pageable, injectionSchedules.getTotalElements());
     }
 
     @Override

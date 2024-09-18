@@ -4,6 +4,7 @@ import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.CRequestVaccineType;
 import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.DResponseVaccineType;
 
 import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.FindAllResponseVaccineType;
+import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.FindByIdResponseVaccineType;
 import mockProject.team3.Vaccination_20.model.VaccineType;
 import mockProject.team3.Vaccination_20.repository.VaccineTypeRepository;
 import mockProject.team3.Vaccination_20.service.VaccineTypeService;
@@ -65,7 +66,7 @@ public class VaccineTypeServiceImpl implements VaccineTypeService {
     }
 
     @Override
-    public DResponseVaccineType addVaccineType(CRequestVaccineType cRequestVaccineType) {
+    public int addVaccineType(CRequestVaccineType cRequestVaccineType) {
         VaccineType vaccineType = vaccineTypeRepository.findByVaccineTypeId(cRequestVaccineType.getVaccineTypeId());
         if(cRequestVaccineType.getVaccineTypeImage() == null && vaccineType != null) {
             byte[] currentImage = vaccineTypeRepository.findByVaccineTypeId(cRequestVaccineType.getVaccineTypeId()).getVaccineTypeImage();
@@ -81,31 +82,29 @@ public class VaccineTypeServiceImpl implements VaccineTypeService {
                 byte[] decodedImage = Base64.getDecoder().decode(base64Image);
                 vaccineType.setVaccineTypeImage(decodedImage);
             } catch (IllegalArgumentException e) {
-                System.err.println("Failed to decode image: " + e.getMessage());
-                throw new RuntimeException("Invalid Base64 image data", e);
+                return 0;
             }
         }
-        return modelMapper.map(vaccineTypeRepository.save(vaccineType), DResponseVaccineType.class);
+        VaccineType vaccineTypeResult = vaccineTypeRepository.save(vaccineType);
+        return 1;
     }
 
     @Override
-    public VaccineType findById(String id) {
-        return vaccineTypeRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Vaccine type not found with id: " + id));
+    public FindByIdResponseVaccineType findById(String id) {
+        VaccineType vaccineType = vaccineTypeRepository.findById(id).get();
+        return modelMapper.map(vaccineType, FindByIdResponseVaccineType.class);
     }
 
     @Override
     public int makeInactive(List<String> vaccineTypeIds) {
-        System.out.println("INSIDE SERVICE:" + vaccineTypeIds.size());
         int count = 0;
         List<VaccineType> vaccineTypes = vaccineTypeRepository.findAllById(vaccineTypeIds);
-        System.out.println(vaccineTypes.size());
         if(vaccineTypes.isEmpty()) {
             return 0;
         }
         for (VaccineType vaccineType : vaccineTypes) {
             if(vaccineType.getVaccineTypeStatus() == Status.INACTIVE) {
-                continue;
+                return 0;
             }
             vaccineType.setVaccineTypeStatus(Status.INACTIVE);
             count++;
@@ -117,19 +116,14 @@ public class VaccineTypeServiceImpl implements VaccineTypeService {
     @Override
     public Page<FindAllResponseVaccineType> findBySearchWithPagination(String searchInput, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-
-        // Check if searchInput is empty or null
+		Page<VaccineType> vaccineTypePage;
         if (StringUtils.hasText(searchInput)) {
-            // Perform search query with pagination
-            Page<VaccineType> vaccineTypePage = vaccineTypeRepository.findBySearch(searchInput, pageable);
-            List<FindAllResponseVaccineType> responseVaccineTypes = modelMapper.map(vaccineTypePage.getContent(), new TypeToken<List<FindAllResponseVaccineType>>() {}.getType());
-            return new PageImpl<>(responseVaccineTypes, pageable, vaccineTypePage.getTotalElements());
+            vaccineTypePage = vaccineTypeRepository.findBySearch(searchInput, pageable);
         } else {
-            // Return all results with pagination when no searchInput
-            Page<VaccineType> vaccineTypePage = vaccineTypeRepository.findAll(pageable);
-            List<FindAllResponseVaccineType> responseVaccineTypes = modelMapper.map(vaccineTypePage.getContent(), new TypeToken<List<FindAllResponseVaccineType>>() {}.getType());
-            return new PageImpl<>(responseVaccineTypes, pageable, vaccineTypePage.getTotalElements());
+            vaccineTypePage = vaccineTypeRepository.findAll(pageable);
         }
+        List<FindAllResponseVaccineType> responseVaccineTypes = modelMapper.map(vaccineTypePage.getContent(), new TypeToken<List<FindAllResponseVaccineType>>() {}.getType());
+        return new PageImpl<>(responseVaccineTypes, pageable, vaccineTypePage.getTotalElements());
     }
 
 

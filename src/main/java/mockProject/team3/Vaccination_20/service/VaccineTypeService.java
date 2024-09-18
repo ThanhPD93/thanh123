@@ -4,6 +4,7 @@ import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.CRequestVaccineType;
 import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.DResponseVaccineType;
 
 import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.FindAllResponseVaccineType;
+import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.FindByIdResponseVaccineType;
 import mockProject.team3.Vaccination_20.model.Vaccine;
 import mockProject.team3.Vaccination_20.model.VaccineType;
 import org.springframework.data.domain.Page;
@@ -17,9 +18,9 @@ public interface VaccineTypeService {
 
     VaccineType findVaccineTypeById(String id);
 
-    DResponseVaccineType addVaccineType(CRequestVaccineType cRequestVaccineType);
+    int addVaccineType(CRequestVaccineType cRequestVaccineType);
 
-    VaccineType findById(String id);
+    FindByIdResponseVaccineType findById(String id);
 
     int makeInactive(List<String> vaccineTypeIds);
 

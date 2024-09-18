@@ -13,12 +13,12 @@
             <label>Show</label>
             <div class="btn-group border-bottom border-info rounded-0">
                 <button type="button" class="btn btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
-                        id="dropdownMenuButton">10</button>
+                        id="dropdownMenuButton">1</button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#" onclick="findAllVaccineWithPagination(0,5)">5</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="findAllVaccineWithPagination(0,25)">25</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="findAllVaccineWithPagination(0,50)">50</a></li>
-                    <li><a class="dropdown-item" href="#" onclick="findAllVaccineWithPagination(0,100)">100</a></li>
+                    <li><a class="dropdown-item" onclick="findAllVaccineWithPagination(0,1)">5</a></li>
+                    <li><a class="dropdown-item" onclick="findAllVaccineWithPagination(0,2)">25</a></li>
+                    <li><a class="dropdown-item" onclick="findAllVaccineWithPagination(0,3)">50</a></li>
+                    <li><a class="dropdown-item" onclick="findAllVaccineWithPagination(0,4)">100</a></li>
                 </ul>
             </div>
             <span>entries</span>
@@ -27,10 +27,9 @@
         <div class="search">
             <div class="d-flex">
                 <span class="me-2">Search:</span>
-                <input type="search" name="searchInput" id="searchInput" class="border-bottom border-0 border-info" placeholder="...">
-                <button id="search-button" onclick="search(0)" class="rounded-5 border-0 bg-light">
-                    <img src="/images/icons/search.png">
-                </button>
+                <input type="search" name="searchInput" id="searchInput"
+                       class="border-bottom border-0 border-info" placeholder="..."
+                		oninput="search(0)">
             </div>
         </div>
     </div>

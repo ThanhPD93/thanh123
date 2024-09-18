@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Vaccine Create</title>
-    <link rel="stylesheet" href="/static/css/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css">
 </head>
 <body class="bg-body-secondary">
     <div class="container mt-3 bg-light p-3">
-        <form id="add-vaccine-form" onsubmit="addVaccine(event)">
+        <form id="add-vaccine-form" onsubmit="event.preventDefault(); addVaccine(event);">
 <!--            Row 1-->
             <div class="d-flex justify-content-between mb-4">
 <!--                vaccine ID-->
@@ -50,7 +50,7 @@
                 <div class="col-4">
                     <label class="form-label fw-medium">Number of injection</label>
                     <div class="input-group">
-                        <input type="text" class="form-control text-capitalize" id="numberOfInjection">
+                        <input type="number" class="form-control text-capitalize" id="numberOfInjection">
                     </div>
                 </div>
             </div>
@@ -111,7 +111,7 @@
                     <button type="button" class="btn btn-info text-white" style="width: 100px;" onclick="resetInput()">Reset</button>
                 </div>
                 <div>
-                    <a class="btn btn-warning text-white" href="#" onclick="fetchVaccineList('vaccine-list.html')" style="width: 100px;">Cancel</a>
+                    <a class="btn btn-warning text-white" onclick="fetchVaccineList('vaccine-list.html')" style="width: 100px;">Cancel</a>
                 </div>
             </div>
         </form>

@@ -1,86 +1,80 @@
-function checkAllBoxes() {
-    const selectAllCheckbox = document.getElementById('mother-checkbox');
-    const checkboxes = document.querySelectorAll('.check-boxes input[type="checkbox"]');
-    checkboxes.forEach(function (checkbox) {
-        checkbox.checked = selectAllCheckbox.checked;
-    });
+function setPageSize(pageSize) {
+	$("#dropdownMenuButton")[0].textContent = pageSize;
 }
 
-function search(page) {
-    const query = document.getElementById('searchInput').value;
-    const currentPageSize = parseInt(document.getElementById("dropdownMenuButton").innerHTML, 10);
-//    console.log(currentPageSize);
-
-    fetch(`/employee/findAllWithPagination?searchInput=${encodeURIComponent(query)}&page=${page}&size=${currentPageSize}`)
-        .then(response => response.json())
-        .then(employees => {
-            const tableBody = document.getElementById('employee-list-content');
-            tableBody.innerHTML = '';
-
-            employees.content.forEach(employee => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td class="text-center check-boxes"><input type="checkbox"></td>
-                    <td><a href="#" class="link-offset-2 link-underline link-underline-opacity-0" onclick="showEmployeeDetails('${employee.employeeId}')">${employee.employeeId}</a></td>
-                    <td>${employee.employeeName}</td>
-                    <td>${employee.dateOfBirth}</td>
-                    <td>${employee.gender}</td>
-                    <td>${employee.phone}</td>
-                    <td>${employee.address}</td>
-                    <td class="text-center"><img src="/employee/image/${employee.employeeId}" alt="image" style="height: 30px; width: 45px"></td>
-                `;
-                tableBody.appendChild(row);
-            });
-            updatePaginationControls(employees.number, employees.totalPages, currentPageSize, employees.totalElements);
-        })
-        .catch(error => console.error('Error fetching employee data:', error));
+function checkAllBoxes() {
+    const selectAllCheckbox = $("#mother-checkbox")[0];
+    const checkboxes = $(".check-boxes input[type='checkbox']").toArray();
+    checkboxes.forEach(checkbox => checkbox.checked = selectAllCheckbox.checked);
 }
 
 //---------------------------
-function findAllEmployeeWithPagination(page, pageSize) {
-    const searchInputElement = document.getElementById('searchInput');
+function fetchEmployee(filename) {
+	const checkbox = $(".check-boxes input[type='checkbox']:checked");
+	if(UpdateBtnPressed === true) {
+        if(checkbox.length != 1) {
+            alert("Please select only 1 employee to update!");
+            return;
+        }
+    }
+	$.ajax({
+		url: "/api/employee/getAjax",
+		data: {filename: filename},
+		success: function(data) {
+			$("#ajax-content")[0].innerHTML = data;
+			if(filename === "employee-list.html") {
+				UpdateBtnPressed = false;
+				$("#ajax-title")[0].innerHTML = "EMPLOYEE LIST";
+				findAllEmployee(0);
+			} else {
+				if(UpdateBtnPressed === true) {
+					const employeeId = checkbox[0].closest('tr').querySelector('td:nth-child(2)').textContent;
+					arrangeUpdateEmployeeInfoToInput(employeeId);
+				}
+				UpdateBtnPressed = false;
+				$("#ajax-title")[0].innerHTML = "CREATE EMPLOYEE";
+			}
+		},
+		error: function(error) {
+			alert("Error fetching employee document!");
+		}
+	});
+}
 
-    // Check if the element exists before accessing its value
-    const query = searchInputElement ? searchInputElement.value : '';
-    console.log('Search input element:', searchInputElement);
-    fetch(`/employee/findAllWithPagination?searchInput=${encodeURIComponent(query)}&page=${page}&size=${pageSize}`)
-        .then(response => response.json())
-        .then(employees => {
-            const tableBody = document.getElementById('employee-list-content');
-            tableBody.innerHTML = '';
-
-            // List<Employee> .forEach()
-            // Page<Employee> .content() (trả về List<Employee>, .totalPages, .number, .totalElements
+function findAllEmployee(page) {
+    const query = $("#searchInput")[0].value;
+   	const pageSize = parseInt($("#dropdownMenuButton").text().trim(), 10);
+    console.log(pageSize);
+    $.ajax({
+    	url: "/api/employee/findAll",
+    	data: {
+    		searchInput: query,
+    		page: page,
+    		size: pageSize
+    	},
+    	success: function(employees) {
+    		const tableBody = $("#employee-list-content")[0];
+            tableBody.innerHTML = "";
             employees.content.forEach(employee => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td class="text-center check-boxes"><input type="checkbox" onchange="handleCheckboxChange()" class="check-select-box"></td>
-                    <td><a href="#" class="link-offset-2 link-underline link-underline-opacity-0" onclick="showEmployeeDetails('${employee.employeeId}')">${employee.employeeId}</a></td>
-                    <td class="text-capitalize text-start">${employee.employeeName}</td>
-                    <td class="text-start">${employee.dateOfBirth}</td>
-                    <td class="text-start">${employee.gender}</td>
-                    <td class="text-start">${employee.phone}</td>
-                    <td class="text-capitalize text-start">${employee.address}</td>
-                    <td class="text-center"><img src="/employee/image/${employee.employeeId}" alt="image" style="height: 30px; width: 45px"></td>
+                    <td class="text-center check-boxes"><input type="checkbox" class="check-select-box"></td>
+                    <td class="text-center"><a href="#" class="link-offset-2 link-underline link-underline-opacity-0" onclick="showEmployeeDetails('${employee.employeeId}')">${employee.employeeId}</a></td>
+                    <td class="text-capitalize text-start text-center">${employee.employeeName}</td>
+                    <td class="text-start text-center">${employee.dateOfBirth}</td>
+                    <td class="text-start text-center">${employee.gender}</td>
+                    <td class="text-start text-center">${employee.phone}</td>
+                    <td class="text-capitalize text-start text-center">${employee.address}</td>
+                    <td class="text-center"><img src="/api/employee/image/${employee.employeeId}" alt="image" style="height: 30px; width: 45px"></td>
                 `;
                 tableBody.appendChild(row);
             });
-            updatePaginationControls(employees.number, employees.totalPages, pageSize, employees.totalElements);
-        })
-        .catch(error => console.error('Error fetching list of employees', error));
-}
-//---------------------------------
-
-let selectedEmployeeId = null;
-function handleCheckboxChange() {
-    const checkboxes = document.querySelectorAll('.check-select-box');
-    const updateButton = document.querySelector('.update-button');
-
-    const checkedBox = Array.from(checkboxes).find(checkbox => checkbox.checked);
-
-    if (checkedBox) {
-        selectedEmployeeId = checkedBox.closest('tr').querySelector('td:nth-child(2) a').textContent;
-    }
+            updatePageControls(employees.number, employees.totalPages, pageSize, employees.totalElements);
+    	},
+    	error: function(error) {
+    		alert("error at /api/employee/findAll: " + error);
+    	}
+    });
 }
 
 //--update
@@ -94,6 +88,43 @@ function updateSelectedEmployee() {
     console.log(employeeId);
     // Fetch employee data using selectedEmployeeId
     fetchUpdateEmployee('employee-create.html', employeeId);
+}
+
+function arrangeUpdateEmployeeInfoToInput(employeeId) {
+	$.ajax({
+        url: "/api/employee/findById",
+        data: {employeeId: employeeId},
+        success: function(employee) {
+			$("#employeeId")[0].value = employee.employeeId;
+			$("#employeeId")[0].disabled = true;
+			$("#employeeName")[0].value = employee.employeeName;
+			if(employee.gender === "MALE") {
+				$("#gender-male")[0].checked = true;
+			} else {
+				$("#gender-female")[0].checked = true;
+			}
+			$("#dateOfBirth")[0].value = employee.dateOfBirth;
+			$("#phone")[0].value = employee.phone;
+			$("#address")[0].value = employee.address;
+			$("#email")[0].value = employee.email;
+			$("#workingPlace")[0].value = employee.workingPlace;
+			$("#position")[0].value = employee.position;
+			$("#username")[0].value = employee.username;
+			$("#username")[0].disabled = true;
+			$("#password")[0].value = employee.password;
+			$("#password")[0].disabled = true;
+			$("#toggle-button")[0].hidden = true;
+			if (employee.image || employee.image != null) {
+                $("#image-preview")[0].src = "/api/employee/image/" +employee.employeeId;
+                $("#image-preview")[0].style.display = 'block';
+            } else {
+                $("#image-preview")[0].style.display = 'none';
+            }
+        },
+        error: function(error) {
+            alert("error fetching update employee at /api/employee/findById");
+        }
+    });
 }
 
 function deleteSelectedEmployee() {
@@ -113,139 +144,65 @@ function deleteSelectedEmployee() {
     }
 
 	$.ajax({
-		url: "/employee/delete",
+		url: "/api/employee/delete",
 		method: "DELETE",
 		contentType: "application/json",
 		data: JSON.stringify(employeeIds),
-		dataType: "json",
-		success: function(apiResponse) {
-            if (apiResponse.code === 200) {
-                alert(apiResponse.description);
-                $.getScript("/js/employee.js");
-                findAllEmployeeWithPagination(0,10);
-            } else {
-                alert("Error deleting employees: " + apiResponse.description);
-            }
+		success: function(stringData) {
+            alert(stringData);
+            findAllEmployee(0,10);
 		},
-		error: function(error) {alert("An error occurred: " + error.message);}
+		error: function(xhr) {
+			alert(xhr.status);
+			console.error("An error occurred, response body: " + xhr.responseText);
+		}
 	});
-}
-//---update
-function updateEmployeeDetail(employeeId) {
-    fetch(`/employee/detail/` + employeeId)
-        .then(response => response.json())
-        .then(employee => {
-            // Now that the form is loaded, populate the form with employee data
-            document.getElementById('employeeId').value = employee.employeeId;
-            document.getElementById('employeeId').disabled = true;
-            // document.getElementById('employeeId').readOnly = true;
-            document.getElementById('employeeName').value = employee.employeeName;
-            document.getElementById('dateOfBirth').value = employee.dateOfBirth;
-            document.getElementById('phone').value = employee.phone;
-            document.getElementById('address').value = employee.address;
-            document.getElementById('email').value = employee.email;
-            document.getElementById('workingPlace').value = employee.workingPlace;
-            document.getElementById('position').value = employee.position;
-            document.getElementById('username').value = employee.username;
-            document.getElementById('username').disabled = true;
-            // document.getElementById('username').readOnly = true;
-            document.getElementById('password').value = employee.password;
-            document.getElementById('password').disabled = true;
-            // document.getElementById('password').readOnly = true;
-            document.getElementById('toggle-button').hidden = true; //hide toggle button
-            // Set gender
-            if (employee.gender === 'MALE') {
-                document.getElementById('gender-male').checked = true;
-            } else {
-                document.getElementById('gender-female').checked = true;
-            }
-
-            // Image preview (optional)
-            if (employee.image) {
-                document.getElementById('image-preview').src = `/employee/image/${employee.employeeId}`;
-                document.getElementById('image-preview').style.display = 'block';
-            } else {
-                document.getElementById('image-preview').style.display = 'none';
-            }
-        }).catch(error => {
-        console.error('Error fetching employee data', error);
-    });
 }
 
 //------show employee details on modal
-function showEmployeeDetails(employeeId) {
-    // Fetch employee details by employeeId
-    fetch(`/employee/detail/` + employeeId)
-        .then(response => response.json())  // Assuming the response is in JSON format
-        .then(employee => {
-            // Populate the modal fields with employee data
-            document.getElementById('modalEmployeeId').value = employee.employeeId;
-            document.getElementById('modalEmployeeName').value = employee.employeeName;
-            document.getElementById('modalEmployeeDob').value = employee.dateOfBirth;
-            document.getElementById('modalEmployeeGender').value = employee.gender;
-            document.getElementById('modalEmployeePhone').value = employee.phone;
-            document.getElementById('modalEmployeeAddress').value = employee.address;
-            document.getElementById('modalEmployeeEmail').value = employee.email;
-            document.getElementById('modalEmployeePosition').value = employee.position;
-            document.getElementById('modalWorkingPlace').value = employee.workingPlace;
-            document.getElementById('modalEmployeeImage').src = `/employee/image/${employee.employeeId}`;
-
-            // Show the modal
+function showEmployeeDetails(id) {
+	$.ajax({
+		url: "/api/employee/findById",
+		data: {employeeId: id},
+		success: function(employee) {
+			$("#modalEmployeeId")[0].value = employee.employeeId;
+			$("#modalEmployeeName")[0].value = employee.employeeName;
+			$("#modalEmployeeDob")[0].value = employee.dateOfBirth;
+			$("#modalEmployeeGender")[0].value = employee.gender;
+			$("#modalEmployeePhone")[0].value = employee.phone;
+			$("#modalEmployeeAddress")[0].value = employee.address;
+			$("#modalEmployeeEmail")[0].value = employee.email;
+			$("#modalEmployeePosition")[0].value = employee.position;
+			$("#modalWorkingPlace")[0].value = employee.workingPlace;
+			$("#modalEmployeeImage")[0].src = "/api/employee/image/" + employee.employeeId;
+			// Show the modal
             var modal = new bootstrap.Modal(document.getElementById('employeeModal'));
             modal.show();
-        })
-        .catch(error => {
-            console.error('Error fetching employee details:', error);
-            alert('Failed to load employee details. Please try again.');
-        });
+		},
+		error: function(xhr) {
+			console.log("error at /api/employee/detail/{id}: ", xhr.responseText);
+			alert("error at /api/employee/detail/{id}");
+		}
+	});
 }
 
-//------
-// function updatePaginationControls(currentPage, totalPages, pageSize, totalElements) {
-//     document.getElementById("start-entry").innerHTML = currentPage === 0 ? 1 : currentPage * pageSize + 1;
-//     document.getElementById("end-entry").innerHTML = currentPage === totalPages - 1 ? totalElements : (currentPage + 1) * pageSize;
-//     document.getElementById("total-entries").innerHTML = totalElements;
-//
-//     const paginationContainer = document.getElementById("page-buttons");
-//     let pageButtons = '';
-//
-//     // left button
-//     if (currentPage > 0) {
-//         pageButtons += `<button onclick="findAllEmployeeWithPagination(${currentPage - 1}, ${pageSize})" class="text-info">&laquo;</button>`;
-//     } else {
-//         pageButtons += `<button disabled class="text-info">&laquo;</button>`;
-//     }
-//
-//     // buttons with number page
-//     for (let i = 0; i < totalPages; i++) {
-//         if (i === currentPage) {
-//             pageButtons += `<button disabled class="bg-info fw-medium">${i + 1}</button>`;
-//         } else {
-//             pageButtons += `<button onclick="findAllEmployeeWithPagination(${i}, ${pageSize})">${i + 1}</button>`;
-//         }
-//     }
-//
-//     // right button
-//     if (currentPage < totalPages - 1) {
-//         pageButtons += `<button onclick="findAllEmployeeWithPagination(${currentPage + 1}, ${pageSize})" class="text-info">&raquo;</button>`;
-//     } else {
-//         pageButtons += `<button disabled class="text-info">&raquo;</button>`;
-//     }
-//
-//     paginationContainer.innerHTML = pageButtons;
-//     document.getElementById("dropdownMenuButton").innerHTML = pageSize;
-// }
-function updatePaginationControls(currentPage, totalPages, pageSize, totalElements) {
-    document.getElementById("start-entry").innerHTML = currentPage === 0 ? 1 : currentPage * pageSize + 1;
-    document.getElementById("end-entry").innerHTML = currentPage === totalPages - 1 ? totalElements : (currentPage + 1) * pageSize;
-    document.getElementById("total-entries").innerHTML = totalElements;
+function updatePageControls(currentPage, totalPages, pageSize, totalElements) {
+	if (totalElements === 0) {
+		$("#start-entry")[0].innerHTML = 0;
+		$("#end-entry")[0].innerHTML = 0;
+		$("#total-entries")[0].innerHTML = 0;
+	} else {
+        $("#start-entry")[0].innerHTML = currentPage === 0 ? 1 : currentPage * pageSize + 1;
+        $("#end-entry")[0].innerHTML = currentPage === totalPages - 1 ? totalElements : (currentPage + 1) * pageSize;
+        $("#total-entries")[0].innerHTML = totalElements;
+	}
 
-    const paginationContainer = document.getElementById("page-buttons");
+    const paginationContainer = $("#page-buttons")[0];
     let pageButtons = '';
 
     // Left button
     if (currentPage > 0) {
-        pageButtons += `<li class="page-item"><a class="page-link" onclick="findAllEmployeeWithPagination(${currentPage - 1}, ${pageSize})">&laquo;</a></li>`;
+        pageButtons += `<li class="page-item"><a class="page-link" onclick="findAllEmployee(${currentPage - 1}, ${pageSize})">&laquo;</a></li>`;
     } else {
         pageButtons += `<li class="page-item disabled"><span class="page-link">&laquo;</span></li>`;
     }
@@ -253,14 +210,14 @@ function updatePaginationControls(currentPage, totalPages, pageSize, totalElemen
     // Show all pages if totalPages < 10
     if (totalPages <= 10) {
         for (let i = 0; i < totalPages; i++) {
-            pageButtons += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" onclick="findAllEmployeeWithPagination(${i}, ${pageSize})">${i + 1}</a></li>`;
+            pageButtons += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" onclick="findAllEmployee(${i}, ${pageSize})">${i + 1}</a></li>`;
         }
     } else {
         // Always show page 1 and 2
         if (totalPages > 1) {
-            pageButtons += `<li class="page-item ${currentPage === 0 ? 'active' : ''}"><a class="page-link" onclick="findAllEmployeeWithPagination(0, ${pageSize})">1</a></li>`;
+            pageButtons += `<li class="page-item ${currentPage === 0 ? 'active' : ''}"><a class="page-link" onclick="findAllEmployee(0, ${pageSize})">1</a></li>`;
             if (totalPages > 2) {
-                pageButtons += `<li class="page-item ${currentPage === 1 ? 'active' : ''}"><a class="page-link" onclick="findAllEmployeeWithPagination(1, ${pageSize})">2</a></li>`;
+                pageButtons += `<li class="page-item ${currentPage === 1 ? 'active' : ''}"><a class="page-link" onclick="findAllEmployee(1, ${pageSize})">2</a></li>`;
             }
         }
 
@@ -273,7 +230,7 @@ function updatePaginationControls(currentPage, totalPages, pageSize, totalElemen
         let endPage = Math.min(totalPages - 3, currentPage + 1);
 
         for (let i = startPage; i <= endPage; i++) {
-            pageButtons += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" onclick="findAllEmployeeWithPagination(${i}, ${pageSize})">${i + 1}</a></li>`;
+            pageButtons += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" onclick="findAllEmployee(${i}, ${pageSize})">${i + 1}</a></li>`;
         }
 
         if (currentPage < totalPages - 4) {
@@ -283,74 +240,82 @@ function updatePaginationControls(currentPage, totalPages, pageSize, totalElemen
         // Always show the last two pages
         if (totalPages > 2) {
             if (totalPages > 3) {
-                pageButtons += `<li class="page-item ${currentPage === totalPages - 2 ? 'active' : ''}"><a class="page-link" onclick="findAllEmployeeWithPagination(${totalPages - 2}, ${pageSize})">${totalPages - 1}</a></li>`;
+                pageButtons += `<li class="page-item ${currentPage === totalPages - 2 ? 'active' : ''}"><a class="page-link" onclick="findAllEmployee(${totalPages - 2}, ${pageSize})">${totalPages - 1}</a></li>`;
             }
-            pageButtons += `<li class="page-item ${currentPage === totalPages - 1 ? 'active' : ''}"><a class="page-link" onclick="findAllEmployeeWithPagination(${totalPages - 1}, ${pageSize})">${totalPages}</a></li>`;
+            pageButtons += `<li class="page-item ${currentPage === totalPages - 1 ? 'active' : ''}"><a class="page-link" onclick="findAllEmployee(${totalPages - 1}, ${pageSize})">${totalPages}</a></li>`;
         }
     }
 
     // Right button
     if (currentPage < totalPages - 1) {
-        pageButtons += `<li class="page-item"><a class="page-link" onclick="findAllEmployeeWithPagination(${currentPage + 1}, ${pageSize})">&raquo;</a></li>`;
+        pageButtons += `<li class="page-item"><a class="page-link" onclick="findAllEmployee(${currentPage + 1}, ${pageSize})">&raquo;</a></li>`;
     } else {
         pageButtons += `<li class="page-item disabled"><span class="page-link">&raquo;</span></li>`;
     }
 
     paginationContainer.innerHTML = `<ul class="pagination">${pageButtons}</ul>`;
-    document.getElementById("dropdownMenuButton").innerHTML = pageSize;
+    $("#dropdownMenuButton")[0].innerHTML = pageSize;
 }
 
 //------------------
 //preview image
 function previewImage() {
-    const imagePreview = document.getElementById('image-preview');
-    const fileInput = document.getElementById('image');
+    const imagePreview = $("#image-preview")[0];
+    const fileInput = $("#image")[0];
     const file = fileInput.files[0];
 
     if (file) {
         const reader = new FileReader();
         reader.onload = function (e) {
             imagePreview.src = e.target.result;
-            imagePreview.style.display = 'block'; // Show the preview
+            imagePreview.style.display = 'block';
         };
         reader.readAsDataURL(file);
     } else {
         imagePreview.src = '';
-        imagePreview.style.display = 'none'; // Hide the preview if no file is selected
+        imagePreview.style.display = 'none';
     }
 }
 
-
 // add employee
 function addEmployee() {
-    const form = document.getElementById('add-employee-form');
-    const formData = new FormData(form);
-
-    const genderInput = document.querySelector('input[name="gender"]:checked');
+	if ($("#phone")[0].value.replace(/[^\d]/g , "").length !== 10) {
+		alert("Wrong phone number!");
+		return;
+	}
+	const date = new Date($("#dateOfBirth")[0].value);
+	const today = new Date();
+	let age = today.getFullYear() - date.getFullYear();
+	const monthDiff = today.getMonth() - date.getMonth();
+	const dayDiff = today.getDate() - date.getDate();
+	if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+		age--;
+	}
+	if (age < 18) {
+		alert("the age is not valid, please check date of birth!");
+		return;
+	}
+    const genderInput = $("input[name='gender']:checked")[0];
     const genderValue = genderInput ? genderInput.value : null;
-
     const employee = {
-        employeeId: document.getElementById('employeeId').value,
-        employeeName: document.getElementById('employeeName').value,
+        employeeId: $("#employeeId")[0].value,
+        employeeName: $("#employeeName")[0].value,
         gender: genderValue,
-        dateOfBirth: document.getElementById('dateOfBirth').value,
-        phone: document.getElementById('phone').value,
-        address: document.getElementById('address').value,
-        email: document.getElementById('email').value,
-        workingPlace: document.getElementById('workingPlace').value,
-        position: document.getElementById('position').value,
-        username: document.getElementById('username').value,
-        password: document.getElementById('password').value,
+        dateOfBirth: $("#dateOfBirth")[0].value,
+        phone: $("#phone")[0].value,
+        address: $("#address")[0].value,
+        email: $("#email")[0].value,
+        workingPlace: $("#workingPlace")[0].value,
+        position: $("#position")[0].value,
+        username: $("#username")[0].value,
+        password: $("#password")[0].value,
         image: null
     };
-
-    console.log(employee.email);
-
-    const imageFile = document.getElementById('image').files[0];
+    const imageFile = $("#image")[0].files[0];
     if (imageFile) {
         const reader = new FileReader();
         reader.onloadend = function () {
-            employee.image = reader.result.split(',')[1].replace(/\s/g, '');
+            employee.image = reader.result.split(',')[1];
             sendEmployeeData(employee);
         };
         reader.readAsDataURL(imageFile);
@@ -361,70 +326,62 @@ function addEmployee() {
 
 
 function sendEmployeeData(employee) {
-    fetch('/employee/add', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(employee)
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to add employee');
+	$.ajax({
+		url: "/api/employee/add",
+		method: "POST",
+		contentType: "application/json",
+		data: JSON.stringify(employee),
+		// success: 200 -> 399
+		success: function(stringData) {
+                alert(stringData);
+                $("#add-employee-form")[0].reset();
+                $("#image-preview")[0].style.display = 'none';
+		},
+		// error: 400 and up
+		error: function(xhr, jqXHR) {
+            if(xhr.status === 400) {
+                const error = JSON.parse(xhr.responseText);
+                let validationMessage = "";
+                let i = 0;
+                error.errors.forEach(error => {
+                    validationMessage += ++i + "." + error.defaultMessage + "\n";
+                });
+                alert(error.message + " -->\n" + validationMessage);
             }
-            return response.json();
-        })
-        .then(data => {
-            alert('Employee added successfully!');
-            document.getElementById('add-employee-form').reset();
-            document.getElementById('image-preview').style.display = 'none';
-        })
-        .catch(error => {
-            console.error('Error adding employee:', error);
-            alert('Error adding employee.');
-        });
+            else {
+                alert("an expected error occurred at /api/employee/add, error code: " + xhr.status);
+                console.error("error: " + jqXHR.responseText);
+            }
+		}
+	});
 }
 
 // show/hide password when input data
 function togglePassword() {
-    const passwordField = document.getElementById("password");
-    const toggleIcon = document.getElementById("toggle-icon");
+    const passwordField = $("#password")[0];
+    const toggleIcon = $("#toggle-icon")[0];
     if (passwordField.type === "password") {
         passwordField.type = "text";
-        toggleIcon.src = "/images/icons/hidden.png"; // Change to hide icon
+        toggleIcon.src = "/images/icons/hidden.png";
     } else {
         passwordField.type = "password";
-        toggleIcon.src = "/images/icons/eye.png"; // Change to show icon
+        toggleIcon.src = "/images/icons/eye.png";
     }
 }
 
 // button reset: reset and hide preview image, can't reset id, username, password
-function resetInput() {
-    // Get all the fields
-    const employeeId = document.getElementById('employeeId');
-    const employeeName = document.getElementById('employeeName');
-    const dateOfBirth = document.getElementById('dateOfBirth');
-    const phone = document.getElementById('phone');
-    const address = document.getElementById('address');
-    const email = document.getElementById('email');
-    const workingPlace = document.getElementById('workingPlace');
-    const position = document.getElementById('position');
-    const username = document.getElementById('username');
-    const password = document.getElementById('password');
-
-    // Reset only fields that are not disabled
-    if (!employeeId.disabled) employeeId.value = '';
-    if (!employeeName.disabled) employeeName.value = '';
-    if (!dateOfBirth.disabled) dateOfBirth.value = '';
-    if (!phone.disabled) phone.value = '';
-    if (!address.disabled) address.value = '';
-    if (!email.disabled) email.value = '';
-    if (!workingPlace.disabled) workingPlace.value = '';
-    if (!position.disabled) position.value = '';
-    if (!username.disabled) username.value = '';
-    if (!password.disabled) password.value = '';
-
-    // Reset the image preview
-    document.getElementById('image-preview').style.display = 'none';
-    document.getElementById('image-preview').src = '/images/icons/image.png'; // Set to default image icon
+function resetEmployeeInput() {
+    $("#image-preview")[0].style.display = 'none';
+    $("#image-preview")[0].src = '/images/icons/image.png';
+	if($("#employeeId")[0].disabled === true) {
+        const employeeId = $("#employeeId")[0].value;
+        const username = $("#username")[0].value;
+        const password = $("#password")[0].value;
+    	$("#add-employee-form")[0].reset();
+        $("#employeeId")[0].value = employeeId;
+        $("#username")[0].value = username;
+        $("#password")[0].value = password;
+	} else {
+		$("#add-employee-form")[0].reset();
+	}
 }

@@ -1,6 +1,6 @@
 package mockProject.team3.Vaccination_20.utils;
 
-public enum MSGDef {
+public enum MSG {
     MSG1("Sorry, your username or password is incorrect. Please try again!"),
     MSG2("Username must not be empty!"),
     MSG3("Password must be not empty!"),
@@ -30,11 +30,13 @@ public enum MSGDef {
     MSG27("Approve successfully."),
     MSG28("Accept successfully."),
     MSG29("Start successfully."),
-    MSG30("Finish successfully.");
+    MSG30("Finish successfully."),
+    MSG31("ajax filename must not be empty!"),
+    MSG32("ajax file path not found!");
 
     private final String message;
 
-    MSGDef(String message) {
+    MSG(String message) {
         this.message = message;
     }
 

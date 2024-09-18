@@ -1,7 +1,5 @@
-package mockProject.team3.Vaccination_20.dto.request.forcreate;
+package mockProject.team3.Vaccination_20.dto.employeeDto;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,7 +10,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class CRequestEmployee {
+public class URequestEmployee {
     private String employeeId;
 
     private String address;
@@ -32,8 +30,4 @@ public class CRequestEmployee {
     private String position;
 
     private String workingPlace;
-
-    private String username;
-
-    private String password;
 }
