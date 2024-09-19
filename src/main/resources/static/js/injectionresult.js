@@ -186,7 +186,7 @@ function loadCustomers() {
             customers.forEach(customer => {
                 const option = document.createElement('option');
                 option.value = customer.id;
-                option.text = `${customer.id} - ${customer.name} - ${cus	tomer.dateOfBirth}`;
+                option.text = `${customer.id} - ${customer.name} - ${customer.dateOfBirth}`;
                 customerSelect.appendChild(option);
             });
         })

@@ -1,6 +1,7 @@
 package mockProject.team3.Vaccination_20.repository;
 
 import mockProject.team3.Vaccination_20.dto.injectionresult.InjectionResultDTO;
+import mockProject.team3.Vaccination_20.dto.report.InjectionResultStats;
 import mockProject.team3.Vaccination_20.model.InjectionResult;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,5 +35,10 @@ public interface InjectionResultRepository extends JpaRepository<InjectionResult
             "JOIN v.vaccineType vt " +
             "WHERE c.fullName LIKE %:searchInput% OR c.customerId LIKE %:searchInput%")
     Page<InjectionResultDTO> findAllWithPagination(@Param("searchInput") String searchInput, Pageable pageable);
+
+    //report
+    @Query("SELECT new mockProject.team3.Vaccination_20.dto.report.InjectionResultStats(MONTH(ir.injectionDate), COUNT(ir)) " +
+            "FROM InjectionResult ir WHERE YEAR(ir.injectionDate) = :year GROUP BY MONTH(ir.injectionDate)")
+    List<InjectionResultStats> findInjectionResultsByMonth(@Param("year") int year);
 
 }
