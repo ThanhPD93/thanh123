@@ -1,8 +1,46 @@
 package mockProject.team3.Vaccination_20.service.impl;
 
+import mockProject.team3.Vaccination_20.dto.newsDto.NewsAddRequestDto;
+import mockProject.team3.Vaccination_20.dto.newsDto.NewsResponseDto;
+import mockProject.team3.Vaccination_20.model.News;
+import mockProject.team3.Vaccination_20.repository.NewsRepository;
 import mockProject.team3.Vaccination_20.service.NewsService;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class NewsServiceImpl implements NewsService {
+    @Autowired
+    NewsRepository newsRepository;
+
+    @Autowired
+    ModelMapper modelMapper;
+
+    @Override
+    public NewsResponseDto addNews(NewsAddRequestDto newsAddRequestDto) {
+        News news = modelMapper.map(newsAddRequestDto, News.class);
+        return modelMapper.map(newsRepository.save(news), NewsResponseDto.class);
+    }
+
+    @Override
+    public Page<NewsResponseDto> findByTittleOrContent(String searchInput, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<News> news;
+        if(searchInput.trim().isEmpty()) {
+            news = newsRepository.findAll(pageable);
+        }else {
+            news = newsRepository.findBySearch(searchInput, pageable);
+        }
+        List<NewsResponseDto> newsListResponse = modelMapper.map(news.getContent(), new TypeToken<List<NewsResponseDto>>(){}.getType());
+        return new PageImpl<>(newsListResponse, pageable, news.getTotalElements());
+    }
+
 }
