@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,6 +29,9 @@ public class News {
 
     @Column(length = 300)
     private String title;
+
+    @Column
+    private LocalDate postDate;
 
     //relationship
     @ManyToOne
