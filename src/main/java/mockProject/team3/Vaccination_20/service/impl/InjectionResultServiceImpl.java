@@ -151,5 +151,8 @@ public class InjectionResultServiceImpl implements InjectionResultService {
     }
 
     //get year - report
+	public List<Integer> getYears(){
+        return injectionResultRepository.findYears();
+    }
 
 }

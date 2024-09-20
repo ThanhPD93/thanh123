@@ -36,5 +36,5 @@ public interface InjectionResultService {
     //report
     public List<InjectionResultStats> getInjectionResultsByYear(int year);
 
-
+    public List<Integer> getYears();
 }

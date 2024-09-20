@@ -41,4 +41,6 @@ public interface InjectionResultRepository extends JpaRepository<InjectionResult
             "FROM InjectionResult ir WHERE YEAR(ir.injectionDate) = :year GROUP BY MONTH(ir.injectionDate)")
     List<InjectionResultStats> findInjectionResultsByMonth(@Param("year") int year);
 
+    @Query("SELECT DISTINCT YEAR(ir.injectionDate) FROM InjectionResult ir ORDER BY YEAR(ir.injectionDate)")
+    List<Integer> findYears();
 }

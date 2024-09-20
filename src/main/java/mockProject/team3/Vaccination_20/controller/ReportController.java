@@ -28,10 +28,16 @@ public class ReportController {
         return Files.readString(path);
     }
 
-    @GetMapping("/api/injection-results/stats")
+    @GetMapping("/injection-result/stats")
     public ResponseEntity<List<InjectionResultStats>> getInjectionResultsByMonth(@RequestParam int year) {
         List<InjectionResultStats> stats = injectionResultService.getInjectionResultsByYear(year);
         return ResponseEntity.ok(stats);
+    }
+
+    @GetMapping("/injection-result/getYears")
+    public ResponseEntity<List<Integer>> getListYear() {
+		List<Integer> years = injectionResultService.getYears();
+        return ResponseEntity.ok(years);
     }
 
 }
