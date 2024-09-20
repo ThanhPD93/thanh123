@@ -139,19 +139,4 @@ public class VaccineController {
 
         return ResponseEntity.ok(vaccineInfo);
     }
-
-//    @GetMapping("/detail/{vaccineInfoId}")
-//    public ResponseEntity<ApiResponse<VaccineInfoDTO>> getVaccineDetail(@PathVariable String vaccineInfoId) {
-//        Optional<Vaccine> vaccineOptional = vaccineRepository.findById(vaccineInfoId);
-//
-//        if (vaccineOptional.isPresent()) {
-//            Vaccine vaccine = vaccineOptional.get();
-//            VaccineInfoDTO vaccineInfoDTO = new VaccineInfoDTO(vaccine.getVaccineId(), vaccine.getVaccineName());
-//            return ResponseEntity.ok(new ApiResponse<>(200, "Vaccine found", vaccineInfoDTO));
-//        } else {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-//                    .body(new ApiResponse<>(404, "Vaccine not found", null));
-//        }
-//    }
-
 }
