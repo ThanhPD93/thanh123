@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional;
 import mockProject.team3.Vaccination_20.dto.injectionresult.CInjectionResultDTO;
 import mockProject.team3.Vaccination_20.dto.injectionresult.InjectionResultDTO;
 import mockProject.team3.Vaccination_20.dto.injectionresult.UInjectionResultDTO;
-import mockProject.team3.Vaccination_20.dto.report.InjectionResultStats;
 import mockProject.team3.Vaccination_20.model.Customer;
 import mockProject.team3.Vaccination_20.model.InjectionResult;
 import mockProject.team3.Vaccination_20.model.Vaccine;
@@ -146,13 +145,16 @@ public class InjectionResultServiceImpl implements InjectionResultService {
         }
     }
 
-    public List<InjectionResultStats> getInjectionResultsByYear(int year) {
-        return injectionResultRepository.findInjectionResultsByMonth(year);
+    //for report
+    @Override
+    public List<Integer> findDistinctYears() {
+        return injectionResultRepository.findDistinctYears();
     }
 
-    //get year - report
-	public List<Integer> getYears(){
-        return injectionResultRepository.findYears();
+    @Override
+    public List<Object[]> findInjectionResultsByYear(Integer year) {
+        return injectionResultRepository.findInjectionResultsByYear(year);
     }
+
 
 }

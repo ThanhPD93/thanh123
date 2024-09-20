@@ -84,4 +84,9 @@ public class CustomerServiceImpl implements CustomerService {
     public Customer findByIdIR(String customerId) {
         return customerRepository.findCustomerByCustomerId(customerId);
     }
+
+    //for report
+    public List<Object[]> findCustomersVaccinatedByMonth(Integer year) {
+        return customerRepository.findCustomersVaccinatedByMonth(year);
+    }
 }

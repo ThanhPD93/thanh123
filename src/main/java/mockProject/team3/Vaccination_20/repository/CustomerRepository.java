@@ -33,4 +33,13 @@ public interface CustomerRepository extends JpaRepository<Customer, String> {
     //use for add-ir
     List<Customer> findAll();
     Customer findCustomerByCustomerId(String customerId);
+
+    //report customer
+    @Query("SELECT MONTH(ir.injectionDate) AS month, COUNT(DISTINCT c.customerId) AS count " +
+            "FROM InjectionResult ir " +
+            "JOIN ir.customer c " +
+            "WHERE YEAR(ir.injectionDate) = :year " +
+            "GROUP BY MONTH(ir.injectionDate) " +
+            "ORDER BY MONTH(ir.injectionDate)")
+    List<Object[]> findCustomersVaccinatedByMonth(Integer year);
 }

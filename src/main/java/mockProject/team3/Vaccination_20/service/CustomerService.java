@@ -22,4 +22,6 @@ public interface CustomerService {
     //for add-ir
     public List<Customer> getAllCustomers();
     Customer findByIdIR(String customerId);
+	// for report
+    public List<Object[]> findCustomersVaccinatedByMonth(Integer year);
 }

@@ -4,7 +4,6 @@ package mockProject.team3.Vaccination_20.service;
 import mockProject.team3.Vaccination_20.dto.injectionresult.CInjectionResultDTO;
 import mockProject.team3.Vaccination_20.dto.injectionresult.InjectionResultDTO;
 import mockProject.team3.Vaccination_20.dto.injectionresult.UInjectionResultDTO;
-import mockProject.team3.Vaccination_20.dto.report.InjectionResultStats;
 import mockProject.team3.Vaccination_20.model.InjectionResult;
 import org.springframework.data.domain.Page;
 
@@ -34,7 +33,8 @@ public interface InjectionResultService {
     public void deleteInjectionResults(List<String> ids);
 
     //report
-    public List<InjectionResultStats> getInjectionResultsByYear(int year);
 
-    public List<Integer> getYears();
+    List<Integer> findDistinctYears();
+
+    List<Object[]> findInjectionResultsByYear(Integer year);
 }
