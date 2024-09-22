@@ -18,7 +18,6 @@ public interface CustomerService {
     boolean addCustomer(CustomerAddRequestDto customerAddRequestDto);
     CustomerFindByIdDto findById(String id);
 
-
     //for add-ir
     public List<Customer> getAllCustomers();
     Customer findByIdIR(String customerId);

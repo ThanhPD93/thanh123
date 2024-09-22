@@ -1,6 +1,7 @@
 package mockProject.team3.Vaccination_20.controller;
 
-import mockProject.team3.Vaccination_20.dto.report.InjectionResultStats;
+import mockProject.team3.Vaccination_20.dto.report.ChartData;
+import mockProject.team3.Vaccination_20.service.CustomerService;
 import mockProject.team3.Vaccination_20.service.InjectionResultService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -13,13 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/report")
 public class ReportController {
     @Autowired
     private InjectionResultService injectionResultService;
+    @Autowired
+    private CustomerService customerService;
     //call
     @GetMapping("/getAjax")
     public String getDocument(@RequestParam String filename) throws IOException {
@@ -28,16 +31,97 @@ public class ReportController {
         return Files.readString(path);
     }
 
-    @GetMapping("/injection-result/stats")
-    public ResponseEntity<List<InjectionResultStats>> getInjectionResultsByMonth(@RequestParam int year) {
-        List<InjectionResultStats> stats = injectionResultService.getInjectionResultsByYear(year);
-        return ResponseEntity.ok(stats);
-    }
 
-    @GetMapping("/injection-result/getYears")
-    public ResponseEntity<List<Integer>> getListYear() {
-		List<Integer> years = injectionResultService.getYears();
+    @GetMapping("/injection/getYears")
+    public ResponseEntity<List<Integer>> getYears() {
+        List<Integer> years = injectionResultService.findDistinctYears();
         return ResponseEntity.ok(years);
     }
+
+
+    @GetMapping("/injection/chart")
+    public ResponseEntity<ChartData> getChartData(@RequestParam Integer year) {
+        List<Object[]> resultList = injectionResultService.findInjectionResultsByYear(year);
+
+        List<String> months = new ArrayList<>(Arrays.asList(
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+        ));
+
+        List<Integer> results = new ArrayList<>(Collections.nCopies(12, 0));
+
+        for (Object[] result : resultList) {
+            Integer monthIndex = (Integer) result[0];
+            Integer total = ((Number) result[1]).intValue();
+
+            if (monthIndex >= 1 && monthIndex <= 12) {
+                results.set(monthIndex - 1, total);
+            }
+        }
+
+        ChartData chartData = new ChartData();
+        chartData.setMonths(months);
+        chartData.setResults(results);
+
+        return ResponseEntity.ok(chartData);
+    }
+
+    @GetMapping("/customer/chart")
+    public ResponseEntity<ChartData> getVaccinatedCustomerChartData(@RequestParam Integer year) {
+        List<Object[]> resultList = injectionResultService.findCustomersVaccinatedByMonth(year);
+
+        List<String> months = new ArrayList<>(Arrays.asList(
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+        ));
+
+        List<Integer> results = new ArrayList<>(Collections.nCopies(12, 0));
+
+        for (Object[] result : resultList) {
+            Integer monthIndex = (Integer) result[0]; // Lấy chỉ số tháng (1-12)
+            Integer total = ((Number) result[1]).intValue();
+
+            // Gán giá trị cho tháng tương ứng
+            if (monthIndex >= 1 && monthIndex <= 12) {
+                results.set(monthIndex - 1, total); // Cập nhật giá trị
+            }
+        }
+
+        ChartData chartData = new ChartData();
+        chartData.setMonths(months);
+        chartData.setResults(results);
+
+        return ResponseEntity.ok(chartData);
+    }
+
+    @GetMapping("/vaccine/chart")
+    public ResponseEntity<ChartData> getVaccinatedChartData(@RequestParam Integer year) {
+        List<Object[]> resultList = injectionResultService.findVaccineCountByMonth(year);
+
+        List<String> months = new ArrayList<>(Arrays.asList(
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+        ));
+
+        List<Integer> results = new ArrayList<>(Collections.nCopies(12, 0));
+
+        for (Object[] result : resultList) {
+            Integer monthIndex = (Integer) result[0]; // Lấy chỉ số tháng (1-12)
+            Integer total = ((Number) result[1]).intValue();
+
+            // Gán giá trị cho tháng tương ứng
+            if (monthIndex >= 1 && monthIndex <= 12) {
+                results.set(monthIndex - 1, total); // Cập nhật giá trị
+            }
+        }
+
+        ChartData chartData = new ChartData();
+        chartData.setMonths(months);
+        chartData.setResults(results);
+
+        return ResponseEntity.ok(chartData);
+    }
+
+
 
 }

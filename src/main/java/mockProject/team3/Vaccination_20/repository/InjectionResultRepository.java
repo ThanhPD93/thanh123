@@ -1,7 +1,6 @@
 package mockProject.team3.Vaccination_20.repository;
 
 import mockProject.team3.Vaccination_20.dto.injectionresult.InjectionResultDTO;
-import mockProject.team3.Vaccination_20.dto.report.InjectionResultStats;
 import mockProject.team3.Vaccination_20.model.InjectionResult;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,11 +35,32 @@ public interface InjectionResultRepository extends JpaRepository<InjectionResult
             "WHERE c.fullName LIKE %:searchInput% OR c.customerId LIKE %:searchInput%")
     Page<InjectionResultDTO> findAllWithPagination(@Param("searchInput") String searchInput, Pageable pageable);
 
-    //report
-    @Query("SELECT new mockProject.team3.Vaccination_20.dto.report.InjectionResultStats(MONTH(ir.injectionDate), COUNT(ir)) " +
-            "FROM InjectionResult ir WHERE YEAR(ir.injectionDate) = :year GROUP BY MONTH(ir.injectionDate)")
-    List<InjectionResultStats> findInjectionResultsByMonth(@Param("year") int year);
-
+	//get year for report
     @Query("SELECT DISTINCT YEAR(ir.injectionDate) FROM InjectionResult ir ORDER BY YEAR(ir.injectionDate)")
-    List<Integer> findYears();
+    List<Integer> findDistinctYears();
+
+    //report injection
+    @Query("SELECT MONTH(ir.injectionDate) AS month, COUNT(ir) AS total "
+            + "FROM InjectionResult ir WHERE YEAR(ir.injectionDate) = :year "
+            + "GROUP BY MONTH(ir.injectionDate) ORDER BY MONTH(ir.injectionDate)")
+    List<Object[]> findInjectionResultsByYear(@Param("year") Integer year);
+
+    //report customer
+    @Query("SELECT MONTH(ir.injectionDate) AS month, COUNT(DISTINCT c.customerId) AS count " +
+            "FROM InjectionResult ir " +
+            "JOIN ir.customer c " +
+            "WHERE YEAR(ir.injectionDate) = :year " +
+            "GROUP BY MONTH(ir.injectionDate) " +
+            "ORDER BY MONTH(ir.injectionDate)")
+    List<Object[]> findCustomersVaccinatedByMonth(Integer year);
+
+    //report vaccine
+    @Query("SELECT MONTH(ir.injectionDate) AS month, COUNT(DISTINCT v.vaccineId) AS count " +
+            "FROM InjectionResult ir " +
+            "JOIN ir.vaccineFromInjectionResult v " +
+            "WHERE YEAR(ir.injectionDate) = :year " +
+            "GROUP BY MONTH(ir.injectionDate) " +
+            "ORDER BY MONTH(ir.injectionDate)")
+    List<Object[]> findVaccineCountByMonth(Integer year);
+
 }

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Report Injection Result</title>
+    <title>Report Customer</title>
     <style>
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button {
@@ -11,20 +11,20 @@
     </style>
 </head>
 <body class="bg-body-secondary">
-<div class="container mt-3 bg-light p-2 text-center">
+<div class="container bg-light p-2 text-center">
     <!--display type-->
     <div class="input-group d-block">
         <div class="d-flex fw-medium">
             <label>Display Type:</label>
         </div>
-        <div class="d-flex p-1 mt-2">
+        <div class="d-flex p-1">
             <div class="form-check form-check-inline">
                 <input class="form-check-input" type="radio" name="displaytype" id="displaytype-report" value="REPORT"
-                       onclick="switchDisplayType('REPORT')" checked>
+                       onclick="switchDisplayTypeCustmer('REPORT')" checked>
                 <label class="form-check-label" for="displaytype-report">Report</label>
             </div>
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="displaytype" id="displaytype-chart" value="CHART" onclick="switchDisplayType('CHART')">
+                <input class="form-check-input" type="radio" name="displaytype" id="displaytype-chart" value="CHART" onclick="switchDisplayTypeCustmer('CHART')">
                 <label class="form-check-label" for="displaytype-chart">Chart</label>
             </div>
         </div>
@@ -39,7 +39,7 @@
                 <!-- Injection Date -->
                 <div class="input-group d-block">
                     <div class="d-flex fw-medium">
-                        <label>Injection Date:</label>
+                        <label>Date of Birth:</label>
                     </div>
                     <div class="d-flex p-1">
                         <div class="d-flex">
@@ -52,29 +52,25 @@
                         </div>
                     </div>
                 </div>
-                <!-- Vaccine Type Name -->
+                <!-- Full name -->
                 <div class="input-group d-block">
                     <div class="d-flex fw-medium">
-                        <label>Vaccine Type:</label>
+                        <label>Full Name:</label>
                     </div>
                     <div class="d-flex p-1">
                         <div class="input-group">
-                            <select class="form-select" id="rp-vaccinetypename">
-                                <option value="" disabled selected>Select Vaccine Type Name</option>
-                            </select>
+                           <input type="text" class="form-control">
                         </div>
                     </div>
                 </div>
                 <!-- Vaccine Name -->
                 <div class="input-group d-block">
                     <div class="d-flex fw-medium">
-                        <label>Vaccine Name:</label>
+                        <label>Address:</label>
                     </div>
                     <div class="d-flex p-1">
                         <div class="input-group">
-                            <select class="form-select" id="rp-vaccinename">
-                                <option value="" disabled selected>Select Vaccine Name</option>
-                            </select>
+                            <input type="text" class="form-control">
                         </div>
                     </div>
                 </div>
@@ -99,15 +95,15 @@
     </div>
     <!-- Report Table -->
     <div class="table-report-injection-result mt-3">
-        <h3>LIST INJECTION RESULT</h3>
+        <h3>LIST CUSTOMER RESULT</h3>
         <table class="table table-striped table-hover table-bordered">
             <thead class="text-center">
             <tr>
                 <th class="bg-success text-white">No.</th>
-                <th class="bg-success text-white">Vaccine Name</th>
-                <th class="bg-success text-white">Vaccine Type Name</th>
-                <th class="bg-success text-white">Customer Name</th>
-                <th class="bg-success text-white">Date of Injection</th>
+                <th class="bg-success text-white">Full Name</th>
+                <th class="bg-success text-white">Date of Birth</th>
+                <th class="bg-success text-white">Address</th>
+                <th class="bg-success text-white">Identity Card</th>
                 <th class="bg-success text-white">Number of Injection</th>
             </tr>
             </thead>
@@ -127,7 +123,7 @@
                     <label>Year:</label>
                 </div>
                 <div class="d-flex p-1">
-                    <div class="input-group">
+                    <div class="input-group" style="width:140px;">
                         <select class="form-select" id="year">
                             <option value="" disabled selected>Select Year</option>
                         </select>
@@ -137,7 +133,7 @@
         </div>
     </div>
     <!-- Chart -->
-    <canvas id="injectionChart"></canvas>
+    <canvas id="vaccinatedCustomerChart"></canvas>
 </div>
 </body>
 </html>
