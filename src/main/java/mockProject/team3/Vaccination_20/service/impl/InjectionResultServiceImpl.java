@@ -156,5 +156,12 @@ public class InjectionResultServiceImpl implements InjectionResultService {
         return injectionResultRepository.findInjectionResultsByYear(year);
     }
 
+    //for report
+    public List<Object[]> findCustomersVaccinatedByMonth(Integer year) {
+        return injectionResultRepository.findCustomersVaccinatedByMonth(year);
+    }
 
+    public List<Object[]> findVaccineCountByMonth(Integer year) {
+        return injectionResultRepository.findVaccineCountByMonth(year);
+    }
 }

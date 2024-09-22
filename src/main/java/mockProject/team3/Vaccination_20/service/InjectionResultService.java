@@ -33,8 +33,12 @@ public interface InjectionResultService {
     public void deleteInjectionResults(List<String> ids);
 
     //report
-
     List<Integer> findDistinctYears();
 
     List<Object[]> findInjectionResultsByYear(Integer year);
+
+    public List<Object[]> findCustomersVaccinatedByMonth(Integer year);
+
+    public List<Object[]> findVaccineCountByMonth(Integer year);
+
 }

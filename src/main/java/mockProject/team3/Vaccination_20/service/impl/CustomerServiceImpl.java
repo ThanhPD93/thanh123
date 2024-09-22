@@ -10,6 +10,7 @@ import mockProject.team3.Vaccination_20.model.Employee;
 import mockProject.team3.Vaccination_20.repository.CustomerRepository;
 import mockProject.team3.Vaccination_20.model.Customer;
 import mockProject.team3.Vaccination_20.repository.CustomerRepository;
+import mockProject.team3.Vaccination_20.repository.InjectionScheduleRepository;
 import mockProject.team3.Vaccination_20.service.CustomerService;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -35,6 +36,8 @@ public class CustomerServiceImpl implements CustomerService {
     private ModelMapper modelMapper;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private InjectionScheduleRepository injectionScheduleRepository;
 
     @Override
     public Page<CustomerListResponseDto> findByFullNameOrAddress(String searchInput, int page, int size) {
@@ -85,8 +88,6 @@ public class CustomerServiceImpl implements CustomerService {
         return customerRepository.findCustomerByCustomerId(customerId);
     }
 
-    //for report
-    public List<Object[]> findCustomersVaccinatedByMonth(Integer year) {
-        return customerRepository.findCustomersVaccinatedByMonth(year);
-    }
+
+
 }

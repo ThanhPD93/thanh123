@@ -45,4 +45,22 @@ public interface InjectionResultRepository extends JpaRepository<InjectionResult
             + "GROUP BY MONTH(ir.injectionDate) ORDER BY MONTH(ir.injectionDate)")
     List<Object[]> findInjectionResultsByYear(@Param("year") Integer year);
 
+    //report customer
+    @Query("SELECT MONTH(ir.injectionDate) AS month, COUNT(DISTINCT c.customerId) AS count " +
+            "FROM InjectionResult ir " +
+            "JOIN ir.customer c " +
+            "WHERE YEAR(ir.injectionDate) = :year " +
+            "GROUP BY MONTH(ir.injectionDate) " +
+            "ORDER BY MONTH(ir.injectionDate)")
+    List<Object[]> findCustomersVaccinatedByMonth(Integer year);
+
+    //report vaccine
+    @Query("SELECT MONTH(ir.injectionDate) AS month, COUNT(DISTINCT v.vaccineId) AS count " +
+            "FROM InjectionResult ir " +
+            "JOIN ir.vaccineFromInjectionResult v " +
+            "WHERE YEAR(ir.injectionDate) = :year " +
+            "GROUP BY MONTH(ir.injectionDate) " +
+            "ORDER BY MONTH(ir.injectionDate)")
+    List<Object[]> findVaccineCountByMonth(Integer year);
+
 }

@@ -46,6 +46,18 @@ function switchDisplayTypeCustmer(type) {
     }
 }
 
+function switchDisplayTypeVaccine(type) {
+    if (type === 'REPORT') {
+        $('#report-section').show();
+        $('#chart-section').hide();
+    } else if (type === 'CHART') {
+        $('#report-section').hide();
+        $('#chart-section').show();
+        loadYears();
+        $('#year').on('change', fetchChartDataVaccine);
+    }
+}
+
     // Load years into the dropdown for the chart
     function loadYears() {
         $.ajax({
@@ -62,7 +74,7 @@ function switchDisplayTypeCustmer(type) {
             }
         });
     }
-
+//--injection
 function fetchChartDataInjection() {
     const year = $('#year').val();
 
@@ -122,7 +134,7 @@ function renderChart(chartData) {
     });
 }
 
-
+//--customer
 function fetchChartDataCustomer() {
     const year = $('#year').val();
 
@@ -161,10 +173,10 @@ function renderVaccinatedCustomerChart(chartData) {
         data: {
             labels: months,
             datasets: [{
-                label: 'Vaccinated Customers',
+                label: 'Customers',
                 data: results,
-                backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                borderColor: 'rgba(153, 102, 255, 1)',
+                backgroundColor: 'rgba(117,236,201,0.2)',
+                borderColor: 'rgb(9,145,36)',
                 borderWidth: 1
             }]
         },
@@ -181,7 +193,66 @@ function renderVaccinatedCustomerChart(chartData) {
     });
 }
 
+//--vaccine
+function fetchChartDataVaccine() {
+    const year = $('#year').val();
+
+    if (!year) {
+        console.error("No year selected.");
+        return;
+    }
+
+    $.ajax({
+        url: '/api/report/vaccine/chart',
+        method: 'GET',
+        data: { year: year },
+        success: function (chartData) {
+            renderVaccineChart(chartData);
+        },
+        error: function (error) {
+            console.error('Error fetching chart data:', error);
+        }
+    });
+}
+
+
+let currentVaccineChart = null;
+function renderVaccineChart(chartData) {
+    const ctx = document.getElementById('vaccineChart').getContext('2d');
+
+    if (currentVaccineChart) {
+        currentVaccineChart.destroy();
+    }
+
+    const months = chartData.months;
+    const results = chartData.results;
+
+    currentVaccineChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: months,
+            datasets: [{
+                label: 'Vaccine',
+                data: results,
+                backgroundColor: 'rgba(241,215,130,0.2)',
+                borderColor: 'rgb(228,184,27)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
+}
 
 // Event listener for when the user selects a year
-$('#year').on('change', fetchChartData);
+$('#year').on('change', fetchChartDataInjection);
 $('#year').on('change', fetchChartDataCustomer);
+$('#year').on('change', fetchChartDataVaccine);
