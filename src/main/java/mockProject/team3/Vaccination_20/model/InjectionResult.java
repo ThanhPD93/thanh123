@@ -2,6 +2,7 @@ package mockProject.team3.Vaccination_20.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import java.time.LocalDate;
@@ -13,9 +14,10 @@ import java.util.UUID;
 @Getter
 @Setter
 public class InjectionResult {
-	@Id
+    @Id
+    @GeneratedValue(generator = "injection_result_id")
+    @GenericGenerator(name = "injection_result_id", strategy = "mockProject.team3.Vaccination_20.utils.InjectionResultIdGenerator")
     @Column(length = 36)
-    @GeneratedValue(strategy = GenerationType.UUID)
     private String injectionResultId;
 
     private LocalDate injectionDate;

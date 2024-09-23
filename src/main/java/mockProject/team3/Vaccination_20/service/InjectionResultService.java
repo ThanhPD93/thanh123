@@ -1,39 +1,25 @@
 package mockProject.team3.Vaccination_20.service;
 
-
-import mockProject.team3.Vaccination_20.dto.injectionresult.CInjectionResultDTO;
-import mockProject.team3.Vaccination_20.dto.injectionresult.InjectionResultDTO;
-import mockProject.team3.Vaccination_20.dto.injectionresult.UInjectionResultDTO;
-import mockProject.team3.Vaccination_20.model.InjectionResult;
+import mockProject.team3.Vaccination_20.dto.injectionResultDto.*;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 
 public interface InjectionResultService {
-    //show with pagination
-    public Page<InjectionResultDTO> findBySearchWithPagination(String searchInput, int page, int size);
 
-    //list all
-    List<InjectionResultDTO> getAllInjectionResults();
-
-   //get data to dropdown
+    Page<InjectionResultResponseDto1> findBySearchWithPagination(String searchInput, int page, int size);
+    List<InjectionResultResponseDto1> getAllInjectionResults();
     List<String> getAllInjectionPlaces();
-
-    //add IR
-    public InjectionResult addInjectionResult(CInjectionResultDTO dto);
-
-    //detail
-    public UInjectionResultDTO getInjectionResultById(String id);
-
-    //update
+    int addInjectionResult(InjectionResultRequestDto1 dto);
+    UInjectionResultDTO getInjectionResultById(String id);
     UInjectionResultDTO updateInjectionResult(String injectionResultId, UInjectionResultDTO uInjectionResultDTO);
+    void deleteInjectionResults(List<String> ids);
+    Page<InjectionResultResponseDto3> findBySearch(String searchInput, int page, int size);
+	InjectionResultResponseDto2 displayDropdown();
 
-    //delete
-    public void deleteInjectionResults(List<String> ids);
-
-    //report
-    List<Integer> findDistinctYears();
+//    //report
+//    List<Integer> findDistinctYears();
 
     List<Object[]> findInjectionResultsByYear(Integer year);
 

@@ -1,6 +1,6 @@
 package mockProject.team3.Vaccination_20.repository;
 
-import mockProject.team3.Vaccination_20.dto.injectionresult.InjectionResultDTO;
+import mockProject.team3.Vaccination_20.dto.injectionResultDto.InjectionResultResponseDto1;
 import mockProject.team3.Vaccination_20.model.InjectionResult;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,17 +14,17 @@ import java.util.List;
 @Repository
 public interface InjectionResultRepository extends JpaRepository<InjectionResult, String> {
 
-    @Query("SELECT new mockProject.team3.Vaccination_20.dto.injectionresult.InjectionResultDTO("+
+    @Query("SELECT new mockProject.team3.Vaccination_20.dto.injectionResultDto.InjectionResultResponseDto1("+
             "ir.injectionResultId," +
             "CONCAT(c.customerId, ' - ', c.fullName, ' - ', c.dateOfBirth), " +
             "v.vaccineName, ir.prevention, ir.numberOfInjection, ir.injectionDate, ir.nextInjectionDate) " +
             "FROM InjectionResult ir " +
             "JOIN ir.customer c " +
             "JOIN ir.vaccineFromInjectionResult v")
-    List<InjectionResultDTO> findAllInjectionResults();
+    List<InjectionResultResponseDto1> findAllInjectionResults();
 
 
-    @Query("SELECT new mockProject.team3.Vaccination_20.dto.injectionresult.InjectionResultDTO(" +
+    @Query("SELECT new mockProject.team3.Vaccination_20.dto.injectionResultDto.InjectionResultResponseDto1(" +
             "ir.injectionResultId," +
             "CONCAT(c.customerId, ' - ', c.fullName, ' - ', c.dateOfBirth), " +
             "v.vaccineName, vt.vaccineTypeName, ir.numberOfInjection, ir.injectionDate, ir.nextInjectionDate) " +
@@ -33,11 +33,27 @@ public interface InjectionResultRepository extends JpaRepository<InjectionResult
             "JOIN ir.vaccineFromInjectionResult v " +
             "JOIN v.vaccineType vt " +
             "WHERE c.fullName LIKE %:searchInput% OR c.customerId LIKE %:searchInput%")
-    Page<InjectionResultDTO> findAllWithPagination(@Param("searchInput") String searchInput, Pageable pageable);
+    Page<InjectionResultResponseDto1> findAllWithPagination(@Param("searchInput") String searchInput, Pageable pageable);
 
 	//get year for report
     @Query("SELECT DISTINCT YEAR(ir.injectionDate) FROM InjectionResult ir ORDER BY YEAR(ir.injectionDate)")
-    List<Integer> findDistinctYears();
+    List<Integer> findYears();
+
+    @Query("SELECT ir FROM InjectionResult ir " +
+            "JOIN ir.customer c " +
+            "JOIN ir.vaccineFromInjectionResult v " +
+            "WHERE LOWER(v.vaccineName) LIKE LOWER(CONCAT('%', :searchInput, '%')) " +
+            "OR LOWER(ir.prevention) LIKE LOWER(CONCAT('%', :searchInput, '%')) " +
+            "OR LOWER(ir.numberOfInjection) LIKE LOWER(CONCAT('%', :searchInput, '%')) " +
+            "OR LOWER(c.fullName) LIKE LOWER(CONCAT('%', :searchInput, '%')) " +
+            "OR LOWER(c.identityCard) LIKE LOWER(CONCAT('%', :searchInput, '%')) " +
+            "OR LOWER(c.phone) LIKE LOWER(CONCAT('%', :searchInput, '%')) " +
+            "OR FUNCTION('DATE_FORMAT', ir.injectionDate, '%Y-%m-%d') = :searchInput " +
+            "OR FUNCTION('DATE_FORMAT', ir.nextInjectionDate, '%Y-%m-%d') = :searchInput")
+    Page<InjectionResult> findBySearch(@Param("searchInput") String searchInput, Pageable pageable);
+
+
+//    List<Integer> findDistinctYears();
 
     //report injection
     @Query("SELECT MONTH(ir.injectionDate) AS month, COUNT(ir) AS total "

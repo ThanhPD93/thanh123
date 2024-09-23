@@ -1,10 +1,7 @@
 package mockProject.team3.Vaccination_20.controller;
 
 
-import mockProject.team3.Vaccination_20.dto.injectionresult.CInjectionResultDTO;
-import mockProject.team3.Vaccination_20.dto.injectionresult.InjectionResultDTO;
-import mockProject.team3.Vaccination_20.dto.injectionresult.UInjectionResultDTO;
-import mockProject.team3.Vaccination_20.model.InjectionResult;
+import mockProject.team3.Vaccination_20.dto.injectionResultDto.*;
 import mockProject.team3.Vaccination_20.service.CustomerService;
 import mockProject.team3.Vaccination_20.service.InjectionResultService;
 import mockProject.team3.Vaccination_20.service.VaccineService;
@@ -44,18 +41,30 @@ public class InjectionResultController {
         return Files.readString(path);
     }
 
+    @GetMapping("/displayDropdown")
+    public ResponseEntity<InjectionResultResponseDto2> displayDropdown() {
+        return ResponseEntity.ok(injectionResultService.displayDropdown());
+    }
+
    //show list
     @GetMapping("/list")
-    public ResponseEntity<List<InjectionResultDTO>> getAllInjectionResults() {
-        List<InjectionResultDTO> injectionResults = injectionResultService.getAllInjectionResults();
+    public ResponseEntity<List<InjectionResultResponseDto1>> getAllInjectionResults() {
+        List<InjectionResultResponseDto1> injectionResults = injectionResultService.getAllInjectionResults();
         return new ResponseEntity<>(injectionResults, HttpStatus.OK);
+    }
+
+    @GetMapping("/findBySearch")
+    public ResponseEntity<Page<InjectionResultResponseDto3>> findBySearch(@RequestParam String searchInput,
+                                                                          @RequestParam int page,
+                                                                          @RequestParam int size) {
+        return ResponseEntity.ok(injectionResultService.findBySearch(searchInput,page,size));
     }
 
     //show with pagination
     @GetMapping("/findAllWithPagination")
-    public Page<InjectionResultDTO> findAllWithPagination(@RequestParam String searchInput,
-                                                          @RequestParam(defaultValue = "0") int page,
-                                                          @RequestParam(defaultValue = "5") int size) {
+    public Page<InjectionResultResponseDto1> findAllWithPagination(@RequestParam String searchInput,
+                                                                   @RequestParam(defaultValue = "0") int page,
+                                                                   @RequestParam(defaultValue = "5") int size) {
         return injectionResultService.findBySearchWithPagination(searchInput, page, size);
     }
 
@@ -69,17 +78,13 @@ public class InjectionResultController {
 
     //add
     @PostMapping("/add")
-    public ResponseEntity<ApiResponse<InjectionResult>> addInjectionResult(@RequestBody CInjectionResultDTO injectionResultDto) {
-        InjectionResult savedResult = injectionResultService.addInjectionResult(injectionResultDto);
-        ApiResponse<InjectionResult> response;
-
-        if (savedResult != null) {
-            response = new ApiResponse<>(1, "Injection result added successfully", savedResult);
+    public ResponseEntity<String> addInjectionResult(@RequestBody InjectionResultRequestDto1 injectionResultDto) {
+        int result = injectionResultService.addInjectionResult(injectionResultDto);
+        if (result == 0) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("an exception was thrown during service operation");
         } else {
-            response = new ApiResponse<>(0, "Failed to add injection result", null);
+            return ResponseEntity.ok("add injection result success!");
         }
-
-        return ResponseEntity.ok(response);
     }
 
     //-detail

@@ -13,7 +13,7 @@
 </head>
 <body class="bg-body-secondary">
 <div class="container mt-3 bg-light p-3">
-    <form id="add-injection-result-form" onsubmit="event.preventDefault(); addInjectionResult(event);">
+    <form id="add-injection-result-form" onsubmit="event.preventDefault(); addInjectionResult();">
         <!-- Row 1 -->
         <div class="d-flex justify-content-between mb-4">
             <!-- Customer -->
@@ -31,7 +31,7 @@
                 <label class="form-label fw-medium">Vaccine Type Name <span class="text-danger">*</span></label>
                 <div class="input-group">
                     <img src="/images/icons/prevention.png" class="input-group-text border-0">
-                    <select class="form-select" id="vaccineTypeName" >
+                    <select class="form-select" id="vaccineTypeName" onchange="dropdownVaccineName()">
                         <option value="" disabled selected>--Select Vaccine Type Name--</option>
                     </select>
                 </div>
@@ -41,7 +41,7 @@
                 <label class="form-label fw-medium">Vaccine Name <span class="text-danger">*</span></label>
                 <div class="input-group">
                     <img src="/images/icons/vaccine.png" class="input-group-text border-0">
-                    <select class="form-select" id="vaccinename">
+                    <select class="form-select" id="vaccineName">
                         <option value="" disabled selected>--Select Vaccine Type--</option>
                     </select>
                 </div>
