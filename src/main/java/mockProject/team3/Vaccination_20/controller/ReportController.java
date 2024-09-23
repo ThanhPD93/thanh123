@@ -31,12 +31,17 @@ public class ReportController {
         return Files.readString(path);
     }
 
+//    @GetMapping("/injection-result/stats")
+//    public ResponseEntity<List<ReportResponseDto1>> getInjectionResultsByMonth(@RequestParam int year) {
+//        List<ReportResponseDto1> stats = injectionResultService.getInjectionResultsByYear(year);
+//        return ResponseEntity.ok(stats);
+//    }
 
-    @GetMapping("/injection/getYears")
-    public ResponseEntity<List<Integer>> getYears() {
-        List<Integer> years = injectionResultService.findDistinctYears();
-        return ResponseEntity.ok(years);
-    }
+//    @GetMapping("/injection/getYears")
+//    public ResponseEntity<List<Integer>> getYears() {
+//        List<Integer> years = injectionResultService.findDistinctYears();
+//        return ResponseEntity.ok(years);
+//    }
 
 
     @GetMapping("/injection/chart")

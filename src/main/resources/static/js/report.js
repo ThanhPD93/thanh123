@@ -1,4 +1,3 @@
-
 function fetchReport(filename) {
     $.ajax({
         url: "/api/report/getAjax",
