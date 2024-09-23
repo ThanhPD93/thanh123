@@ -17,4 +17,6 @@ public interface InjectionScheduleRepository extends JpaRepository<InjectionSche
             "OR LOWER(i.injectionScheduleDescription) LIKE LOWER(CONCAT('%', :searchInput, '%')) " +
             "OR LOWER(i.place) LIKE LOWER(CONCAT('%', :searchInput, '%')))")
     Page<InjectionSchedule> findBySearch(String searchInput, Pageable pageable);
+
+    InjectionSchedule findByInjectionScheduleId(String id);
 }
