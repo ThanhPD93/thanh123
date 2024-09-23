@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import mockProject.team3.Vaccination_20.utils.InjectionScheduleStatus;
 import mockProject.team3.Vaccination_20.utils.Status;
 
 import java.util.List;
@@ -17,16 +16,16 @@ import java.util.List;
 @Setter
 public class VaccineType {
     @Id
-    @Column(length = 36)
+    @Column(length = 36, unique = true, nullable = false)
     private String vaccineTypeId;
 
-    @Column(length = 200)
+    @Column(length = 200, nullable = false)
     private String vaccineTypeDescription;
 
-    @Column(length = 50)
+    @Column(length = 50, nullable = false)
     private String vaccineTypeName;
 
-    @Column(length = 50)
+    @Column(length = 50, nullable = false)
     private Status vaccineTypeStatus;
 
     @Lob
@@ -34,6 +33,7 @@ public class VaccineType {
     private byte[] vaccineTypeImage;
 
     //relationship
+    @Column(nullable = false)
     @OneToMany(mappedBy = "vaccineType")
     private List<Vaccine> vaccines;
 }

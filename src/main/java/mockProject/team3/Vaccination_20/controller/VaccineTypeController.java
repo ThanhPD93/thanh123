@@ -1,5 +1,6 @@
 package mockProject.team3.Vaccination_20.controller;
 
+import jakarta.validation.Valid;
 import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.*;
 import mockProject.team3.Vaccination_20.model.VaccineType;
 import mockProject.team3.Vaccination_20.service.VaccineTypeService;
@@ -9,14 +10,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+
 
 @RestController
 @RequestMapping("/api/vaccine-type")
@@ -46,7 +44,7 @@ public class VaccineTypeController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> addVaccineType(@RequestBody VaccineTypeRequestDto1 vaccineTypeRequestDto1) {
+    public ResponseEntity<String> addVaccineType(@Valid @RequestBody VaccineTypeRequestDto1 vaccineTypeRequestDto1) {
         int result = vaccineTypeService.addVaccineType(vaccineTypeRequestDto1);
     	if (result == 0) {
             return ResponseEntity.badRequest().body("cannot add new vaccineType, due to image fault");
