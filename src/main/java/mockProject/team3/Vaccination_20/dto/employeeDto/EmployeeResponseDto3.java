@@ -4,7 +4,7 @@ import mockProject.team3.Vaccination_20.utils.Gender;
 
 import java.time.LocalDate;
 
-public interface LResponseEmployee {
+public interface EmployeeResponseDto3 {
     String getEmployeeId();
     String getAddress();
     LocalDate getDateOfBirth();

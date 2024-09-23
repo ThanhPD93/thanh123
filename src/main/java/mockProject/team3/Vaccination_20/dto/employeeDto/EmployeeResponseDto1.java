@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class URequestEmployee {
+public class EmployeeResponseDto1 {
     private String employeeId;
 
     private String address;
@@ -23,11 +23,15 @@ public class URequestEmployee {
 
     private Gender gender;
 
-    private String image;
+    private byte[] image;
 
     private String phone;
 
     private String position;
 
     private String workingPlace;
+
+    private String username;
+
+    private String password;
 }

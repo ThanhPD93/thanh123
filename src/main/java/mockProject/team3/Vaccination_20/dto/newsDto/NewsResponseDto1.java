@@ -9,15 +9,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class NewsResponseDto {
-
+public class NewsResponseDto1 {
     private String newsId;
-
     private String content;
-
     private String preview;
-
     private String title;
-
     private LocalDateTime postDate;
 }

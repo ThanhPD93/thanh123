@@ -9,6 +9,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class LResponseVaccineType {
+public class VaccineTypeRequestDto2 {
         private List<String> vaccineTypeListIds;
 }

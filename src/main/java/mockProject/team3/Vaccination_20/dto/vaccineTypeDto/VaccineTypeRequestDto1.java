@@ -8,7 +8,8 @@ import mockProject.team3.Vaccination_20.utils.Status;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class URequestVaccineType {
+public class VaccineTypeRequestDto1 {
+
     private String vaccineTypeId;
 
     private String vaccineTypeName;
@@ -18,5 +19,4 @@ public class URequestVaccineType {
     private String vaccineTypeImage;
 
     private Status vaccineTypeStatus;
-
 }

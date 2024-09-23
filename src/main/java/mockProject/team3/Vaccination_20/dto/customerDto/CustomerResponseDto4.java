@@ -1,4 +1,4 @@
-package mockProject.team3.Vaccination_20.dto.injectionresult;
+package mockProject.team3.Vaccination_20.dto.customerDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CustomerInfoDTO {
+public class CustomerResponseDto4 {
     private String customerInfoId;
     private String customerInfoFullName;
     private LocalDate customerInfoDateOfBirth;

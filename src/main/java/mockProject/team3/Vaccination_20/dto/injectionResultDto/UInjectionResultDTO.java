@@ -1,4 +1,4 @@
-package mockProject.team3.Vaccination_20.dto.injectionresult;
+package mockProject.team3.Vaccination_20.dto.injectionResultDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

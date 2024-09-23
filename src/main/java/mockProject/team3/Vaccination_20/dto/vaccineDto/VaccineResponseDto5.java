@@ -1,19 +1,15 @@
-package mockProject.team3.Vaccination_20.dto.forvaccine;
+package mockProject.team3.Vaccination_20.dto.vaccineDto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import mockProject.team3.Vaccination_20.utils.InjectionScheduleStatus;
+import lombok.*;
+import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.VaccineTypeResponseDto4;
 import mockProject.team3.Vaccination_20.utils.Status;
 
 import java.time.LocalDate;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-public class VaccineDto {
+@Data
+public class VaccineResponseDto5 {
     private String vaccineId;
     private String contraindication;
     private String indication;
@@ -24,5 +20,5 @@ public class VaccineDto {
     private String vaccineUsage;
     private String vaccineName;
     private Status vaccineStatus;
-    private String vaccineType;
+    private VaccineTypeResponseDto4 vaccineType;
 }

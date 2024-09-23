@@ -15,7 +15,7 @@ import java.time.Period;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class CRequestEmployee {
+public class EmployeeRequestDto1 {
     @Size(max = 36, message = "Employee ID must not exceed 36 characters")
     @NotBlank(message = "Employee ID must not be blank!")
     private String employeeId;

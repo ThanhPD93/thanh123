@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class DResponseEmployee {
+public class EmployeeRequestDto2 {
     private String employeeId;
 
     private String address;
@@ -23,15 +23,11 @@ public class DResponseEmployee {
 
     private Gender gender;
 
-    private byte[] image;
+    private String image;
 
     private String phone;
 
     private String position;
 
     private String workingPlace;
-
-    private String username;
-
-    private String password;
 }

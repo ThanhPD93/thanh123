@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class NewsAddRequestDto {
+public class NewsRequestDto1 {
 
     @Size(max = 50, message = "Vaccine type ID must not exceed 50 characters!")
     @NotBlank(message = "Vaccine type ID must not be empty!")

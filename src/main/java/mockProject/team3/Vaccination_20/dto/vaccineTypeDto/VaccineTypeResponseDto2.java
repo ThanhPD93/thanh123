@@ -5,18 +5,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import mockProject.team3.Vaccination_20.utils.Status;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
-public class CRequestVaccineType {
-
+@NoArgsConstructor
+@AllArgsConstructor
+public class VaccineTypeResponseDto2 {
     private String vaccineTypeId;
-
     private String vaccineTypeName;
-
     private String vaccineTypeDescription;
-
-    private String vaccineTypeImage;
-
     private Status vaccineTypeStatus;
+    private byte[] vaccineTypeImage;
 }

@@ -4,16 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class DResponseVaccineType {
-
-    private String vaccineTypeId;
-
-    private String vaccineTypeName;
-
-    private String vaccineTypeDescription;
-
-    private String vaccineTypeImage;
+public class VaccineTypeResponseDto5 {
+	private String vaccineTypeId;
+	private String vaccineTypeName;
 }
