@@ -59,10 +59,10 @@
                         </div>
                     </a>
                     <div class="sub-menu collapse " id="employeeManagement">
-                        <a class="nav-link text-black" onclick="fetchEmployee('employee-list.html')">
+                        <a class="nav-link text-black" onclick="unPressEmployeeUpdateButton(); fetchEmployee('employee-list.html');">
                             Employee List
                         </a>
-                        <a class="nav-link text-black" onclick="fetchEmployee('employee-create.html')">
+                        <a class="nav-link text-black" onclick="unPressEmployeeUpdateButton(); fetchEmployee('employee-create.html');">
                             Create Employee
                         </a>
                     </div>
@@ -79,7 +79,7 @@
                         <a class="nav-link text-black" onclick="fetchCustomer('customer-list.html')">
                            Customer List
                         </a>
-                        <a class="nav-link text-black" onclick="fetchCustomer('customer-create.html')">
+                        <a class="nav-link text-black" onclick="customerUpdateNotPressed(); fetchCustomer('customer-create.html');">
                            Create Customer
                         </a>
                     </div>
@@ -96,7 +96,7 @@
                         <a class="nav-link text-black" onclick="fetchVaccineType('vaccine-type-list.html')">
                             Vaccine Type List
                         </a>
-                        <a class="nav-link text-black" onclick="fetchVaccineType('vaccine-type-create.html')">
+                        <a class="nav-link text-black" onclick="vaccineTypeUpdateNotPressed(); fetchVaccineType('vaccine-type-create.html');">
                             Create Vaccine Type
                         </a>
                     </div>
@@ -110,10 +110,10 @@
                         </div>
                     </a>
                     <div class="sub-menu collapse" id="vaccine">
-                        <a class="nav-link text-black" onclick="fetchVaccineList('vaccine-list.html')">
+                        <a class="nav-link text-black" onclick="fetchVaccine('vaccine-list.html')">
                            Vaccine List
                         </a>
-                        <a class="nav-link text-black" onclick="fetchVaccineList('create-vaccine.html')">
+                        <a class="nav-link text-black" onclick="fetchVaccine('create-vaccine.html')">
                            Create Vaccine
                         </a>
                     </div>
@@ -127,14 +127,13 @@
                         </div>
                     </a>
                     <div class="sub-menu collapse" id="injectionSchedule">
-                        <a class="nav-link text-black" onclick="fetchInjectionSchedule('injection-schedule-list.html')">
+                        <a class="nav-link text-black" onclick="unPressInjectionScheduleUpdateButton(); fetchInjectionSchedule('injection-schedule-list.html');">
                             Injection Schedule List
                         </a>
-                        <a class="nav-link text-black" onclick="fetchInjectionSchedule('injection-schedule-create.html')">
+                        <a class="nav-link text-black" onclick="unPressInjectionScheduleUpdateButton(); fetchInjectionSchedule('injection-schedule-create.html');">
                             Create Injection Schedule
                         </a>
                     </div>
-                    <!--                    injection result-->
                     <a class="nav-link text-black d-flex justify-content-between" data-bs-toggle="collapse" data-bs-target="#injectionResult"
                        aria-expanded="false" aria-controls="injectionResult">
                         <div>
@@ -164,10 +163,10 @@
                         </div>
                     </a>
                     <div class="sub-menu collapse" id="news">
-                        <a class="nav-link text-black " >
+                        <a class="nav-link text-black" onclick="fetchNewsAjax('news-list.html')">
                             Injection News List
                         </a>
-                        <a class="nav-link text-black" href="#">
+                        <a class="nav-link text-black" onclick="fetchNewsAjax('news-create.html')">
                             Create News Result
                         </a>
                     </div>
@@ -215,10 +214,11 @@
 <script src="/js/vaccine.js"></script>
 <script src="/js/vaccineType.js"></script>
 <script src="/js/injectionresult.js"> </script>
-<script src="/js/dashboard.js"></script>
 <script src="/js/vaccineType.js"></script>
 <script src="/js/injectionSchedule.js"></script>
 <script src="/js/report.js"></script>
+<script src="/js/news.js"></script>
+<script src="/js/dashboard.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </body>
