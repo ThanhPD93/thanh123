@@ -1,14 +1,13 @@
 package mockProject.team3.Vaccination_20.service.impl;
 import jakarta.persistence.EntityNotFoundException;
-import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.CRequestVaccineType;
-import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.DResponseVaccineType;
+import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.VaccineTypeRequestDto1;
 
-import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.FindAllResponseVaccineType;
-import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.FindByIdResponseVaccineType;
+import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.VaccineTypeResponseDto1;
+import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.VaccineTypeResponseDto2;
+import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.VaccineTypeResponseDto5;
 import mockProject.team3.Vaccination_20.model.VaccineType;
 import mockProject.team3.Vaccination_20.repository.VaccineTypeRepository;
 import mockProject.team3.Vaccination_20.service.VaccineTypeService;
-import mockProject.team3.Vaccination_20.utils.InjectionScheduleStatus;
 import mockProject.team3.Vaccination_20.utils.Status;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -22,6 +21,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class VaccineTypeServiceImpl implements VaccineTypeService {
@@ -33,8 +33,12 @@ public class VaccineTypeServiceImpl implements VaccineTypeService {
     private ModelMapper modelMapper;
 
     @Override
-    public List<VaccineType> getAllVaccineTypes() {
-        return vaccineTypeRepository.findAll();
+    public List<VaccineTypeResponseDto5> getAllVaccineTypes() {
+        List<VaccineType> vaccineTypes = vaccineTypeRepository.findAll()
+                .stream()
+                .filter(vaccineType -> vaccineType.getVaccineTypeStatus() == Status.ACTIVE)
+                .collect(Collectors.toList());
+        return modelMapper.map(vaccineTypes, new TypeToken<List<VaccineTypeResponseDto5>>(){}.getType());
     }
 
     @Override
@@ -66,19 +70,19 @@ public class VaccineTypeServiceImpl implements VaccineTypeService {
     }
 
     @Override
-    public int addVaccineType(CRequestVaccineType cRequestVaccineType) {
-        VaccineType vaccineType = vaccineTypeRepository.findByVaccineTypeId(cRequestVaccineType.getVaccineTypeId());
-        if(cRequestVaccineType.getVaccineTypeImage() == null && vaccineType != null) {
-            byte[] currentImage = vaccineTypeRepository.findByVaccineTypeId(cRequestVaccineType.getVaccineTypeId()).getVaccineTypeImage();
-            vaccineType = modelMapper.map(cRequestVaccineType, VaccineType.class);
+    public int addVaccineType(VaccineTypeRequestDto1 vaccineTypeRequestDto1) {
+        VaccineType vaccineType = vaccineTypeRepository.findByVaccineTypeId(vaccineTypeRequestDto1.getVaccineTypeId());
+        if(vaccineTypeRequestDto1.getVaccineTypeImage() == null && vaccineType != null) {
+            byte[] currentImage = vaccineTypeRepository.findByVaccineTypeId(vaccineTypeRequestDto1.getVaccineTypeId()).getVaccineTypeImage();
+            vaccineType = modelMapper.map(vaccineTypeRequestDto1, VaccineType.class);
             vaccineType.setVaccineTypeImage(currentImage);
         } else {
-            vaccineType = modelMapper.map(cRequestVaccineType, VaccineType.class);
+            vaccineType = modelMapper.map(vaccineTypeRequestDto1, VaccineType.class);
         }
-        if (cRequestVaccineType.getVaccineTypeImage() != null && !cRequestVaccineType.getVaccineTypeImage().isEmpty()) {
+        if (vaccineTypeRequestDto1.getVaccineTypeImage() != null && !vaccineTypeRequestDto1.getVaccineTypeImage().isEmpty()) {
             try {
                 // Clean and decode the Base64 string
-                String base64Image = cRequestVaccineType.getVaccineTypeImage();
+                String base64Image = vaccineTypeRequestDto1.getVaccineTypeImage();
                 byte[] decodedImage = Base64.getDecoder().decode(base64Image);
                 vaccineType.setVaccineTypeImage(decodedImage);
             } catch (IllegalArgumentException e) {
@@ -90,9 +94,9 @@ public class VaccineTypeServiceImpl implements VaccineTypeService {
     }
 
     @Override
-    public FindByIdResponseVaccineType findById(String id) {
+    public VaccineTypeResponseDto2 findById(String id) {
         VaccineType vaccineType = vaccineTypeRepository.findById(id).get();
-        return modelMapper.map(vaccineType, FindByIdResponseVaccineType.class);
+        return modelMapper.map(vaccineType, VaccineTypeResponseDto2.class);
     }
 
     @Override
@@ -114,7 +118,7 @@ public class VaccineTypeServiceImpl implements VaccineTypeService {
     }
 
     @Override
-    public Page<FindAllResponseVaccineType> findBySearchWithPagination(String searchInput, int page, int size) {
+    public Page<VaccineTypeResponseDto1> findBySearchWithPagination(String searchInput, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 		Page<VaccineType> vaccineTypePage;
         if (StringUtils.hasText(searchInput)) {
@@ -122,7 +126,7 @@ public class VaccineTypeServiceImpl implements VaccineTypeService {
         } else {
             vaccineTypePage = vaccineTypeRepository.findAll(pageable);
         }
-        List<FindAllResponseVaccineType> responseVaccineTypes = modelMapper.map(vaccineTypePage.getContent(), new TypeToken<List<FindAllResponseVaccineType>>() {}.getType());
+        List<VaccineTypeResponseDto1> responseVaccineTypes = modelMapper.map(vaccineTypePage.getContent(), new TypeToken<List<VaccineTypeResponseDto1>>() {}.getType());
         return new PageImpl<>(responseVaccineTypes, pageable, vaccineTypePage.getTotalElements());
     }
 

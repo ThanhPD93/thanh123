@@ -21,10 +21,6 @@ public interface VaccineTypeRepository extends JpaRepository<VaccineType, String
     @Query("SELECT vt FROM VaccineType vt WHERE " +
             "LOWER(vt.vaccineTypeId) LIKE LOWER(CONCAT('%', :searchInput, '%')) OR " +
             "LOWER(vt.vaccineTypeName) LIKE LOWER(CONCAT('%', :searchInput, '%')) ")
-//    @Query("SELECT vt FROM VaccineType vt WHERE " +
-//            "LOWER(vt.vaccineTypeId) LIKE LOWER(CONCAT('%', :searchInput, '%')) OR " +
-//            "LOWER(vt.vaccineTypeName) LIKE LOWER(CONCAT('%', :searchInput, '%')) OR " +
-//            "CAST(vt.status AS string) LIKE LOWER(CONCAT('%', :searchInput, '%'))")
     Page<VaccineType> findBySearch(String searchInput, Pageable pageable);
 
 
