@@ -1,29 +1,28 @@
 package mockProject.team3.Vaccination_20.service;
 
-import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.CRequestVaccineType;
-import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.DResponseVaccineType;
+import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.VaccineTypeRequestDto1;
 
-import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.FindAllResponseVaccineType;
-import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.FindByIdResponseVaccineType;
-import mockProject.team3.Vaccination_20.model.Vaccine;
+import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.VaccineTypeResponseDto1;
+import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.VaccineTypeResponseDto2;
+import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.VaccineTypeResponseDto5;
 import mockProject.team3.Vaccination_20.model.VaccineType;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public interface VaccineTypeService {
-    List<VaccineType> getAllVaccineTypes();
+    List<VaccineTypeResponseDto5> getAllVaccineTypes();
 
     VaccineType addVaccineType(VaccineType vaccineType);
 
     VaccineType findVaccineTypeById(String id);
 
-    int addVaccineType(CRequestVaccineType cRequestVaccineType);
+    int addVaccineType(VaccineTypeRequestDto1 vaccineTypeRequestDto1);
 
-    FindByIdResponseVaccineType findById(String id);
+    VaccineTypeResponseDto2 findById(String id);
 
     int makeInactive(List<String> vaccineTypeIds);
 
-    Page<FindAllResponseVaccineType> findBySearchWithPagination(String searchInput, int page, int size);
+    Page<VaccineTypeResponseDto1> findBySearchWithPagination(String searchInput, int page, int size);
 
 }

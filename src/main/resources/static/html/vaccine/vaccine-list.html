@@ -13,12 +13,12 @@
             <label>Show</label>
             <div class="btn-group border-bottom border-info rounded-0">
                 <button type="button" class="btn btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
-                        id="dropdownMenuButton">1</button>
+                        id="dropdownMenuButton">10</button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" onclick="findAllVaccineWithPagination(0,1)">5</a></li>
-                    <li><a class="dropdown-item" onclick="findAllVaccineWithPagination(0,2)">25</a></li>
-                    <li><a class="dropdown-item" onclick="findAllVaccineWithPagination(0,3)">50</a></li>
-                    <li><a class="dropdown-item" onclick="findAllVaccineWithPagination(0,4)">100</a></li>
+                    <li><a class="dropdown-item" onclick="setVaccinePageSize(10); findAllVaccine(0);">10</a></li>
+                    <li><a class="dropdown-item" onclick="setVaccinePageSize(25); findAllVaccine(0);">25</a></li>
+                    <li><a class="dropdown-item" onclick="setVaccinePageSize(50); findAllVaccine(0);">50</a></li>
+                    <li><a class="dropdown-item" onclick="setVaccinePageSize(100); findAllVaccine(0);">100</a></li>
                 </ul>
             </div>
             <span>entries</span>
@@ -29,7 +29,7 @@
                 <span class="me-2">Search:</span>
                 <input type="search" name="searchInput" id="searchInput"
                        class="border-bottom border-0 border-info" placeholder="..."
-                		oninput="search(0)">
+                		oninput="findAllVaccine(0)">
             </div>
         </div>
     </div>
@@ -39,7 +39,7 @@
             <thead class="text-center ">
             <tr>
                 <th scope="col" class="bg-success text-white" >
-                    <input type="checkbox" id="mother-checkbox">
+                    <input type="checkbox" id="mother-checkbox" onchange="checkAllBoxes()">
                 </th>
                 <th scope="col" class="bg-success text-white" >Vaccine id</th>
                 <th scope="col" class="bg-success text-white" >Vaccine Name</th>
@@ -70,7 +70,7 @@
     <!--    3 button-->
     <div class="d-flex flex-row mt-2">
         <div class="me-2">
-            <button type="button" class="btn btn-success" onclick="fetchVaccineList('create-vaccine.html')">New Vaccine Type</button>
+            <button type="button" class="btn btn-success" onclick="fetchVaccine('create-vaccine.html')">New Vaccine Type</button>
         </div>
         <div class="me-2">
             <a type="button" class="update-button btn btn-warning text-white" href="#"
@@ -80,7 +80,7 @@
             <button type="button" class="btn btn-danger text-white" onclick="changeStatusSelectedVaccines()">Make In-Active</button>
         </div>
         <div class="me-2">
-            <button type="button" class="btn btn-danger text-white" onclick="fetchImportExcelFile('import-vaccine.html')">Import Vaccine</button>
+            <button type="button" class="btn btn-danger text-white" onclick="fetchVaccine('import-vaccine.html')">Import Vaccine</button>
         </div>
     </div>
 </div>

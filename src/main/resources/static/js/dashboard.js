@@ -1,6 +1,28 @@
-let UpdateBtnPressed = false;
+let employeeUpdateBtn = false;
 let selectedEmployeeId = null;
 let vaccineTypeUpdateBtn = false;
+let customerUpdateBtn = false;
+let vaccineTypeDisplayObject;
+let vaccineIdParam;
+let injectionScheduleUpdateBtn = false;
+let injectionScheduleIdParam;
+let vaccineOfIsIdParam;
+let injectionScheduleLink = false;
+
+function checkAllBoxes() {
+    const selectAllCheckbox = $("#mother-checkbox")[0];
+    const checkboxes = $(".check-boxes input[type='checkbox']").toArray();
+    checkboxes.forEach(checkbox => checkbox.checked = selectAllCheckbox.checked);
+}
+
+function dropdownPageSize(pageSize) {
+	document.getElementById("dropdownMenuButton").innerHTML = pageSize;
+}
+
+function backToHomePage() {
+	$("#ajax-title")[0].innerHTML = "WELCOME TO VACCINE MANAGEMENT SYSTEM";
+	$("#ajax-content")[0].innerHTML = "";
+}
 
 document.addEventListener("DOMContentLoaded", function () {
 	$.ajax({
@@ -19,16 +41,3 @@ document.addEventListener("DOMContentLoaded", function () {
 		}
 	});
 });
-
-function pressEmployeeUpdateButton() {
-	UpdateBtnPressed = true;
-}
-
-function dropdownPageSize(pageSize) {
-	document.getElementById("dropdownMenuButton").innerHTML = pageSize;
-}
-
-function backToHomePage() {
-	$("#ajax-title")[0].innerHTML = "WELCOME TO VACCINE MANAGEMENT SYSTEM";
-	$("#ajax-content")[0].innerHTML = "";
-}

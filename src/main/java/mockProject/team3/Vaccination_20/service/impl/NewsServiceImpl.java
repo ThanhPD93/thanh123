@@ -1,7 +1,7 @@
 package mockProject.team3.Vaccination_20.service.impl;
 
-import mockProject.team3.Vaccination_20.dto.newsDto.NewsAddRequestDto;
-import mockProject.team3.Vaccination_20.dto.newsDto.NewsResponseDto;
+import mockProject.team3.Vaccination_20.dto.newsDto.NewsRequestDto1;
+import mockProject.team3.Vaccination_20.dto.newsDto.NewsResponseDto1;
 import mockProject.team3.Vaccination_20.model.News;
 import mockProject.team3.Vaccination_20.repository.NewsRepository;
 import mockProject.team3.Vaccination_20.service.NewsService;
@@ -25,13 +25,13 @@ public class NewsServiceImpl implements NewsService {
     ModelMapper modelMapper;
 
     @Override
-    public NewsResponseDto addNews(NewsAddRequestDto newsAddRequestDto) {
-        News news = modelMapper.map(newsAddRequestDto, News.class);
-        return modelMapper.map(newsRepository.save(news), NewsResponseDto.class);
+    public NewsResponseDto1 addNews(NewsRequestDto1 newsRequestDto1) {
+        News news = modelMapper.map(newsRequestDto1, News.class);
+        return modelMapper.map(newsRepository.save(news), NewsResponseDto1.class);
     }
 
     @Override
-    public Page<NewsResponseDto> findByTittleOrContent(String searchInput, int page, int size) {
+    public Page<NewsResponseDto1> findByTittleOrContent(String searchInput, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<News> news;
         if(searchInput.trim().isEmpty()) {
@@ -39,7 +39,7 @@ public class NewsServiceImpl implements NewsService {
         }else {
             news = newsRepository.findBySearch(searchInput, pageable);
         }
-        List<NewsResponseDto> newsListResponse = modelMapper.map(news.getContent(), new TypeToken<List<NewsResponseDto>>(){}.getType());
+        List<NewsResponseDto1> newsListResponse = modelMapper.map(news.getContent(), new TypeToken<List<NewsResponseDto1>>(){}.getType());
         return new PageImpl<>(newsListResponse, pageable, news.getTotalElements());
     }
 

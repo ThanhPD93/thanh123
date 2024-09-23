@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Import Vaccine</title>
-    <link rel="stylesheet" href="/static/css/bootstrap/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/bootstrap/bootstrap.min.css">
 </head>
 <body>
 <form id="importForm" onsubmit="importExcelFile(event)">
@@ -21,10 +21,10 @@
                 <button type="submit" class="btn btn-success" style="width: 100px;">Import</button>
             </div>
             <div class="me-2">
-                <button type="button" class="btn btn-info text-white" style="width: 100px;">Reset</button>
+                <button type="button" class="btn btn-info text-white" style="width: 100px;" onclick="resetImportVaccine()">Reset</button>
             </div>
             <div class="me-2">
-                <button type="button" class="btn btn-warning text-white" style="width: 100px;">Cancel</button>
+                <button type="button" class="btn btn-warning text-white" style="width: 100px;" onclick="fetchVaccineList('vaccine-list.html')">Cancel</button>
             </div>
         </div>
     </div>

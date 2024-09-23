@@ -1,7 +1,7 @@
 package mockProject.team3.Vaccination_20.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import mockProject.team3.Vaccination_20.dto.customerDto.CustomerAddRequestDto;
+import mockProject.team3.Vaccination_20.dto.customerDto.CustomerRequestDto1;
 import mockProject.team3.Vaccination_20.repository.CustomerRepository;
 import mockProject.team3.Vaccination_20.service.CustomerService;
 import org.junit.jupiter.api.Test;
@@ -48,7 +48,7 @@ public class CustomerIntegrationTest {
     @Test
     @Sql(scripts = "/sql/customer-empty.sql") // Run SQL script to set up database
     public void testAddCustomer() throws Exception {
-        CustomerAddRequestDto requestDto = new CustomerAddRequestDto();
+        CustomerRequestDto1 requestDto = new CustomerRequestDto1();
         requestDto.setCustomerId("3");
         requestDto.setFullName("Alice Johnson");
         requestDto.setAddress("789 Pine Rd");

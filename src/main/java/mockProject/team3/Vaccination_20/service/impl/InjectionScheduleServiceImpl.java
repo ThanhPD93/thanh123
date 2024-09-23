@@ -1,10 +1,9 @@
 package mockProject.team3.Vaccination_20.service.impl;
 
 import jakarta.annotation.PostConstruct;
-import mockProject.team3.Vaccination_20.dto.customerDto.CustomerListResponseDto;
-import mockProject.team3.Vaccination_20.dto.injectionScheduleDto.InjectionScheduleDto;
-import mockProject.team3.Vaccination_20.dto.injectionScheduleDto.SaveRequestInjectionSchedule;
-import mockProject.team3.Vaccination_20.dto.injectionScheduleDto.VaccineDto;
+import mockProject.team3.Vaccination_20.dto.injectionScheduleDto.InjectionScheduleResponseDto1;
+import mockProject.team3.Vaccination_20.dto.injectionScheduleDto.InjectionScheduleRequestDto1;
+import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineResponseDto4;
 import mockProject.team3.Vaccination_20.model.InjectionSchedule;
 import mockProject.team3.Vaccination_20.model.Vaccine;
 import mockProject.team3.Vaccination_20.repository.InjectionScheduleRepository;
@@ -37,7 +36,7 @@ public class InjectionScheduleServiceImpl implements InjectionScheduleService {
 
     @PostConstruct
     public void setupModelMapper() {
-        modelMapper.addMappings(new PropertyMap<Vaccine, VaccineDto>() {
+        modelMapper.addMappings(new PropertyMap<Vaccine, VaccineResponseDto4>() {
             @Override
             protected void configure() {
                 map().setVaccineName(source.getVaccineName());
@@ -46,7 +45,7 @@ public class InjectionScheduleServiceImpl implements InjectionScheduleService {
     }
 
     @Override
-    public Page<InjectionScheduleDto> findBySearch(String searchInput, int page, int size) {
+    public Page<InjectionScheduleResponseDto1> findBySearch(String searchInput, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<InjectionSchedule> injectionSchedules;
         if (searchInput.trim().isEmpty()) {
@@ -55,31 +54,40 @@ public class InjectionScheduleServiceImpl implements InjectionScheduleService {
         else {
             injectionSchedules = injectionScheduleRepository.findBySearch(searchInput, pageable);
         }
-        List<InjectionScheduleDto> injectionScheduleDtos = modelMapper.map(injectionSchedules.getContent(), new TypeToken<List<InjectionScheduleDto>>(){}.getType());
-    	return new PageImpl<>(injectionScheduleDtos, pageable, injectionSchedules.getTotalElements());
+        List<InjectionScheduleResponseDto1> injectionScheduleResponseDto1s = modelMapper.map(injectionSchedules.getContent(), new TypeToken<List<InjectionScheduleResponseDto1>>(){}.getType());
+    	return new PageImpl<>(injectionScheduleResponseDto1s, pageable, injectionSchedules.getTotalElements());
     }
 
     @Override
-    public int save(SaveRequestInjectionSchedule saveRequestInjectionSchedule) {
-        InjectionSchedule injectionSchedule = modelMapper.map(saveRequestInjectionSchedule, InjectionSchedule.class);
-        System.out.println(injectionSchedule.toString());
+    public int save(InjectionScheduleRequestDto1 injectionScheduleRequestDto1) {
+        InjectionSchedule injectionSchedule = modelMapper.map(injectionScheduleRequestDto1, InjectionSchedule.class);
+		if (injectionSchedule.getInjectionScheduleId().equals("")) {
+            injectionSchedule.setInjectionScheduleId(null);
+        }
         LocalDate today = LocalDate.now();
         if(today.isBefore(injectionSchedule.getStartDate())){
             injectionSchedule.setStatus(InjectionScheduleStatus.NOT_YET);
         } else if (today.isAfter(injectionSchedule.getEndDate())) {
             injectionSchedule.setStatus(InjectionScheduleStatus.OVER);
-
         } else {
             injectionSchedule.setStatus(InjectionScheduleStatus.OPEN);
         }
-        Vaccine vaccine = vaccineRepository.findByVaccineName(saveRequestInjectionSchedule.getVaccineName());
+
+        Vaccine vaccine = vaccineRepository.findByVaccineId(injectionScheduleRequestDto1.getVaccineId());
         if(vaccine == null){
             return -1;
         }
         injectionSchedule.setVaccineFromInjectionSchedule(vaccine);
+        System.out.println(injectionSchedule.getInjectionScheduleId());
         if (injectionScheduleRepository.save(injectionSchedule).getInjectionScheduleId() != null){
             return 1;
         }
         return 0;
+    }
+
+    @Override
+    public InjectionScheduleResponseDto1 findByInjectionScheduleId(String id) {
+        InjectionSchedule injectionSchedule = injectionScheduleRepository.findByInjectionScheduleId(id);
+        return modelMapper.map(injectionSchedule, InjectionScheduleResponseDto1.class);
     }
 }

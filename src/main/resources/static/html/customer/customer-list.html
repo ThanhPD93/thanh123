@@ -71,12 +71,12 @@
     <!--    3 buttons-->
     <div class="d-flex flex-row mt-2">
         <div class="me-2">
-            <a type="button" class="btn btn-success" onclick="fetchCustomer('customer-create.html')">
+            <a type="button" class="btn btn-success" onclick="customerUpdateNotPressed(); fetchCustomer('customer-create.html');">
                 Register
             </a>
         </div>
         <div class="me-2">
-            <a type="button" class="update-button btn btn-warning text-white" onclick="updateSelectedCustomer()">
+            <a type="button" class="update-button btn btn-warning text-white" onclick="customerUpdatePressed(); updateSelectedCustomer();">
                 Update Customer
             </a>
         </div>

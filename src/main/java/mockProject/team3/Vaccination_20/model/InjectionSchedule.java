@@ -1,11 +1,10 @@
 package mockProject.team3.Vaccination_20.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.*;
 import mockProject.team3.Vaccination_20.utils.InjectionScheduleStatus;
+import mockProject.team3.Vaccination_20.utils.InjectionScheduleIdGenerator;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDate;
 
@@ -15,7 +14,13 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class InjectionSchedule {
-	@Id
+
+    @Id
+    @GeneratedValue(generator = "injection_schedule_id_generator")
+    @GenericGenerator(
+        name = "injection_schedule_id_generator",
+        strategy = "mockProject.team3.Vaccination_20.utils.InjectionScheduleIdGenerator"
+    )
     @Column(length = 36)
     private String injectionScheduleId;
 
@@ -37,5 +42,3 @@ public class InjectionSchedule {
     @ManyToOne
     private Vaccine vaccineFromInjectionSchedule;
 }
-
-

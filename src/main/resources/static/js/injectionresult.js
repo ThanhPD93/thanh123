@@ -1,87 +1,126 @@
-//from dashboard
-//--------INJECTION RESULT LIST
- function fetchInjectionResult(filename) {
-     fetch(`/api/injection-result/getAjax?filename=${filename}`)
-         .then(response => response.text())
-         .then(data => {
-             document.getElementById('ajax-content').innerHTML = data;
-             // Initialize data loading functions after updating content
-             if(filename === "injection-result-list.html") {
-                 $("#ajax-title")[0].innerHTML = "INJECTION RESULT LIST";
-                 findAllInjectionResultsWithPagination(0, 10);
-                 loadCustomers();
-                 loadVaccineTypeName();
-                 loadInjectionPlace();
-             }
-             else {
-             	$("#ajax-title")[0].innerHTML = "CREATE INJECTION RESULT";
-                $('#vaccineTypeName')[0].addEventListener("change", filterVaccineName);
-             }
 
-
-          })
-          .catch(error => console.error('Error fetching document:', error));
+function fetchInjectionResult(filename) {
+$.ajax({
+    url: "/api/injection-result/getAjax",
+    data: {filename: filename},
+    success: function(ajaxData) {
+        $('#ajax-content')[0].innerHTML = ajaxData;
+         if(filename === "injection-result-list.html") {
+             $("#ajax-title")[0].innerHTML = "INJECTION RESULT LIST";
+             findAllInjectionResults(0, 10);
+         }
+         else {
+            $("#ajax-title")[0].innerHTML = "CREATE INJECTION RESULT";
+            setupDropdown();
+//            $('#vaccineTypeName')[0].addEventListener("change", filterVaccineName);
+         }
+    },
+    error: function(xhr) {
+        alert("error at /api/injection-result/getAjax, error code: " + xhr.status);
+        console.log("response code: " + xhr.status);
+        console.log("response body: " + JSON.parse(xhr.responseText).message);
     }
+});
+}
 
-    //------------
-    function fetchUpdateInjectionResult(filename, injectionResultId) {
-      fetch(`/api/injection-result/getAjax?filename=${filename}`)
-          .then(response => response.text())
-          .then(data => {
-              document.getElementById('ajax-content').innerHTML = data;
-              updateInjectionResultDetail(injectionResultId);
-              loadCustomers();
-              loadVaccineTypeName();
-              loadInjectionPlace();
-              document.getElementById('vaccineTypeName').addEventListener('change', function() {
-                  const selectedVaccineTypeId = this.value;
-                  const vaccineSelect = document.getElementById('vaccinename');
+function setupDropdown() {
+	$.ajax({
+		url: "/api/injection-result/displayDropdown",
+		success:function (data) {
+			vaccineTypeDisplayObject = data.vaccineTypes;
+			$("#customer")[0].innerHTML = '<option value="" disabled selected>--Select Customer--</option>';
+			$("#vaccineTypeName")[0].innerHTML = '<option value="" disabled selected>--Select Vaccine Type Name--</option>';
+			$("#vaccineName")[0].innerHTML = '<option value="" disabled selected>--Select Vaccine Type--</option>';
+			data.customers.forEach(customer => {
+				const row = `<option value="${customer.customerId}">${customer.customerId}-${customer.fullName}-${customer.dateOfBirth}</option>`;
+				$("#customer").append(row);
+			});
+			data.vaccineTypes.forEach(vaccineType => {
+				const row = `<option value="${vaccineType.vaccineTypeId}">--${vaccineType.vaccineTypeName}--</option>`;
+				$("#vaccineTypeName").append(row);
+			});
+		},
+		error: function(xhr) {
+			alert("error at /api/injection-result/displayDropdown, error code: " + xhr.status);
+		}
+	});
+}
 
-                  // Clear previous vaccine names and hide dropdown if no vaccine type is selected
-                  vaccineSelect.innerHTML = '<option selected>--Select Vaccine--</option>';
-                  vaccineSelect.style.display = 'none';
+function dropdownVaccineName() {
+	$("#vaccineName")[0].innerHTML = '<option value="" disabled selected>--Select Vaccine Type--</option>';
+	const vaccineTypeValue = $("#vaccineTypeName")[0].value;
+	vaccineTypeDisplayObject.forEach(vaccineType => {
+		if (vaccineType.vaccineTypeId === vaccineTypeValue) {
+			vaccineType.vaccines.forEach(vaccine => {
+				const row = `<option value ="${vaccine.vaccineId}">--${vaccine.vaccineName}--</option>`;
+				$("#vaccineName").append(row);
+			});
+		}
+	});
+}
 
-                  if (selectedVaccineTypeId) {
-                      loadVaccines(selectedVaccineTypeId);
-                  }
-              });
+function fetchUpdateInjectionResult(filename, injectionResultId) {
+fetch(`/api/injection-result/getAjax?filename=${filename}`)
+.then(response => response.text())
+    .then(data => {
+        document.getElementById('ajax-content').innerHTML = data;
+        updateInjectionResultDetail(injectionResultId);
+        loadCustomers();
+        loadVaccineTypeName();
+        loadInjectionPlace();
+        document.getElementById('vaccineTypeName').addEventListener('change', function() {
+            const selectedVaccineTypeId = this.value;
+            const vaccineSelect = document.getElementById('vaccineName');
+            // Clear previous vaccine names and hide dropdown if no vaccine type is selected
+            vaccineSelect.innerHTML = '<option selected>--Select Vaccine--</option>';
+            vaccineSelect.style.display = 'none';
 
-          })
-          .catch(error => console.error('Error fetching document:', error));
-    }
+            if (selectedVaccineTypeId) {
+                loadVaccines(selectedVaccineTypeId);
+            }
+      });
 
-//show list with pagination
-function findAllInjectionResultsWithPagination(page, pageSize) {
+})
+  .catch(error => console.error('Error fetching document:', error));
+}
+
+function findAllInjectionResults(page) {
     const searchInputElement = document.getElementById('searchInput');
     const query = searchInputElement ? searchInputElement.value : '';
-
-    fetch(`/api/injection-result/findAllWithPagination?searchInput=${encodeURIComponent(query)}&page=${page}&size=${pageSize}`)
-        .then(response => response.json())
-        .then(injectionResults => {
-            const tableBody = document.getElementById('injection-result-list-content');
+    const pageSize = parseInt($("#dropdownMenuButton")[0].innerHTML, 10);
+	$.ajax({
+		url: "/api/injection-result/findBySearch",
+		data: {
+			searchInput: query,
+			page: page,
+			size: pageSize
+		},
+		success: function(injectionResults) {
+			const tableBody = document.getElementById('injection-result-list-content');
             tableBody.innerHTML = '';
-
             injectionResults.content.forEach(result => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                         <td class="text-center check-boxes"><input type="checkbox"></td>
                         <td hidden>${result.injectionResultId}</td>
-                        <td class="text-start"><a class="link-offset-2 link-underline link-underline-opacity-0" href="#" onclick="showInjectionResultDetails('${result.injectionResultId}')">${result.customerInfo}</a></td>
-                        <td class="text-start">${result.vaccineName}</td>
-                        <td class="text-start">${result.vaccineTypeName}</td>
+                        <td class="text-start"><a class="link-offset-2 link-underline link-underline-opacity-0" onclick="showInjectionResultDetails('${result.injectionResultId}')">${result.customer.fullName}</a></td>
+                        <td class="text-start">${result.vaccineFromInjectionResult.vaccineName}</td>
+                        <td class="text-start">${result.vaccineFromInjectionResult.vaccineType.vaccineTypeName}</td>
                         <td>${result.numberOfInjection}</td>
                         <td>${result.injectionDate}</td>
                         <td>${result.nextInjectionDate}</td>
                     `;
                 tableBody.appendChild(row);
             });
-            updatePaginationControlsIR(injectionResults.number, injectionResults.totalPages, pageSize, injectionResults.totalElements);
-        })
-        .catch(error => console.error('Error fetching injection results', error));
+            updatePageInjectionResult(injectionResults.number, injectionResults.totalPages, pageSize, injectionResults.totalElements);
+		},
+		error: function(xhr) {
+			alert("error at /api/injection-result/findBySearch, error code: " + xhr.status + ", " + xhr.statusText);
+		}
+	});
 }
 
-//-handle paging
-function updatePaginationControlsIR(currentPage, totalPages, pageSize, totalElements) {
+function updatePageInjectionResult(currentPage, totalPages, pageSize, totalElements) {
     document.getElementById("start-entry").innerHTML = currentPage === 0 ? 1 : currentPage * pageSize + 1;
     document.getElementById("end-entry").innerHTML = currentPage === totalPages - 1 ? totalElements : (currentPage + 1) * pageSize;
     document.getElementById("total-entries").innerHTML = totalElements;
@@ -91,7 +130,7 @@ function updatePaginationControlsIR(currentPage, totalPages, pageSize, totalElem
 
     // Left button
     if (currentPage > 0) {
-        pageButtons += `<li class="page-item"><a class="page-link" onclick="findAllInjectionResultsWithPagination(${currentPage - 1}, ${pageSize})">&laquo;</a></li>`;
+        pageButtons += `<li class="page-item"><a class="page-link" onclick="findAllInjectionResults(${currentPage - 1}, ${pageSize})">&laquo;</a></li>`;
     } else {
         pageButtons += `<li class="page-item disabled"><span class="page-link">&laquo;</span></li>`;
     }
@@ -99,14 +138,14 @@ function updatePaginationControlsIR(currentPage, totalPages, pageSize, totalElem
     // Show all pages if totalPages < 10
     if (totalPages <= 10) {
         for (let i = 0; i < totalPages; i++) {
-            pageButtons += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" onclick="findAllInjectionResultsWithPagination(${i}, ${pageSize})">${i + 1}</a></li>`;
+            pageButtons += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" onclick="findAllInjectionResults(${i}, ${pageSize})">${i + 1}</a></li>`;
         }
     } else {
         // Always show page 1 and 2
         if (totalPages > 1) {
-            pageButtons += `<li class="page-item ${currentPage === 0 ? 'active' : ''}"><a class="page-link" onclick="findAllInjectionResultsWithPagination(0, ${pageSize})">1</a></li>`;
+            pageButtons += `<li class="page-item ${currentPage === 0 ? 'active' : ''}"><a class="page-link" onclick="findAllInjectionResults(0, ${pageSize})">1</a></li>`;
             if (totalPages > 2) {
-                pageButtons += `<li class="page-item ${currentPage === 1 ? 'active' : ''}"><a class="page-link" onclick="findAllInjectionResultsWithPagination(1, ${pageSize})">2</a></li>`;
+                pageButtons += `<li class="page-item ${currentPage === 1 ? 'active' : ''}"><a class="page-link" onclick="findAllInjectionResults(1, ${pageSize})">2</a></li>`;
             }
         }
 
@@ -119,7 +158,7 @@ function updatePaginationControlsIR(currentPage, totalPages, pageSize, totalElem
         let endPage = Math.min(totalPages - 3, currentPage + 1);
 
         for (let i = startPage; i <= endPage; i++) {
-            pageButtons += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" onclick="findAllInjectionResultsWithPagination(${i}, ${pageSize})">${i + 1}</a></li>`;
+            pageButtons += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" onclick="findAllInjectionResults(${i}, ${pageSize})">${i + 1}</a></li>`;
         }
 
         if (currentPage < totalPages - 4) {
@@ -129,15 +168,15 @@ function updatePaginationControlsIR(currentPage, totalPages, pageSize, totalElem
         // Always show the last two pages
         if (totalPages > 2) {
             if (totalPages > 3) {
-                pageButtons += `<li class="page-item ${currentPage === totalPages - 2 ? 'active' : ''}"><a class="page-link" onclick="findAllInjectionResultsWithPagination(${totalPages - 2}, ${pageSize})">${totalPages - 1}</a></li>`;
+                pageButtons += `<li class="page-item ${currentPage === totalPages - 2 ? 'active' : ''}"><a class="page-link" onclick="findAllInjectionResults(${totalPages - 2}, ${pageSize})">${totalPages - 1}</a></li>`;
             }
-            pageButtons += `<li class="page-item ${currentPage === totalPages - 1 ? 'active' : ''}"><a class="page-link" onclick="findAllInjectionResultsWithPagination(${totalPages - 1}, ${pageSize})">${totalPages}</a></li>`;
+            pageButtons += `<li class="page-item ${currentPage === totalPages - 1 ? 'active' : ''}"><a class="page-link" onclick="findAllInjectionResults(${totalPages - 1}, ${pageSize})">${totalPages}</a></li>`;
         }
     }
 
     // Right button
     if (currentPage < totalPages - 1) {
-        pageButtons += `<li class="page-item"><a class="page-link" onclick="findAllInjectionResultsWithPagination(${currentPage + 1}, ${pageSize})">&raquo;</a></li>`;
+        pageButtons += `<li class="page-item"><a class="page-link" onclick="findAllInjectionResults(${currentPage + 1}, ${pageSize})">&raquo;</a></li>`;
     } else {
         pageButtons += `<li class="page-item disabled"><span class="page-link">&raquo;</span></li>`;
     }
@@ -146,12 +185,11 @@ function updatePaginationControlsIR(currentPage, totalPages, pageSize, totalElem
     document.getElementById("dropdownMenuButton").innerHTML = pageSize;
 }
 
-//--search
 function searchInjectionResults(page) {
     const query = document.getElementById('searchInput').value;
     const currentPageSize = parseInt(document.getElementById("dropdownMenuButton").innerHTML, 10);
 
-    fetch(`/api/injection-result/findAllWithPagination?searchInput=${encodeURIComponent(query)}&page=${page}&size=${currentPageSize}`)
+    fetch(`/api/injection-result/findAll?searchInput=${encodeURIComponent(query)}&page=${page}&size=${currentPageSize}`)
         .then(response => response.json())
         .then(injectionResults => {
             const tableBody = document.getElementById('injection-result-list-content');
@@ -171,79 +209,10 @@ function searchInjectionResults(page) {
                 `;
                 tableBody.appendChild(row);
             });
-            updatePaginationControlsIR(injectionResults.number, injectionResults.totalPages, currentPageSize, injectionResults.totalElements);
+            updatePageInjectionResult(injectionResults.number, injectionResults.totalPages, currentPageSize, injectionResults.totalElements);
         })
         .catch(error => console.error('Error fetching injection results data:', error));
 }
-
-// Function to load customers
-function loadCustomers() {
-    fetch('/customer/c-for-add-ir')
-        .then(response => response.json())
-        .then(customers => {
-            const customerSelect = document.getElementById('customer');
-            customerSelect.innerHTML = '<option selected>--Select Customer--</option>';
-            customers.forEach(customer => {
-                const option = document.createElement('option');
-                option.value = customer.id;
-                option.text = `${customer.id} - ${customer.name} - ${customer.dateOfBirth}`;
-                customerSelect.appendChild(option);
-            });
-        })
-        .catch(error => console.error('Error loading customers:', error));
-}
-
-
-// Load vaccine types and initially hide the vaccine names dropdown
-function loadVaccineTypeName() {
-    fetch('/api/vaccine-type/vt-for-add-ir')
-        .then(response => response.json())
-        .then(vaccineTypes => {
-            const vaccineTypeSelect = document.getElementById('vaccineTypeName');
-            vaccineTypeSelect.innerHTML = '<option selected>--Select Vaccine Type Name--</option>';
-
-            vaccineTypes.forEach(vaccineType => {
-                const option = document.createElement('option');
-                option.value = vaccineType.id;
-                option.text = vaccineType.name;
-                vaccineTypeSelect.appendChild(option);
-            });
-        })
-        .catch(error => console.error('Error loading vaccine types:', error));
-}
-
-// Load vaccines based on selected vaccine type
-function loadVaccines(vaccineTypeId) {
-    fetch(`/vaccine/v-for-add-ir?vaccineTypeId=${vaccineTypeId}`)
-        .then(response => response.json())
-        .then(vaccines => {
-            const vaccineSelect = document.getElementById('vaccinename');
-            vaccineSelect.innerHTML = '<option selected>--Select Vaccine--</option>';
-            vaccineSelect.style.display = 'block'; // Show the vaccine name dropdown
-
-            vaccines.forEach(vaccine => {
-                const option = document.createElement('option');
-                option.value = vaccine.id;
-                option.text = vaccine.name;
-                vaccineSelect.appendChild(option);
-            });
-        })
-        .catch(error => console.error('Error loading vaccines:', error));
-}
-
-// Event listener for vaccine type dropdown change
-    function filterVaccineName(){
-        const selectedVaccineTypeId = this.value;
-        const vaccineSelect = document.getElementById('vaccinename');
-
-        // Clear previous vaccine names and hide dropdown if no vaccine type is selected
-        vaccineSelect.innerHTML = '<option selected>--Select Vaccine--</option>';
-        vaccineSelect.style.display = 'none';
-
-        if (selectedVaccineTypeId) {
-            loadVaccines(selectedVaccineTypeId);
-        }
-    }
 
 function loadInjectionPlace() {
     $.ajax({
@@ -264,59 +233,32 @@ function loadInjectionPlace() {
     });
 }
 
-//add
-function addInjectionResult(event) {
-    event.preventDefault(); // Prevent default form submission
-
-    // Get form values
-    const customerId = document.getElementById('customer').value.split(' - ')[0];  // Extract customerId only
-    const vaccineTypeName = document.getElementById('vaccineTypeName').value;
-    const vaccineName = document.getElementById('vaccinename').value;
-    const injection = document.getElementById('injection').value;
-    const injectionDate = document.getElementById('injectiondate').value;
-    const nextInjectionDate = document.getElementById('nextinjectiondate').value;
-    const injectionPlace = document.getElementById('injectionplace').value;
-    const injectionResultId = document.getElementById('injectionresultid').value;
-    // Create the data object
-    const data = {
-        customerId: customerId, // Send only the customerId to the server
-        vaccineTypeName: vaccineTypeName,
-        vaccineName: vaccineName,
-        injection: injection,
-        injectionDate: injectionDate,
-        nextInjectionDate: nextInjectionDate,
-        injectionPlace: injectionPlace,
-        injectionResultId: injectionResultId
+function addInjectionResult() {
+    const injectionResult = {
+        customerId: $("#customer")[0].value,
+        vaccineTypeId: $("#vaccineTypeName")[0].value,
+        vaccineId: $("#vaccineName")[0].value,
+        injection: $("#injection")[0].value,
+        injectionDate: $("#injectiondate")[0].value,
+        nextInjectionDate: $("#nextinjectiondate")[0].value,
+        injectionPlace: $("#injectionplace")[0].value,
     };
 
-    // Send data to the server
-    fetch('/api/injection-result/add', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                return response.text().then(text => {
-                    throw new Error(text || 'Failed to add injection result.');
-                });
-            }
-        })
-        .then(result => {
-            alert('Injection result added successfully!');
-            document.getElementById('add-injection-result-form').reset();
-        })
-        .catch(error => {
-            console.error('Error adding injection result:', error);
-            alert('Failed to add injection result. Please try again.');
-        });
+	$.ajax({
+		url: "/api/injection-result/add",
+		method: "POST",
+		contentType: "application/json",
+		data: JSON.stringify(injectionResult),
+		success: function(stringData) {
+			alert(stringData);
+			$('#add-injection-result-form')[0].reset();
+		},
+		error: function(xhr) {
+			alert("error at /api/injection/result/add, error code: " + xhr.status);
+		}
+	});
 }
 
-//--update
 function updateSelectedInjectionResult() {
     const checkbox = document.querySelectorAll('#injection-result-list-content input[type="checkbox"]:checked');
 
@@ -336,7 +278,6 @@ function updateSelectedInjectionResult() {
     fetchUpdateInjectionResult('injection-result-create.html', injectionResultId);  // Pass ID to the update handler
 }
 
-// Function to update injection result details in the form
 function updateInjectionResultDetail(injectionResultId) {
     fetch(`/api/injection-result/detail/` + injectionResultId)
         .then(response => response.json())
@@ -347,23 +288,10 @@ function updateInjectionResultDetail(injectionResultId) {
             document.getElementById('injectiondate').value = injectionResult.injectionDate;
             document.getElementById('nextinjectiondate').value = injectionResult.nextInjectionDate;
             document.getElementById('injectionplace').value = injectionResult.injectionPlace;
-
-            // Load customers, vaccine types, vaccines, and injection places first, then set the values
-            // loadCustomers(() => {
-            //     document.getElementById('customer').value = injectionResult.customerId;
-            // });
-            // loadVaccineTypeName(() => {
-            //     document.getElementById('vaccineTypeName').value = injectionResult.vaccineTypeId;
-            // });
-            // loadVaccines(injectionResult.vaccineTypeId, () => {
-            //     document.getElementById('vaccinename').value = injectionResult.vaccineId;
-            // });
-            // loadInjectionPlace();
         })
         .catch(error => console.error('Error fetching injection result data', error));
 }
 
-// Function to fetch and show injection result details in a modal
 function showInjectionResultDetails(injectionResultId) {
     // Fetch injection result details by ID
     fetch(`/api/injection-result/detail/` + injectionResultId)
@@ -409,7 +337,6 @@ function showInjectionResultDetails(injectionResultId) {
         });
 }
 
-// delete
 function deleteSelectedInjectionResults() {
     // Get all checked checkboxes
     const checkboxes = document.querySelectorAll('#injection-result-list-content input[type="checkbox"]:checked');
@@ -455,8 +382,6 @@ function deleteSelectedInjectionResults() {
         .catch(error => console.error('Error deleting injection results:', error));
 }
 
-
-//reset button
 function resetInputInjectionresult() {
     // Get all the fields
     const injectionResultId = document.getElementById('injectionresultid');
@@ -466,7 +391,7 @@ function resetInputInjectionresult() {
     // Get all dropdown lists
     const customerDropdown = document.getElementById('customer');
     const vaccineTypeDropdown = document.getElementById('vaccineTypeName');
-    const vaccineNameDropdown = document.getElementById('vaccinename');
+    const vaccineNameDropdown = document.getElementById('vaccineName');
     const placeOfInjectionDropdown = document.getElementById('injectionplace');
 
     // Reset only fields that are not disabled

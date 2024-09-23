@@ -1,17 +1,18 @@
-function setPageSize(pageSize) {
-	$("#dropdownMenuButton")[0].textContent = pageSize;
+function pressEmployeeUpdateButton() {
+	employeeUpdateBtn = true;
+}
+function unPressEmployeeUpdateButton() {
+	employeeUpdateBtn = false;
 }
 
-function checkAllBoxes() {
-    const selectAllCheckbox = $("#mother-checkbox")[0];
-    const checkboxes = $(".check-boxes input[type='checkbox']").toArray();
-    checkboxes.forEach(checkbox => checkbox.checked = selectAllCheckbox.checked);
+function setPageSize(pageSize) {
+	$("#dropdownMenuButton")[0].textContent = pageSize;
 }
 
 //---------------------------
 function fetchEmployee(filename) {
 	const checkbox = $(".check-boxes input[type='checkbox']:checked");
-	if(UpdateBtnPressed === true) {
+	if(employeeUpdateBtn === true) {
         if(checkbox.length != 1) {
             alert("Please select only 1 employee to update!");
             return;
@@ -23,15 +24,14 @@ function fetchEmployee(filename) {
 		success: function(data) {
 			$("#ajax-content")[0].innerHTML = data;
 			if(filename === "employee-list.html") {
-				UpdateBtnPressed = false;
 				$("#ajax-title")[0].innerHTML = "EMPLOYEE LIST";
 				findAllEmployee(0);
 			} else {
-				if(UpdateBtnPressed === true) {
+				if(employeeUpdateBtn === true) {
 					const employeeId = checkbox[0].closest('tr').querySelector('td:nth-child(2)').textContent;
 					arrangeUpdateEmployeeInfoToInput(employeeId);
 				}
-				UpdateBtnPressed = false;
+				$("#image")[0].setAttribute('required', '');
 				$("#ajax-title")[0].innerHTML = "CREATE EMPLOYEE";
 			}
 		},
@@ -44,7 +44,6 @@ function fetchEmployee(filename) {
 function findAllEmployee(page) {
     const query = $("#searchInput")[0].value;
    	const pageSize = parseInt($("#dropdownMenuButton").text().trim(), 10);
-    console.log(pageSize);
     $.ajax({
     	url: "/api/employee/findAll",
     	data: {
@@ -59,7 +58,7 @@ function findAllEmployee(page) {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td class="text-center check-boxes"><input type="checkbox" class="check-select-box"></td>
-                    <td class="text-center"><a href="#" class="link-offset-2 link-underline link-underline-opacity-0" onclick="showEmployeeDetails('${employee.employeeId}')">${employee.employeeId}</a></td>
+                    <td class="text-center"><a class="link-offset-2 link-underline link-underline-opacity-0" onclick="showEmployeeDetails('${employee.employeeId}')">${employee.employeeId}</a></td>
                     <td class="text-capitalize text-start text-center">${employee.employeeName}</td>
                     <td class="text-start text-center">${employee.dateOfBirth}</td>
                     <td class="text-start text-center">${employee.gender}</td>
@@ -69,7 +68,7 @@ function findAllEmployee(page) {
                 `;
                 tableBody.appendChild(row);
             });
-            updatePageControls(employees.number, employees.totalPages, pageSize, employees.totalElements);
+            updatePageEmployee(employees.number, employees.totalPages, pageSize, employees.totalElements);
     	},
     	error: function(error) {
     		alert("error at /api/employee/findAll: " + error);
@@ -95,6 +94,7 @@ function arrangeUpdateEmployeeInfoToInput(employeeId) {
         url: "/api/employee/findById",
         data: {employeeId: employeeId},
         success: function(employee) {
+	        $("#image")[0].removeAttribute('required');
 			$("#employeeId")[0].value = employee.employeeId;
 			$("#employeeId")[0].disabled = true;
 			$("#employeeName")[0].value = employee.employeeName;
@@ -186,7 +186,7 @@ function showEmployeeDetails(id) {
 	});
 }
 
-function updatePageControls(currentPage, totalPages, pageSize, totalElements) {
+function updatePageEmployee(currentPage, totalPages, pageSize, totalElements) {
 	if (totalElements === 0) {
 		$("#start-entry")[0].innerHTML = 0;
 		$("#end-entry")[0].innerHTML = 0;
@@ -280,7 +280,7 @@ function previewImage() {
 // add employee
 function addEmployee() {
 	if ($("#phone")[0].value.replace(/[^\d]/g , "").length !== 10) {
-		alert("Wrong phone number!");
+		alert("phone number must be 10 digits");
 		return;
 	}
 	const date = new Date($("#dateOfBirth")[0].value);
@@ -320,10 +320,10 @@ function addEmployee() {
         };
         reader.readAsDataURL(imageFile);
     } else {
+    	employee.image = "null-image";
         sendEmployeeData(employee);
     }
 }
-
 
 function sendEmployeeData(employee) {
 	$.ajax({
@@ -333,12 +333,17 @@ function sendEmployeeData(employee) {
 		data: JSON.stringify(employee),
 		// success: 200 -> 399
 		success: function(stringData) {
-                alert(stringData);
+            alert(stringData);
+            if (employeeUpdateBtn === true) {
+            	employeeUpdateBtn = false;
+            	fetchEmployee("employee-list.html");
+            } else {
                 $("#add-employee-form")[0].reset();
                 $("#image-preview")[0].style.display = 'none';
+            }
 		},
 		// error: 400 and up
-		error: function(xhr, jqXHR) {
+		error: function(xhr) {
             if(xhr.status === 400) {
                 const error = JSON.parse(xhr.responseText);
                 let validationMessage = "";
@@ -350,7 +355,6 @@ function sendEmployeeData(employee) {
             }
             else {
                 alert("an expected error occurred at /api/employee/add, error code: " + xhr.status);
-                console.error("error: " + jqXHR.responseText);
             }
 		}
 	});

@@ -7,18 +7,18 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 public interface EmployeeService {
-    Page<FindAllResponseEmployee> findBySearch(String searchInput, int page, int size);
+    Page<EmployeeResponseDto2> findBySearch(String searchInput, int page, int size);
     List<Employee> findAll();
 
-    List<LResponseEmployee> getAll();
+    List<EmployeeResponseDto3> getAll();
 
-    int addEmployee(CRequestEmployee cRequestEmployee);
+    int addEmployee(EmployeeRequestDto1 employeeRequestDto1);
 
-    DResponseEmployee updateEmployee(URequestEmployee uRequestEmployee);
+    EmployeeResponseDto1 updateEmployee(EmployeeRequestDto2 employeeRequestDto2);
 
     Page<Employee> findAllWithPagination(int page, int size);
 
-    DResponseEmployee findById(String id);
+    EmployeeResponseDto1 findById(String id);
 
     Employee findEmployeeById(String id);
 

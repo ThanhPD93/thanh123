@@ -14,13 +14,13 @@
             <div class="btn-group border-bottom border-info rounded-0">
                 <button type="button" class="btn btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
                         id="dropdownMenuButton">
-                    10
+                    1
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" onclick="findAllInjectionResultsWithPagination(0,10)">10</a></li>
-                    <li><a class="dropdown-item" onclick="findAllInjectionResultsWithPagination(0,25)">25</a></li>
-                    <li><a class="dropdown-item" onclick="findAllInjectionResultsWithPagination(0,50)">50</a></li>
-                    <li><a class="dropdown-item" onclick="findAllInjectionResultsWithPagination(0,100)">100</a></li>
+                    <li><a class="dropdown-item" onclick="setPageSize(1); findAllInjectionResult(0);">10</a></li>
+                    <li><a class="dropdown-item" onclick="setPageSize(2); findAllInjectionResults(0);">25</a></li>
+                    <li><a class="dropdown-item" onclick="setPageSize(3); findAllInjectionResults(0);">50</a></li>
+                    <li><a class="dropdown-item" onclick="setPageSize(4); findAllInjectionResults(0);">100</a></li>
                 </ul>
             </div>
             <span>entries</span>
