@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
@@ -16,50 +17,39 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-class EmployeeControllerTest {
-
+@WithMockUser
+class EmployeeIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private CustomerRepository customerRepository;
-    @Autowired
-    private CustomerService customerService;
 
     @Test
     @Sql(scripts = "/sql/employee-sql/employee-empty.sql")
     public void testGetDocumentForEmployeeListResponse200() throws Exception{
         ResultActions result = mockMvc.perform(get("/api/employee/getAjax")
                         .param("filename", "AjaxTest.html"))
-                .andExpect(status().isFound());
+                .andExpect(status().isOk());
         result.andExpect(content()
-                .string("<!DOCTYPE html>\n" +
-                                        "<html lang=\"en\">\n" +
-                                        "<head>\n" +
-                                        "    <meta charset=\"UTF-8\">\n" +
-                                        "    <title>Title</title>\n" +
-                                        "</head>\n" +
-                                        "<body>\n" +
-                                        "    <h1>This is ajax content for testing</h1>\n" +
-                                        "</body>\n" +
-                                        "</html>"));
+                .string("This is ajax content for testing"));
     }
 
     @Test
     @Sql(scripts = "/sql/employee-sql/employee-empty.sql")
-    public void testGetDocumentForEmployeeListRespsone400() throws Exception{
+    public void testGetDocumentForEmployeeListResponse400() throws Exception{
         mockMvc.perform(get("/api/employee/getAjax")
                         .param("filename", ""))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("ajax file name must not be empty!"));
+                .andExpect(content().string("ajax filename must not be empty!"));
     }
 
     @Test
     @Sql(scripts = "/sql/employee-sql/employee-empty.sql")
-    public void testGetDocumentForEmployeeListRespsone404() throws Exception{
+    public void testGetDocumentForEmployeeListResponse404() throws Exception{
         mockMvc.perform(get("/api/employee/getAjax")
                         .param("filename", "non-existed.html"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("ajax path could not find file!"));
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("ajax file path not found!"));
     }
 
     @Test
@@ -68,7 +58,7 @@ class EmployeeControllerTest {
         mockMvc.perform(get("/api/employee/findById")
                         .param("employeeId", "EM0001"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$. employeeName").value("John Doe"));
+                .andExpect(jsonPath("$.employeeName").value("John Doe"));
     }
 
     @Test

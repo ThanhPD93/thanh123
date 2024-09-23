@@ -30,7 +30,8 @@
         <div class="search">
             <div class="d-flex">
                 <span class="me-2">Search:</span>
-                <input type="search" name="searchInput" id="searchInput" class="border-0 border-bottom border-info" style="outline: none;" onfocus="this.style.outline = 'none';" placeholder=". . ."
+                <input type="search" name="searchInput" id="searchInput" class="border-0 border-bottom border-info"
+                       style="outline: none;" onfocus="this.style.outline = 'none';" placeholder="..." maxlength="100"
                        oninput="findAllEmployee(0)">
             </div>
         </div>
@@ -72,7 +73,7 @@
     <!--    3 buttons-->
     <div class="d-flex flex-row mt-2">
         <div class="me-2">
-            <a type="button" class="btn btn-success" onclick="fetchEmployee('employee-create.html')">New
+            <a type="button" class="btn btn-success" onclick="unPressEmployeeUpdateButton(); fetchEmployee('employee-create.html');">New
                 Employee</a>
         </div>
         <div class="me-2">

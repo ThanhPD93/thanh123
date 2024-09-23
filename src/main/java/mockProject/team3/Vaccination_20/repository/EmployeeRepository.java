@@ -1,7 +1,7 @@
 package mockProject.team3.Vaccination_20.repository;
 
 import jakarta.transaction.Transactional;
-import mockProject.team3.Vaccination_20.dto.employeeDto.LResponseEmployee;
+import mockProject.team3.Vaccination_20.dto.employeeDto.EmployeeResponseDto3;
 import mockProject.team3.Vaccination_20.model.Employee;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +23,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, String> {
             "LOWER(e.employeeId) LIKE LOWER(CONCAT('%', :searchInput, '%'))")
     Page<Employee> findBySearch(String searchInput, Pageable pageable);
 
-    List<LResponseEmployee> findAllBy();
+    List<EmployeeResponseDto3> findAllBy();
 
     Employee findByEmployeeId(String employeeId);
 

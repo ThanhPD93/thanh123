@@ -39,7 +39,7 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
     private String adminPassword;
 
     @Override
-    public Page<FindAllResponseEmployee> findBySearch(String searchInput, int page, int size) {
+    public Page<EmployeeResponseDto2> findBySearch(String searchInput, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Employee> employeePage;
         if (searchInput.trim().isEmpty()) {
@@ -47,7 +47,7 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         } else {
             employeePage = employeeRepository.findBySearch(searchInput, pageable);
         }
-        List<FindAllResponseEmployee> responseEmployees = modelMapper.map(employeePage.getContent(), new TypeToken<List<FindAllResponseEmployee>>(){}.getType());
+        List<EmployeeResponseDto2> responseEmployees = modelMapper.map(employeePage.getContent(), new TypeToken<List<EmployeeResponseDto2>>(){}.getType());
         return new PageImpl<>(responseEmployees, pageable, employeePage.getTotalElements());
     }
 
@@ -57,28 +57,31 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
     }
 
     @Override
-    public List<LResponseEmployee> getAll() {
+    public List<EmployeeResponseDto3> getAll() {
         return employeeRepository.findAllBy();
     }
 
     @Override
-    public int addEmployee(CRequestEmployee cRequestEmployee) {
-        Employee employee = employeeRepository.findByEmployeeId(cRequestEmployee.getEmployeeId());
+    public int addEmployee(EmployeeRequestDto1 employeeRequestDto1) {
+        if(employeeRequestDto1.getImage().equals("null-image")) {
+            employeeRequestDto1.setImage(null);
+        }
+        Employee employee = employeeRepository.findByEmployeeId(employeeRequestDto1.getEmployeeId());
         boolean update = false;
         if(employee != null) {
             update = true;
         }
-        if(cRequestEmployee.getImage() == null && employee != null) {
+        if(employeeRequestDto1.getImage() == null && employee != null) {
            byte[] currentImage = employee.getImage();
-            employee = modelMapper.map(cRequestEmployee, Employee.class);
+            employee = modelMapper.map(employeeRequestDto1, Employee.class);
             employee.setImage(currentImage);
         } else {
-            employee = modelMapper.map(cRequestEmployee, Employee.class);
+            employee = modelMapper.map(employeeRequestDto1, Employee.class);
         }
-        if (cRequestEmployee.getImage() != null && !cRequestEmployee.getImage().isEmpty()) {
+        if (employeeRequestDto1.getImage() != null && !employeeRequestDto1.getImage().isEmpty()) {
             try {
                 // Clean and decode the Base64 string
-                String base64Image = cRequestEmployee.getImage();
+                String base64Image = employeeRequestDto1.getImage();
                 byte[] decodedImage = Base64.getDecoder().decode(base64Image);
                 employee.setImage(decodedImage);
             } catch (IllegalArgumentException e) {
@@ -94,18 +97,18 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
     }
 
     @Override
-    public DResponseEmployee updateEmployee(URequestEmployee uRequestEmployee) {
+    public EmployeeResponseDto1 updateEmployee(EmployeeRequestDto2 employeeRequestDto2) {
         // Fetch the existing employee by ID
-        Employee existingEmployee = employeeRepository.findById(uRequestEmployee.getEmployeeId())
+        Employee existingEmployee = employeeRepository.findById(employeeRequestDto2.getEmployeeId())
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
 
         // Map the DTO to the existing entity, keeping existing data if necessary
-        modelMapper.map(uRequestEmployee, existingEmployee);
+        modelMapper.map(employeeRequestDto2, existingEmployee);
 
         // If a new image is provided, decode and set it
-        if (uRequestEmployee.getImage() != null && !uRequestEmployee.getImage().isEmpty()) {
+        if (employeeRequestDto2.getImage() != null && !employeeRequestDto2.getImage().isEmpty()) {
             try {
-                String base64Image = uRequestEmployee.getImage();
+                String base64Image = employeeRequestDto2.getImage();
                 byte[] decodedImage = Base64.getDecoder().decode(base64Image);
                 existingEmployee.setImage(decodedImage);
             } catch (IllegalArgumentException e) {
@@ -115,7 +118,7 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
         }
 
         // Save the updated employee
-        return modelMapper.map(employeeRepository.save(existingEmployee), DResponseEmployee.class);
+        return modelMapper.map(employeeRepository.save(existingEmployee), EmployeeResponseDto1.class);
     }
 
     @Override
@@ -125,12 +128,12 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
     }
 
     @Override
-    public DResponseEmployee findById(String id) {
+    public EmployeeResponseDto1 findById(String id) {
         Employee employee = employeeRepository.findById(id).get();
 //        employee.setPassword(passwordEncoder.);
 
-        DResponseEmployee dResponseEmployee = modelMapper.map(employee, DResponseEmployee.class);
-        return dResponseEmployee;
+        EmployeeResponseDto1 employeeResponseDto1 = modelMapper.map(employee, EmployeeResponseDto1.class);
+        return employeeResponseDto1;
     }
 
     @Override

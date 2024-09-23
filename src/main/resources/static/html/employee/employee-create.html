@@ -29,7 +29,7 @@
                 <label class="form-label fw-medium">Employee Name <span class="text-danger">(*)</span></label>
                 <div class="input-group">
                     <img src="/images/icons/people.png" class="input-group-text border-0">
-                    <input type="text" class="form-control text-capitalize" id="employeeName" maxlength="100" required>
+                    <input type="text" class="form-control text-capitalize" id="employeeName" maxlength="100">
                 </div>
             </div>
             <!--gender-->
@@ -58,7 +58,7 @@
                 <label class="form-label fw-medium">Date of Birth <span class="text-danger">(*)</span></label>
                 <div class="input-group">
                     <img src="/images/icons/calendar.png" class="input-group-text border-0">
-                    <input type="date" class="form-control" id="dateOfBirth">
+                    <input type="date" class="form-control" id="dateOfBirth" required>
                 </div>
             </div>
             <!--phone-->
@@ -66,7 +66,7 @@
                 <label class="form-label fw-medium">Phone <span class="text-danger">(*)</span></label>
                 <div class="input-group">
                     <img src="/images/icons/old-typical-phone.png" class="input-group-text border-0">
-                    <input type="number" class="form-control" id="phone" maxlength="50">
+                    <input type="number" class="form-control" id="phone" maxlength="50" required>
                 </div>
             </div>
             <!--address-->
@@ -74,7 +74,7 @@
                 <label class="form-label fw-medium">Address <span class="text-danger">(*)</span></label>
                 <div class="input-group">
                     <img src="/images/icons/location.png" class="input-group-text border-0">
-                    <input type="text" class="form-control text-capitalize" id="address" maxlength="100">
+                    <input type="text" class="form-control text-capitalize" id="address" maxlength="100" required>
                 </div>
             </div>
         </div>
@@ -85,7 +85,7 @@
                 <label class="form-label fw-medium">Email <span class="text-danger">(*)</span></label>
                 <div class="input-group">
                     <img src="/images/icons/email.png" class="input-group-text border-0">
-                    <input type="email" class="form-control" id="email" maxlength="100" required>
+                    <input type="email" class="form-control" id="email" maxlength="100">
                 </div>
             </div>
             <!--working place-->
@@ -112,7 +112,7 @@
                 <label class="form-label fw-medium">Image</label>
                 <div class="input-group">
                     <img src="/images/icons/image.png" class="input-group-text border-0">
-                    <input type="file" class="form-control" id="image" onchange="previewImage()" required>
+                        <input type="file" class="form-control" id="image" onchange="previewImage()" required>
                 </div>
             </div>
             <!--username-->

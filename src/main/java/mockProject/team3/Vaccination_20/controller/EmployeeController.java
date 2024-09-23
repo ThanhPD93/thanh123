@@ -6,10 +6,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
-import mockProject.team3.Vaccination_20.dto.employeeDto.CRequestEmployee;
-import mockProject.team3.Vaccination_20.dto.employeeDto.DResponseEmployee;
-import mockProject.team3.Vaccination_20.dto.employeeDto.FindAllResponseEmployee;
-import mockProject.team3.Vaccination_20.dto.employeeDto.LResponseEmployee;
+import mockProject.team3.Vaccination_20.dto.employeeDto.EmployeeRequestDto1;
+import mockProject.team3.Vaccination_20.dto.employeeDto.EmployeeResponseDto1;
+import mockProject.team3.Vaccination_20.dto.employeeDto.EmployeeResponseDto2;
 import mockProject.team3.Vaccination_20.model.Employee;
 import mockProject.team3.Vaccination_20.service.EmployeeService;
 import mockProject.team3.Vaccination_20.utils.MSG;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -42,18 +40,18 @@ public class EmployeeController {
     })
     @GetMapping("/getAjax")
     public ResponseEntity<String> getDocument(@RequestParam String filename) throws IOException {
-        // if user input filename that is empty or null -> return response 400 and appropriate message
-        if(filename == null || filename.isEmpty()) {
-            return ResponseEntity.badRequest().body(MSG.MSG31.getMessage());
-        }
-        ClassPathResource resource = new ClassPathResource("static/html/employee/" + filename);
-        Path path = resource.getFile().toPath();
-        // if the path to the file cannot find the file -> return 404
-        if (!Files.exists(path)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(MSG.MSG32.getMessage());
-        } else {
+        try {
+            // if user input filename that is empty or null -> return response 400 and appropriate message
+            if (filename == null || filename.isEmpty()) {
+                return ResponseEntity.badRequest().body(MSG.MSG31.getMessage());
+            }
+            ClassPathResource resource = new ClassPathResource("static/html/employee/" + filename);
+            Path path = resource.getFile().toPath();
             // if file found, return response 200 and the file
             return ResponseEntity.ok(Files.readString(path));
+        } catch(Exception e) {
+            // if the path to the file cannot find the file -> return 404
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(MSG.MSG32.getMessage());
         }
     }
 
@@ -63,8 +61,8 @@ public class EmployeeController {
             @ApiResponse(responseCode = "404", description = "employee not found by employee ID provided")
     })
     @GetMapping("/findById")
-    public ResponseEntity<DResponseEmployee> findById(@RequestParam String employeeId) {
-        DResponseEmployee employee = employeeService.findById(employeeId);
+    public ResponseEntity<EmployeeResponseDto1> findById(@RequestParam String employeeId) {
+        EmployeeResponseDto1 employee = employeeService.findById(employeeId);
         if (employee == null) {
             return ResponseEntity.notFound().build();
         }
@@ -74,12 +72,11 @@ public class EmployeeController {
     @Operation(summary = "find all employees or search employees and put in a pagination list for display")
     @ApiResponse(responseCode = "200", description = "Pagination list of employees found!")
     @GetMapping("/findAll")
-    public ResponseEntity<Page<FindAllResponseEmployee>> findAll(@RequestParam String searchInput,
-                                                                 @RequestParam(defaultValue = "0") int page,
-                                                                 @RequestParam(defaultValue = "5") int size) {
+    public ResponseEntity<Page<EmployeeResponseDto2>> findAll(@RequestParam String searchInput,
+                                                              @RequestParam(defaultValue = "0") int page,
+                                                              @RequestParam(defaultValue = "5") int size) {
         return ResponseEntity.ok(employeeService.findBySearch(searchInput, page, size));
     }
-
 
     @Operation(summary = "Add a new employee or update an existing one")
     @ApiResponses(value = {
@@ -87,10 +84,10 @@ public class EmployeeController {
         @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(type = "string", example = "New employee added successfully! or employee updated successfully!")))
     })
     @PostMapping("/add")
-    public ResponseEntity<String> addEmployee(@Valid @RequestBody CRequestEmployee cRequestEmployee) {
-        int serviceResponse = employeeService.addEmployee(cRequestEmployee);
+    public ResponseEntity<String> addEmployee(@Valid @RequestBody EmployeeRequestDto1 employeeRequestDto1) {
+        int serviceResponse = employeeService.addEmployee(employeeRequestDto1);
         if(serviceResponse == 0) {
-            return ResponseEntity.badRequest().body("image base64 is not in correct format, failed!");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("image base64 is not in correct format, failed!");
         }
         else if(serviceResponse == 1) {
             return ResponseEntity.ok().body("New employee added successfully!");
@@ -128,6 +125,4 @@ public class EmployeeController {
                     .body("An error occurred");
         }
     }
-
-
 }
