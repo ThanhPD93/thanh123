@@ -1,36 +1,22 @@
 package mockProject.team3.Vaccination_20.controller;
 
-import mockProject.team3.Vaccination_20.dto.forvaccine.VaccineDto;
-import mockProject.team3.Vaccination_20.model.Employee;
-import mockProject.team3.Vaccination_20.model.Vaccine;
-import mockProject.team3.Vaccination_20.dto.injectionresult.VaccineInfoDTO;
-import mockProject.team3.Vaccination_20.model.Vaccine;
-import mockProject.team3.Vaccination_20.repository.VaccineRepository;
+import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineRequestDto1;
+import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineResponseDto3;
+import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineResponseDto4;
+import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineResponseDto5;
 import mockProject.team3.Vaccination_20.service.VaccineService;
-import mockProject.team3.Vaccination_20.utils.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/vaccine")
@@ -47,54 +33,37 @@ public class VaccineController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> createVaccine(@RequestBody VaccineDto vaccineDto) {
-        int result = vaccineService.createVaccine(vaccineDto);
+    public ResponseEntity<String> createVaccine(@RequestBody VaccineRequestDto1 vaccineRequestDto1) {
+        int result = vaccineService.createVaccine(vaccineRequestDto1);
         return ResponseEntity.ok("add new vaccine success!");
     }
 
-    @GetMapping("/list")
-    public ResponseEntity<Page<VaccineDto>> getVaccineList(
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size) {
-        Page<VaccineDto> vaccinePage = vaccineService.getVaccineList(page, size);
-        return ResponseEntity.ok(vaccinePage);
-    }
-
     @GetMapping("/search")
-    public ResponseEntity<Page<VaccineDto>> getVaccineListBySearchInput(
+    public ResponseEntity<Page<VaccineResponseDto3>> getVaccineListBySearchInput(
             @RequestParam("searchInput") String searchInput,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size) {
-        Page<VaccineDto> vaccinePage = vaccineService.getVaccineListBySearchInput(searchInput, page, size);
+        Page<VaccineResponseDto3> vaccinePage = vaccineService.getVaccineListBySearchInput(searchInput, page, size);
         return ResponseEntity.ok(vaccinePage);
     }
 
     @GetMapping("/detail/{vaccineId}")
-    public ResponseEntity<VaccineDto> getVaccineById(@PathVariable String vaccineId) {
-        VaccineDto vaccineDto = vaccineService.getVaccineById(vaccineId);
-        return ResponseEntity.ok(vaccineDto);
-    }
-
-    @PutMapping("/update/{vaccineId}")
-    public ResponseEntity<VaccineDto> updateVaccine(
-            @PathVariable String vaccineId,
-            @RequestBody VaccineDto vaccineDto) {
-        VaccineDto updatedVaccine = vaccineService.updateVaccine(vaccineId, vaccineDto);
-        return ResponseEntity.ok(updatedVaccine);
+    public ResponseEntity<VaccineResponseDto5> getVaccineById(@PathVariable String vaccineId) {
+        VaccineResponseDto5 vaccineResponseDto5 = vaccineService.getVaccineById(vaccineId);
+        if(vaccineResponseDto5 == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        return ResponseEntity.ok(vaccineResponseDto5);
     }
 
     @PutMapping("/change-status")
-    public ResponseEntity<ApiResponse<String>> updateVaccineStatus(@RequestBody List<String> vaccineIds){
-        if (vaccineIds == null || vaccineIds.isEmpty()){
-            return ResponseEntity.badRequest().body(new ApiResponse<>(400, "No data deleted!", null));
-        }
-        try {
-            vaccineService.changeStatusVaccine(vaccineIds);
-            return ResponseEntity.ok(new ApiResponse<>(200, "Vaccines update successfully", null));
-        } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>(500, "An error occurred: " + e.getMessage(), null));
-        }
+    public ResponseEntity<String> updateVaccineStatus(@RequestBody List<String> vaccineIds){
+        int result = vaccineService.changeStatusVaccine(vaccineIds);
+        if (result == -2) return ResponseEntity.badRequest().body("could not find a vaccine with given vaccine IDs");
+        if (result == -1) return ResponseEntity.badRequest().body("Please select only vaccines with In-active status");
+        if (result == 0) return ResponseEntity.badRequest().body("no vaccine was selected");
+        if (result == 1) return ResponseEntity.ok("Successfully changed 1 vaccine status to in-active");
+        return ResponseEntity.ok("Successfully changed " + result + " vaccines' status to in-active");
     }
 
     @PostMapping("/import/excel")
@@ -120,23 +89,9 @@ public class VaccineController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload and import file.");
         }
     }
-    @Autowired
-    private VaccineRepository vaccineRepository;
 
-//    use for add injection-rs
-
-    @GetMapping("/v-for-add-ir")
-    public ResponseEntity<List<Map<String, String>>> getVaccinesByType(@RequestParam(required = false) String vaccineTypeId) {
-        List<Vaccine> vaccines = vaccineService.getVaccinesByType(vaccineTypeId);
-
-        // Map only the needed fields
-        List<Map<String, String>> vaccineInfo = vaccines.stream().map(vaccine -> {
-            Map<String, String> info = new HashMap<>();
-            info.put("id", vaccine.getVaccineId());
-            info.put("name", vaccine.getVaccineName());
-            return info;
-        }).collect(Collectors.toList());
-
-        return ResponseEntity.ok(vaccineInfo);
+    @GetMapping("/findAllVaccineName")
+    public ResponseEntity<List<VaccineResponseDto4>> findAllVaccineName() {
+		return ResponseEntity.ok(vaccineService.findAllVaccineName());
     }
 }

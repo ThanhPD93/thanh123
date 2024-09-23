@@ -41,7 +41,7 @@
                 <div class="col-4">
                     <label class="form-label fw-medium">Vaccine Type <span class="text-danger">(*)</span></label>
                     <div class="input-group">
-                        <select class="form-select" id="vaccineTypeName">
+                        <select class="form-select" id="vaccineTypeName" required>
                             <option value="" disabled selected>--Select Vaccine Type--</option>
                         </select>
                     </div>
@@ -50,7 +50,7 @@
                 <div class="col-4">
                     <label class="form-label fw-medium">Number of injection</label>
                     <div class="input-group">
-                        <input type="number" class="form-control text-capitalize" id="numberOfInjection">
+                        <input type="number" class="form-control text-capitalize" id="numberOfInjection" required>
                     </div>
                 </div>
             </div>
@@ -60,21 +60,21 @@
                 <div class="col-4">
                     <label class="form-label fw-medium">Usage</label>
                     <div>
-                        <textarea name="vaccineUsage" id="vaccineUsage" cols="40" rows="10"></textarea>
+                        <textarea name="vaccineUsage" id="vaccineUsage" cols="40" rows="10" required></textarea>
                     </div>
                 </div>
 <!--                Indication-->
                 <div class="col-4">
                     <label class="form-label fw-medium">Indication</label>
                     <div class="input-group">
-                        <textarea name="vaccineUsage" id="vaccineIndication" cols="40" rows="10"></textarea>
+                        <textarea name="vaccineUsage" id="vaccineIndication" cols="40" rows="10" required></textarea>
                     </div>
                 </div>
 <!--                Contraindication-->
                 <div class="col-4">
                     <label class="form-label fw-medium">Contraindication</label>
                     <div class="input-group">
-                        <textarea name="vaccineUsage" id="vaccineContraindication" cols="40" rows="10"></textarea>
+                        <textarea name="vaccineUsage" id="vaccineContraindication" cols="40" rows="10" required></textarea>
                     </div>
                 </div>
             </div>
@@ -82,23 +82,23 @@
             <div class="d-flex justify-content-between mb-4">
 <!--                Time of beginning next injection-->
                 <div class="col-4">
-                    <label class="form-label fw-medium">Time of begining next injection</label>
+                    <label class="form-label fw-medium">Time of beginning next injection</label>
                     <div class="input-group">
-                        <input type="date" class="form-control text-capitalize" id="beginning-time">
+                        <input type="date" class="form-control text-capitalize" id="beginning-time" required>
                     </div>
                 </div>
 <!--                Time of ending next injection-->
                 <div class="col-4">
                     <label class="form-label fw-medium">Time of ending next injection</label>
                     <div class="input-group">
-                        <input type="date" class="form-control text-capitalize" id="ending-time">
+                        <input type="date" class="form-control text-capitalize" id="ending-time" required>
                     </div>
                 </div>
 <!--                Origin-->
                 <div class="col-4">
                     <label class="form-label fw-medium">Origin</label>
                     <div class="input-group">
-                        <input type="text" class="form-control text-capitalize" id="vaccineOrigin">
+                        <input type="text" class="form-control text-capitalize" id="vaccineOrigin" required>
                     </div>
                 </div>
             </div>
@@ -108,7 +108,7 @@
                     <button type="submit" class="btn btn-success" style="width: 100px;">Save</button>
                 </div>
                 <div class="me-2">
-                    <button type="button" class="btn btn-info text-white" style="width: 100px;" onclick="resetInput()">Reset</button>
+                    <button type="button" class="btn btn-info text-white" style="width: 100px;" onclick="resetVaccineInput()">Reset</button>
                 </div>
                 <div>
                     <a class="btn btn-warning text-white" onclick="fetchVaccineList('vaccine-list.html')" style="width: 100px;">Cancel</a>

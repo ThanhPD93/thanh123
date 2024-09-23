@@ -1,18 +1,25 @@
 package mockProject.team3.Vaccination_20.service.impl;
 
-import mockProject.team3.Vaccination_20.dto.forvaccine.VaccineDto;
+import jakarta.annotation.PostConstruct;
+import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineRequestDto1;
+import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineResponseDto3;
+import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineResponseDto4;
+import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineResponseDto5;
+import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.VaccineTypeResponseDto4;
 import mockProject.team3.Vaccination_20.model.Vaccine;
 import mockProject.team3.Vaccination_20.model.VaccineType;
 import mockProject.team3.Vaccination_20.repository.VaccineRepository;
 import mockProject.team3.Vaccination_20.repository.VaccineTypeRepository;
 import mockProject.team3.Vaccination_20.service.VaccineService;
-import mockProject.team3.Vaccination_20.utils.InjectionScheduleStatus;
 import mockProject.team3.Vaccination_20.utils.Status;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class VaccineServiceImpl implements VaccineService {
@@ -34,67 +42,75 @@ public class VaccineServiceImpl implements VaccineService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @PostConstruct
+    public void setupMapperVaccineTypeOfVaccineDto() {
+        modelMapper.addMappings(new PropertyMap<VaccineType, VaccineTypeResponseDto4>() {
+            @Override
+            protected void configure() {
+                map().setVaccineTypeName(source.getVaccineTypeName());
+            }
+        });
+    }
+
     @Override
-    public int createVaccine(VaccineDto vaccineDto) {
-        Vaccine vaccine = modelMapper.map(vaccineDto, Vaccine.class);
-        VaccineType vaccineType = vaccineTypeRepository.findById(vaccineDto.getVaccineType()).get();
+    public int createVaccine(VaccineRequestDto1 vaccineRequestDto1) {
+        Vaccine vaccine = modelMapper.map(vaccineRequestDto1, Vaccine.class);
+        VaccineType vaccineType = vaccineTypeRepository.findById(vaccineRequestDto1.getVaccineType()).get();
         vaccine.setVaccineType(vaccineType);
         vaccineRepository.save(vaccine);
         return 1;
     }
 
     @Override
-    public Page<VaccineDto> getVaccineList(int page, int size) {
+    public Page<VaccineResponseDto3> getVaccineListBySearchInput(String searchInput, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return vaccineRepository.findAll(pageable)
-                .map(vaccine -> modelMapper.map(vaccine, VaccineDto.class));
+        Page<Vaccine> vaccines;
+        if(searchInput.isEmpty()) {
+            vaccines = vaccineRepository.findAll(pageable);
+        } else {
+            vaccines = vaccineRepository.findBySearchInput(searchInput, pageable);
+        }
+        List<VaccineResponseDto3> vaccineDtos = modelMapper.map(vaccines.getContent(), new TypeToken<List<VaccineResponseDto3>>(){}.getType());
+       	return new PageImpl<>(vaccineDtos, pageable, vaccines.getTotalElements());
     }
 
     @Override
-    public Page<VaccineDto> getVaccineListBySearchInput(String searchInput, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return vaccineRepository.findBySearchInput(searchInput, pageable)
-                .map(vaccine -> modelMapper.map(vaccine, VaccineDto.class));
+    public VaccineResponseDto5 getVaccineById(String vaccineId) {
+        try {
+            Vaccine vaccine = vaccineRepository.findById(vaccineId).get();
+            return modelMapper.map(vaccine, VaccineResponseDto5.class);
+        } catch(Exception e) {
+            return new VaccineResponseDto5();
+        }
     }
 
     @Override
-    public VaccineDto getVaccineById(String vaccineId) {
-        Vaccine vaccine = vaccineRepository.findById(vaccineId)
-                .orElseThrow(() -> new RuntimeException("Vaccine not found"));
-        return modelMapper.map(vaccine, VaccineDto.class);
-    }
-
-    @Override
-    public VaccineDto updateVaccine(String vaccineId, VaccineDto vaccineDto) {
-        Vaccine existingVaccine = vaccineRepository.findById(vaccineId)
-                .orElseThrow(() -> new RuntimeException("Vaccine not found"));
-        modelMapper.map(vaccineDto, existingVaccine);
-        existingVaccine = vaccineRepository.save(existingVaccine);
-        return modelMapper.map(existingVaccine, VaccineDto.class);
-    }
-
-    @Override
-    public void changeStatusVaccine(List<String> vaccineIds) {
+    public int changeStatusVaccine(List<String> vaccineIds) {
         if (vaccineIds == null || vaccineIds.isEmpty()){
-            throw new IllegalArgumentException("No vaccines selected for deletion");
+            System.out.println("no vaccine was selected");
+            return 0;
         }
-        for (String vaccineId : vaccineIds){
-            Vaccine selectedVaccine = vaccineRepository.findById(vaccineId).get();
-            selectedVaccine.setVaccineId(selectedVaccine.getVaccineId());
-            selectedVaccine.setVaccineType(selectedVaccine.getVaccineType());
-            selectedVaccine.setVaccineOrigin(selectedVaccine.getVaccineOrigin());
-            selectedVaccine.setVaccineName(selectedVaccine.getVaccineName());
-            selectedVaccine.setVaccineUsage(selectedVaccine.getVaccineUsage());
-            selectedVaccine.setTimeEndNextInjection(selectedVaccine.getTimeEndNextInjection());
-            selectedVaccine.setTimeBeginNextInjection(selectedVaccine.getTimeBeginNextInjection());
-            selectedVaccine.setIndication(selectedVaccine.getIndication());
-            selectedVaccine.setContraindication(selectedVaccine.getContraindication());
-            selectedVaccine.setNumberOfInjection(selectedVaccine.getNumberOfInjection());
-            selectedVaccine.setInjectionResults(selectedVaccine.getInjectionResults());
-            selectedVaccine.setInjectionSchedule(selectedVaccine.getInjectionSchedule());
-            selectedVaccine.setVaccineStatus(Status.INACTIVE);
-            vaccineRepository.save(selectedVaccine);
+        try {
+            for (String vaccineId : vaccineIds){
+                Vaccine selectedVaccine = vaccineRepository.findById(vaccineId).get();
+                if(selectedVaccine.getVaccineStatus() == Status.INACTIVE) {
+                    System.out.println("Please select only vaccines with ACTIVE status");
+                    return -1;
+                }
+            }
+            for (String vaccineId : vaccineIds){
+                Vaccine selectedVaccine = vaccineRepository.findById(vaccineId).get();
+                selectedVaccine.setVaccineStatus(Status.INACTIVE);
+                vaccineRepository.save(selectedVaccine);
+            }
+        } catch (NoSuchElementException e) {
+            System.out.println("could not find a vaccine with given vaccine IDs");
+            return -2;
         }
+        if(vaccineIds.size() > 1) {
+            return vaccineIds.size();
+        }
+        return 1;
     }
 
     public List<String> importVaccineFromExcel(MultipartFile file) throws IOException {
@@ -103,13 +119,23 @@ public class VaccineServiceImpl implements VaccineService {
         Sheet sheet = workbook.getSheetAt(0);
 
         List<Vaccine> vaccines = new ArrayList<>();
-        List<String> notifications = new ArrayList<>(); // List to store notifications
+        List<String> notifications = new ArrayList<>();
 
         for (int i = 1; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
 
             if (row == null) {
-                continue; // Skip empty rows
+                System.out.println("Row " + i + " is empty.");
+                continue;
+            }
+
+            for (int j = 0; j <= 10; j++) {
+                Cell cell = row.getCell(j);
+                if (cell == null) {
+                    System.out.println("Cell " + j + " in row " + i + " is null.");
+                } else {
+                    System.out.println("Cell " + j + " in row " + i + " contains: " + cell.toString());
+                }
             }
 
             Vaccine vaccine = new Vaccine();
@@ -160,26 +186,15 @@ public class VaccineServiceImpl implements VaccineService {
             }
         }
 
-        // Save all valid vaccines
+        System.out.println("Vaccines to be saved: " + vaccines.size());
         vaccineRepository.saveAll(vaccines);
 
         workbook.close();
         return notifications; // Return notifications to the controller
     }
 
-    public List<Vaccine> getVaccinesByType(String vaccineTypeId) {
-        if (vaccineTypeId != null) {
-            return vaccineRepository.findByVaccineType_VaccineTypeId(vaccineTypeId);
-        }
-        return vaccineRepository.findAll();
-    }
-
-    @Override
-    public Vaccine findByName(String vaccineName) {
-        return null;
-    }
-
-    public List<Vaccine> getAllVaccines() {
-        return vaccineRepository.findAll();
+    public List<VaccineResponseDto4> findAllVaccineName() {
+        List<Vaccine> vaccines = vaccineRepository.findAll();
+        return modelMapper.map(vaccines, new TypeToken<List<VaccineResponseDto4>>(){}.getType());
     }
 }
