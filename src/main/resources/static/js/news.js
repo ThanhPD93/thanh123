@@ -1,5 +1,23 @@
+function fetchNewsAjax(filename) {
+	$.ajax({
+		url: "/api/news/getAjax",
+		data: {filename: filename},
+		success: function(ajaxData) {
+			$("#ajax-content")[0].innerHTML = ajaxData;
+			if(filename === "news-list.html") {
+				$("#ajax-title")[0].innerHTML = "NEWS LIST";
+			} else {
+				$("#ajax-title")[0].innerHTML = "CREATE NEWS";
+			}
+		},
+		error: function(xhr) {
+			alert("error at /api/news/getAjax, error code: " + xhr.status);
+		}
+	});
+}
+
 // Function to search news
-function search(pageNumber) {
+function newsSearch(pageNumber) {
     const searchInput = document.getElementById('searchInput').value;
     const entries = document.getElementById('show').value;
 
@@ -26,13 +44,13 @@ function search(pageNumber) {
             document.getElementById('start-entry').innerText = data.start;
             document.getElementById('end-entry').innerText = data.end;
             document.getElementById('total-entries').innerText = data.total;
-            updatePagination(data.totalPages, pageNumber);
+            updatePageNews(data.totalPages, pageNumber);
         })
         .catch(error => console.error('Error fetching news:', error));
 }
 
 // Function to handle pagination
-function updatePagination(totalPages, currentPage) {
+function updatePageNews(totalPages, currentPage) {
     const pageButtons = document.getElementById('page-buttons');
     pageButtons.innerHTML = ''; // Clear current pagination
 
@@ -144,9 +162,6 @@ function getSelectedNews() {
 }
 
 // Attach event listeners to buttons
-document.querySelector('.btn-success').addEventListener('click', createNews);
-document.querySelector('.btn-warning').addEventListener('click', updateNews);
-document.querySelector('.btn-danger').addEventListener('click', deleteNews);
 
 function saveNews() {
     // Lấy giá trị từ form
@@ -190,13 +205,9 @@ function saveNews() {
     });
 }
 
-function resetInput() {
+function resetReportInput() {
     document.getElementById('title').value = '';
     document.getElementById('preview').value = '';
     document.getElementById('content').value = '';
-}
-
-function fetchNews(pageUrl) {
-    window.location.href = pageUrl; // Điều hướng về trang news-list.html hoặc trang khác nếu cần
 }
 
