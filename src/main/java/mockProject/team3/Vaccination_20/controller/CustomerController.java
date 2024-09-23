@@ -1,11 +1,11 @@
 package mockProject.team3.Vaccination_20.controller;
 
-import mockProject.team3.Vaccination_20.dto.injectionresult.CustomerInfoDTO;
+import mockProject.team3.Vaccination_20.dto.customerDto.CustomerResponseDto4;
 import mockProject.team3.Vaccination_20.model.Customer;
 import jakarta.validation.Valid;
-import mockProject.team3.Vaccination_20.dto.customerDto.CustomerAddRequestDto;
-import mockProject.team3.Vaccination_20.dto.customerDto.CustomerFindByIdDto;
-import mockProject.team3.Vaccination_20.dto.customerDto.CustomerListResponseDto;
+import mockProject.team3.Vaccination_20.dto.customerDto.CustomerRequestDto1;
+import mockProject.team3.Vaccination_20.dto.customerDto.CustomerResponseDto1;
+import mockProject.team3.Vaccination_20.dto.customerDto.CustomerResponseDto2;
 import mockProject.team3.Vaccination_20.repository.CustomerRepository;
 import mockProject.team3.Vaccination_20.service.CustomerService;
 import mockProject.team3.Vaccination_20.utils.ApiResponse;
@@ -26,10 +26,7 @@ import java.nio.file.Path;
 import java.security.Principal;
 import java.util.List;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/customer")
@@ -48,13 +45,12 @@ public class CustomerController {
     }
 
     @GetMapping("/findAllCustomers")
-    public ResponseEntity<Page<CustomerListResponseDto>> findAllCustomers(
+    public ResponseEntity<Page<CustomerResponseDto2>> findAllCustomers(
             @RequestParam String searchInput,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size) {
-
         //method body
-        Page<CustomerListResponseDto> customers = customerService.findByFullNameOrAddress(searchInput, page, size);
+        Page<CustomerResponseDto2> customers = customerService.findByFullNameOrAddress(searchInput, page, size);
         return ResponseEntity.ok(customers);
     }
 
@@ -78,27 +74,10 @@ public class CustomerController {
         }
     }
 
-    //use for add injection-rs
-    @GetMapping("c-for-add-ir")
-    public ResponseEntity<List<Map<String, String>>> getAllCustomers() {
-        List<Customer> customers = customerService.getAllCustomers();
-
-        List<Map<String, String>> customerInfo = customers.stream().map(customer -> {
-            Map<String, String> info = new HashMap<>();
-            info.put("id", customer.getCustomerId());
-            info.put("name", customer.getFullName());
-            info.put("dateOfBirth", customer.getDateOfBirth().toString());
-            return info;
-        }).collect(Collectors.toList());
-
-        return ResponseEntity.ok(customerInfo);
-    }
-
-
     @PostMapping("/add")
-    public ResponseEntity<String> addCustomer(@Valid @RequestBody CustomerAddRequestDto customerAddRequestDto) {
+    public ResponseEntity<String> addCustomer(@Valid @RequestBody CustomerRequestDto1 customerRequestDto1) {
         System.out.println("entering /customer/add endpoint!");
-        if (customerService.addCustomer(customerAddRequestDto)) {
+        if (customerService.addCustomer(customerRequestDto1)) {
             System.out.println("enterting if->true!");
             return ResponseEntity.ok("Add customer success!");
         }
@@ -107,18 +86,18 @@ public class CustomerController {
     }
 
     @GetMapping("/findById")
-    public ResponseEntity<CustomerFindByIdDto> findById(@RequestParam String customerId) {
+    public ResponseEntity<CustomerResponseDto1> findById(@RequestParam String customerId) {
         return ResponseEntity.ok().body(customerService.findById(customerId));
     }
 
     //------
     @GetMapping("/detail/{customerInfoId}")
-    public ResponseEntity<ApiResponse<CustomerInfoDTO>> getCustomerDetail(@PathVariable String customerInfoId) {
+    public ResponseEntity<ApiResponse<CustomerResponseDto4>> getCustomerDetail(@PathVariable String customerInfoId) {
         Optional<Customer> customerOptional = customerRepository.findById(customerInfoId);
 
         if (customerOptional.isPresent()) {
             Customer customer = customerOptional.get();
-            CustomerInfoDTO customerDTO = new CustomerInfoDTO(customer.getCustomerId(), customer.getFullName(), customer.getDateOfBirth());
+            CustomerResponseDto4 customerDTO = new CustomerResponseDto4(customer.getCustomerId(), customer.getFullName(), customer.getDateOfBirth());
             return ResponseEntity.ok(new ApiResponse<>(200, "Customer found", customerDTO));
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
