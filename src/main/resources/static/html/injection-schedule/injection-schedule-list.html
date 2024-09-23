@@ -17,10 +17,10 @@
                     10
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" onclick="findAllEmployeeWithPagination(0,10)">10</a></li>
-                    <li><a class="dropdown-item" onclick="findAllEmployeeWithPagination(0,25)">25</a></li>
-                    <li><a class="dropdown-item" onclick="findAllEmployeeWithPagination(0,50)">50</a></li>
-                    <li><a class="dropdown-item" onclick="findAllEmployeeWithPagination(0,100)">100</a></li>
+                    <li><a class="dropdown-item" onclick="setPageSize(10); findAllInjectionSchedule(0);">10</a></li>
+                    <li><a class="dropdown-item" onclick="setPageSize(25); findAllInjectionSchedule(0);">25</a></li>
+                    <li><a class="dropdown-item" onclick="setPageSize(50); findAllInjectionSchedule(0);">50</a></li>
+                    <li><a class="dropdown-item" onclick="setPageSize(100); findAllInjectionSchedule(0);">100</a></li>
                 </ul>
             </div>
             <span>entries</span>
@@ -30,25 +30,25 @@
             <div class="d-flex">
                 <span class="me-2">Search:</span>
                 <input type="search" name="searchInput" id="searchInput" class="border-0 border-bottom border-info" style="outline: none;" onfocus="this.style.outline = 'none';" placeholder=". . ."
-                oninput="search(0)">
+                oninput="findAllInjectionSchedule(0)">
             </div>
         </div>
     </div>
-    <!--    table show list employees-->
-    <div class="table-employee mt-3">
+    <!--    table show list injectionSchedules-->
+    <div class="table-injectionSchedule mt-3">
         <table class="table table-striped table-hover table-bordered">
             <thead class="text-center ">
             <tr>
-<!--                <th class="bg-success text-white">-->
-<!--                    <input type="checkbox" id="mother-checkbox" onchange="checkAllBoxes()">-->
-<!--                </th>-->
-                <th class="bg-success text-white ">Vaccine</th>
+                <th class="d-none"></th>
+                <th class="d-none"></th>
+                <th class="bg-success text-white">
+                    <input type="checkbox" id="mother-checkbox" onchange="checkAllBoxes()">
+                </th>
+                <th class="bg-success text-white">Vaccine</th>
                 <th class="bg-success text-white">Time</th>
                 <th class="bg-success text-white">Place</th>
                 <th class="bg-success text-white">Status</th>
                 <th class="bg-success text-white">Note</th>
-<!--                <th class="bg-success text-white">Address</th>-->
-<!--                <th class="bg-success text-white">Image</th>-->
             </tr>
             </thead>
             <tbody id="injection-schedule-list">
@@ -58,7 +58,7 @@
     </div>
     <!-- Paging -->
     <div class="container-fluid d-flex justify-content-between mt-3">
-        <div class="container-fluid d-flex justify-content-between align-items-center	">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
             <div>
                 <span>Showing <span id="start-entry"  class="fw-medium">0</span> to <span id="end-entry"  class="fw-medium">0</span> of <span
                         id="total-entries"  class="fw-medium">0</span> entries</span>
@@ -71,60 +71,57 @@
     <!--    3 buttons-->
     <div class="d-flex flex-row mt-2">
         <div class="me-2">
-            <a type="button" class="btn btn-success" onclick="fetchInjectionSchedule('injection-schedule-create.html')">New
+            <a type="button" class="btn btn-success" onclick="unPressInjectionScheduleUpdateButton(); fetchInjectionSchedule('injection-schedule-create.html');">New
                 Injection Schedule</a>
         </div>
         <div class="me-2">
             <a type="button" class="update-button btn btn-warning text-white" href="#"
-               onclick="updateSelectedEmployee()">Update Injection Schedule</a>
+               onclick="pressInjectionScheduleUpdateButton(); fetchInjectionSchedule('injection-schedule-create.html');">Update Injection Schedule</a>
         </div>
-<!--        <div>-->
-<!--            <a type="button" class=" btn btn-danger" id="deleteButton" onclick="deleteSelectedEmployee()">Delete Employee</a>-->
-<!--        </div>-->
     </div>
 </div>
 <!-- Modal -->
-<div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
+<div class="modal fade" id="injectionScheduleModal" tabindex="-1" aria-labelledby="injectionScheduleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-<!--        <div class="modal-content">-->
-<!--            <div class="modal-header">-->
-<!--                <h4 class="modal-title " id="employeeModalLabel">EMPLOYEE DETAILS</h4>-->
-<!--                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-<!--            </div>-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title " id="injectionScheduleModalLabel">INJECTION SCHEDULE DETAILS</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
             <div class="modal-body">
                 <div class="col mb-3">
                     <label class="form-label fw-medium">Vaccine</label>
                     <div class="input-group">
                         <img src="/images/icons/people.png" class="input-group-text border-0">
-                        <input type="text" class="form-control text-uppercase" id="modalEmployeeId" disabled>
+                        <input type="text" class="form-control text-capitalize" id="modalVaccineName" disabled>
                     </div>
                 </div>
                 <div class="col mb-3">
                     <label class="form-label fw-medium">Time</label>
                     <div class="input-group">
-                        <img src="/images/icons/people.png" class="input-group-text border-0">
-                        <input type="text" class="form-control text-capitalize" id="modalEmployeeName" disabled>
+                        <img src="/images/icons/calendar.png" class="input-group-text border-0">
+                        <input type="text" class="form-control" id="modalInjectionScheduleTime" disabled>
                     </div>
                 </div>
                 <div class="col mb-3">
                     <label class="form-label fw-medium">Place</label>
                     <div class="input-group">
-                        <img src="/images/icons/calendar.png" class="input-group-text border-0">
-                        <input type="text" class="form-control" id="modalEmployeeDob" disabled>
+                        <img src="/images/icons/gender.png" class="input-group-text border-0">
+                        <input type="text" class="form-control" id="modalInjectionSchedulePlace" disabled>
                     </div>
                 </div>
                 <div class="col mb-3">
                     <label class="form-label fw-medium">Status</label>
                     <div class="input-group">
-                        <img src="/images/icons/gender.png" class="input-group-text border-0">
-                        <input type="text" class="form-control" id="modalEmployeeGender" disabled>
+                        <img src="/images/icons/old-typical-phone.png" class="input-group-text border-0">
+                        <input type="text" class="form-control" id="modalInjectionScheduleStatus" disabled>
                     </div>
                 </div>
                 <div class="col mb-3">
                     <label class="form-label fw-medium">Note</label>
                     <div class="input-group">
                         <img src="/images/icons/old-typical-phone.png" class="input-group-text border-0">
-                        <input type="text" class="form-control" id="modalEmployeePhone" disabled>
+                        <input type="text" class="form-control" id="modalInjectionScheduleNote" disabled>
                     </div>
                 </div>
             </div>
