@@ -25,13 +25,13 @@
 
     <div class="row">
         <div class="col-3 px-0 ">
-            <div class="bg-danger pb-1">
+            <div class="pb-1" style="background: url(./images/profile-bg.png)" >
                 <img class="w-25 p-1" src="/images/profile.png" alt="profile">
-                <p class="px-3" id="current-username"></p>
+                <p class="px-3 text-warning fw-medium" id="current-username"></p>
                 <a class="nav-link text-black d-flex justify-content-between" data-bs-toggle="collapse" data-bs-target="#logout"
                    aria-expanded="false" aria-controls="logout">
                     <div>
-                        <p class="px-3" id="userEmail"></p>
+                        <p class="px-3 text-warning" id="userEmail"></p>
                     </div>
                     <div>
                         <i class="bi bi-chevron-down mx-3"></i>
@@ -39,19 +39,19 @@
                 </a>
                 <div class="sub-menu collapse " id="logout">
                     <div class="navi-link">
-                        <a class="text-black text-decoration-none" href="/logout">Logout</a>
+                        <a class="text-black text-decoration-none fw-bold" href="/logout">Logout</a>
                     </div>
                 </div>
 
             </div>
             <div class="sidebar bg-white">
                 <nav class="nav flex-column ">
-                    <a class="nav-link text-black" onclick="backToHomePage()">
+                    <a class="nav-link text-black fw-medium" onclick="backToHomePage()">
                         Home
                     </a>
                     <a class="nav-link text-black d-flex justify-content-between" data-bs-toggle="collapse" data-bs-target="#employeeManagement"
                        aria-expanded="false" aria-controls="employeeManagement">
-                        <div>
+                        <div class="fw-medium">
                             Employee Management
                         </div>
                         <div>
@@ -59,16 +59,16 @@
                         </div>
                     </a>
                     <div class="sub-menu collapse " id="employeeManagement">
-                        <a class="nav-link text-black" onclick="unPressEmployeeUpdateButton(); fetchEmployee('employee-list.html');">
+                        <a class="nav-link fw-medium" onclick="unPressEmployeeUpdateButton(); fetchEmployee('employee-list.html');">
                             Employee List
                         </a>
-                        <a class="nav-link text-black" onclick="unPressEmployeeUpdateButton(); fetchEmployee('employee-create.html');">
+                        <a class="nav-link fw-medium" onclick="unPressEmployeeUpdateButton(); fetchEmployee('employee-create.html');">
                             Create Employee
                         </a>
                     </div>
                     <a class="nav-link text-black d-flex justify-content-between" data-bs-toggle="collapse" data-bs-target="#customerManagement"
                        aria-expanded="false" aria-controls="customerManagement">
-                        <div>
+                        <div class="fw-medium">
                             Customer Management
                         </div>
                         <div>
@@ -76,16 +76,16 @@
                         </div>
                     </a>
                     <div class="sub-menu collapse" id="customerManagement">
-                        <a class="nav-link text-black" onclick="fetchCustomer('customer-list.html')">
+                        <a class="nav-link fw-medium" onclick="fetchCustomer('customer-list.html')">
                            Customer List
                         </a>
-                        <a class="nav-link text-black" onclick="customerUpdateNotPressed(); fetchCustomer('customer-create.html');">
+                        <a class="nav-link fw-medium" onclick="customerUpdateNotPressed(); fetchCustomer('customer-create.html');">
                            Create Customer
                         </a>
                     </div>
                     <a class="nav-link text-black d-flex justify-content-between" data-bs-toggle="collapse" data-bs-target="#vaccineType"
                        aria-expanded="false" aria-controls="vaccineType">
-                        <div>
+                        <div class="fw-medium">
                             Vaccine Type Management
                         </div>
                         <div>
@@ -93,16 +93,16 @@
                         </div>
                     </a>
                     <div class="sub-menu collapse" id="vaccineType">
-                        <a class="nav-link text-black" onclick="fetchVaccineType('vaccine-type-list.html')">
+                        <a class="nav-link fw-medium" onclick="fetchVaccineType('vaccine-type-list.html')">
                             Vaccine Type List
                         </a>
-                        <a class="nav-link text-black" onclick="vaccineTypeUpdateNotPressed(); fetchVaccineType('vaccine-type-create.html');">
+                        <a class="nav-link fw-medium" onclick="vaccineTypeUpdateNotPressed(); fetchVaccineType('vaccine-type-create.html');">
                             Create Vaccine Type
                         </a>
                     </div>
                     <a class="nav-link text-black d-flex justify-content-between" data-bs-toggle="collapse" data-bs-target="#vaccine"
                        aria-expanded="false" aria-controls="vaccine">
-                        <div>
+                        <div class="fw-medium">
                             Vaccine management
                         </div>
                         <div>
@@ -110,16 +110,16 @@
                         </div>
                     </a>
                     <div class="sub-menu collapse" id="vaccine">
-                        <a class="nav-link text-black" onclick="fetchVaccine('vaccine-list.html')">
+                        <a class="nav-link fw-medium" onclick="fetchVaccine('vaccine-list.html')">
                            Vaccine List
                         </a>
-                        <a class="nav-link text-black" onclick="fetchVaccine('create-vaccine.html')">
+                        <a class="nav-link fw-medium" onclick="fetchVaccine('create-vaccine.html')">
                            Create Vaccine
                         </a>
                     </div>
                     <a class="nav-link text-black d-flex justify-content-between" data-bs-toggle="collapse" data-bs-target="#injectionSchedule"
                        aria-expanded="false" aria-controls="injectionSchedule">
-                        <div>
+                        <div class="fw-medium">
                             Injection Schedule
                         </div>
                         <div>
@@ -127,17 +127,17 @@
                         </div>
                     </a>
                     <div class="sub-menu collapse" id="injectionSchedule">
-                        <a class="nav-link text-black" onclick="unPressInjectionScheduleUpdateButton(); fetchInjectionSchedule('injection-schedule-list.html');">
+                        <a class="nav-link fw-medium" onclick="unPressInjectionScheduleUpdateButton(); fetchInjectionSchedule('injection-schedule-list.html');">
                             Injection Schedule List
                         </a>
-                        <a class="nav-link text-black" onclick="unPressInjectionScheduleUpdateButton(); fetchInjectionSchedule('injection-schedule-create.html');">
+                        <a class="nav-link fw-medium" onclick="unPressInjectionScheduleUpdateButton(); fetchInjectionSchedule('injection-schedule-create.html');">
                             Create Injection Schedule
                         </a>
                     </div>
                     <!--                    injection result-->
                     <a class="nav-link text-black d-flex justify-content-between" data-bs-toggle="collapse" data-bs-target="#injectionResult"
                        aria-expanded="false" aria-controls="injectionResult">
-                        <div>
+                        <div class="fw-medium">
                             Injection Result
                         </div>
                         <div>
@@ -145,10 +145,10 @@
                         </div>
                     </a>
                     <div class="sub-menu collapse" id="injectionResult">
-                        <a class="nav-link text-black" onclick="fetchInjectionResult('injection-result-list.html')">
+                        <a class="nav-link fw-medium" onclick="fetchInjectionResult('injection-result-list.html')">
                             Injection Result List
                         </a>
-                        <a class="nav-link text-black" onclick="fetchInjectionResult('injection-result-create.html')">
+                        <a class="nav-link fw-medium" onclick="fetchInjectionResult('injection-result-create.html')">
                             Create Injection Result
                         </a>
                     </div>
@@ -156,7 +156,7 @@
                     <!--                    news-->
                     <a class="nav-link text-black d-flex justify-content-between" data-bs-toggle="collapse" data-bs-target="#news"
                        aria-expanded="false" aria-controls="news">
-                        <div>
+                        <div class="fw-medium">
                             News
                         </div>
                         <div>
@@ -164,17 +164,17 @@
                         </div>
                     </a>
                     <div class="sub-menu collapse" id="news">
-                        <a class="nav-link text-black" onclick="fetchNewsAjax('news-list.html')">
+                        <a class="nav-link fw-medium" onclick="fetchNewsAjax('news-list.html')">
                             Injection News List
                         </a>
-                        <a class="nav-link text-black" onclick="fetchNewsAjax('news-create.html')">
+                        <a class="nav-link fw-medium" onclick="fetchNewsAjax('news-create.html')">
                             Create News Result
                         </a>
                     </div>
 <!--                    report-->
                     <a class="nav-link text-black d-flex justify-content-between" data-bs-toggle="collapse" data-bs-target="#report"
                        aria-expanded="false" aria-controls="report">
-                        <div>
+                        <div class="fw-medium">
                             Report
                         </div>
                         <div>
@@ -182,13 +182,13 @@
                         </div>
                     </a>
                     <div class="sub-menu collapse" id="report">
-                        <a class="nav-link text-black " href="#" onclick="fetchReport('report-injection-result.html')">
+                        <a class="nav-link fw-medium " href="#" onclick="fetchReport('report-injection-result.html')">
                             Report Injection Result
                         </a>
-                        <a class="nav-link text-black" href="#" onclick="fetchReport('report-customer.html')">
+                        <a class="nav-link fw-medium" href="#" onclick="fetchReport('report-customer.html')">
                             Report Customer
                         </a>
-                        <a class="nav-link text-black" href="#" onclick="fetchReport('report-vaccine.html')">
+                        <a class="nav-link fw-medium" href="#" onclick="fetchReport('report-vaccine.html')">
                             Report Vaccine
                         </a>
                     </div>
@@ -200,7 +200,6 @@
             <div class="row text-center my-4">
                 <h3 id="ajax-title">WELCOME TO VACCINE MANAGEMENT SYSTEM</h3>
             </div>
-
 
             <!-- div content for AJAX here -->
             <div class="row mx-2" id="ajax-content"></div>

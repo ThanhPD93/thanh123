@@ -23,8 +23,9 @@ public class EmployeeRequestDto2 {
     @NotBlank(message = "Employee's address must not be blank!")
     private String address;
 
-    @NotNull(message = "employee Date of birth must not be null")
+    @NotNull(message = "Employee date of birth must not be null")
     private LocalDate dateOfBirth;
+
     @AssertTrue(message = "Employee must be at least 18 years old")
     public boolean isAgeValid() {
         LocalDate today = LocalDate.now();
@@ -32,26 +33,26 @@ public class EmployeeRequestDto2 {
         return age.getYears() > 18 || (age.getYears() == 18 && (age.getMonths() > 0 || age.getDays() >= 0));
     }
 
-    @NotBlank(message = "email must not be Blank!")
+    @NotBlank(message = "Email must not be blank!")
     private String email;
 
-    @Size(max = 100, message = "Employee name must not exceed 36 characters")
+    @Size(max = 100, message = "Employee name must not exceed 100 characters")
     @NotBlank(message = "Employee name must not be blank!")
     private String employeeName;
 
-    @NotNull(message = "employee Date of birth must not be null")
+    @NotNull(message = "Employee gender must not be null")
     private Gender gender;
 
-    @NotBlank(message = "image must not be Blank!")
+    @NotBlank(message = "Image must not be blank!")
     private String image;
 
-    @Size(max = 20, message = "Employee's phone must not exceed 36 characters")
+    @Size(max = 20, message = "Employee's phone must not exceed 20 characters")
     @NotBlank(message = "Employee's phone must not be blank!")
     private String phone;
 
-    @NotBlank(message = "position must not be Blank!")
+    @NotBlank(message = "Position must not be blank!")
     private String position;
 
-    @NotBlank(message = "working place must not be Blank!")
+    @NotBlank(message = "Working place must not be blank!")
     private String workingPlace;
 }

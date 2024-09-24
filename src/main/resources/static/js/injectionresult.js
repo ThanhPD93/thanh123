@@ -224,9 +224,20 @@ function addInjectionResult() {
 			alert(stringData);
 			$('#add-injection-result-form')[0].reset();
 		},
-		error: function(xhr) {
-			alert("error at /api/injection/result/add, error code: " + xhr.status);
-		}
+        error: function(xhr) {
+            if(xhr.status === 400) {
+                const error = JSON.parse(xhr.responseText);
+                let validationMessage = "";
+                let i = 0;
+                error.errors.forEach(error => {
+                    validationMessage += ++i + "." + error.defaultMessage + "\n";
+                });
+                alert(error.message + " -->\n" + validationMessage);
+            }
+            else {
+                alert("an expected error occurred at /api/injection-result/add, error code: " + xhr.status);
+            }
+        }
 	});
 }
 

@@ -58,7 +58,7 @@ public class VaccineTypeController {
     }
 
     @PutMapping("/make-inactive")
-    public ResponseEntity<String> makeInactive(@RequestBody VaccineTypeRequestDto2 vaccineTypeRequestDto2) {
+    public ResponseEntity<String> makeInactive(@Valid @RequestBody VaccineTypeRequestDto2 vaccineTypeRequestDto2) {
         int count = vaccineTypeService.makeInactive(vaccineTypeRequestDto2.getVaccineTypeListIds());
         if (count != 0) {
             return ResponseEntity.ok("Made " + count + " vaccine types inactive successfully");

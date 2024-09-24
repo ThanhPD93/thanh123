@@ -1,9 +1,6 @@
 package mockProject.team3.Vaccination_20.dto.vaccineDto;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
 import mockProject.team3.Vaccination_20.utils.Status;
 
@@ -34,10 +31,15 @@ public class VaccineRequestDto1 {
     private LocalDate timeBeginNextInjection;
 
     @NotNull(message = "End time for the next injection must not be null.")
-    private LocalDate timeEndNextInjection; // Consider adding a custom validator to check that it is after timeBeginNextInjection
+    private LocalDate timeEndNextInjection;
+
+    @AssertTrue(message = "End time must be after the begin time for the next injection.")
+    public boolean isEndTimeAfterBeginTime() {
+        return timeEndNextInjection.isAfter(timeBeginNextInjection);
+    }
 
     @NotBlank(message = "Vaccine usage must not be empty!")
-    @Size(max = 300, message = "Vaccine usage must not exceed 300 characters!")
+    @Size(max = 200, message = "Vaccine usage must not exceed 200 characters!")
     private String vaccineUsage;
 
     @NotBlank(message = "Vaccine name must not be empty!")

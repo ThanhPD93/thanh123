@@ -216,8 +216,20 @@ function addInjectionSchedule(){
                 resetInjectionSchedule();
             }
         },
-        error: function(){
-            alert("error adding injectionSchedule from back-end");
+
+        error: function(xhr) {
+            if(xhr.status === 400) {
+                const error = JSON.parse(xhr.responseText);
+                let validationMessage = "";
+                let i = 0;
+                error.errors.forEach(error => {
+                    validationMessage += ++i + "." + error.defaultMessage + "\n";
+                });
+                alert(error.message + " -->\n" + validationMessage);
+            }
+            else {
+                alert("an expected error occurred at /api/injection-schedule/add, error code: " + xhr.status);
+            }
         }
     });
 }

@@ -13,7 +13,7 @@ import mockProject.team3.Vaccination_20.utils.Status;
 @Data
 public class VaccineTypeRequestDto1 {
 
-    @Size(max = 50, message = "Vaccine type ID must not exceed 50 characters!")
+    @Size(max = 36, message = "Vaccine type ID must not exceed 36 characters!")
     @NotBlank(message = "Vaccine type ID must not be empty!")
     private String vaccineTypeId;
 
