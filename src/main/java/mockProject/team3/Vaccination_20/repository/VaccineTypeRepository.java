@@ -16,7 +16,9 @@ public interface VaccineTypeRepository extends JpaRepository<VaccineType, String
 
     //use for add-ir
 	List<VaccineType> findAll();
+
     VaccineType findByVaccineTypeId(String vaccineTypeId);
+
 
     @Query("SELECT vt FROM VaccineType vt WHERE " +
             "LOWER(vt.vaccineTypeId) LIKE LOWER(CONCAT('%', :searchInput, '%')) OR " +

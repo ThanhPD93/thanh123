@@ -44,13 +44,14 @@ public interface InjectionResultRepository extends JpaRepository<InjectionResult
             "JOIN ir.vaccineFromInjectionResult v " +
             "WHERE LOWER(v.vaccineName) LIKE LOWER(CONCAT('%', :searchInput, '%')) " +
             "OR LOWER(ir.prevention) LIKE LOWER(CONCAT('%', :searchInput, '%')) " +
-            "OR LOWER(ir.numberOfInjection) LIKE LOWER(CONCAT('%', :searchInput, '%')) " +
+            "OR CAST(ir.numberOfInjection AS string) LIKE %:searchInput% " +
             "OR LOWER(c.fullName) LIKE LOWER(CONCAT('%', :searchInput, '%')) " +
             "OR LOWER(c.identityCard) LIKE LOWER(CONCAT('%', :searchInput, '%')) " +
             "OR LOWER(c.phone) LIKE LOWER(CONCAT('%', :searchInput, '%')) " +
             "OR FUNCTION('DATE_FORMAT', ir.injectionDate, '%Y-%m-%d') = :searchInput " +
             "OR FUNCTION('DATE_FORMAT', ir.nextInjectionDate, '%Y-%m-%d') = :searchInput")
     Page<InjectionResult> findBySearch(@Param("searchInput") String searchInput, Pageable pageable);
+
 
 
 //    List<Integer> findDistinctYears();

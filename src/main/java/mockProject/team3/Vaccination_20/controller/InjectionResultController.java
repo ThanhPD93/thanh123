@@ -1,6 +1,7 @@
 package mockProject.team3.Vaccination_20.controller;
 
 
+import jakarta.validation.Valid;
 import mockProject.team3.Vaccination_20.dto.injectionResultDto.*;
 import mockProject.team3.Vaccination_20.service.CustomerService;
 import mockProject.team3.Vaccination_20.service.InjectionResultService;
@@ -78,10 +79,10 @@ public class InjectionResultController {
 
     //add
     @PostMapping("/add")
-    public ResponseEntity<String> addInjectionResult(@RequestBody InjectionResultRequestDto1 injectionResultDto) {
+    public ResponseEntity<String> addInjectionResult(@Valid @RequestBody InjectionResultRequestDto1 injectionResultDto) {
         int result = injectionResultService.addInjectionResult(injectionResultDto);
         if (result == 0) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("an exception was thrown during service operation");
+            return ResponseEntity.badRequest().body("an exception was thrown during service operation");
         } else {
             return ResponseEntity.ok("add injection result success!");
         }

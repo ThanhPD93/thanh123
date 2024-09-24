@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Data
 public class InjectionResultResponseDto3 {
     private VaccineResponseDto2 vaccineFromInjectionResult;
-    private String numberOfInjection;
+    private long numberOfInjection;
     private LocalDate injectionDate;
     private LocalDate nextInjectionDate;
     private CustomerResponseDto3 customer;

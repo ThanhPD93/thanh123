@@ -12,7 +12,7 @@ public class InjectionResultResponseDto1 {
     private String customerInfo; // customerId - fullName - dateOfBirth
     private String vaccineName;
     private String vaccineTypeName;//
-    private String numberOfInjection;
+    private long numberOfInjection;
     private LocalDate injectionDate;
     private LocalDate nextInjectionDate;
 }

@@ -1,6 +1,8 @@
 package mockProject.team3.Vaccination_20.controller;
 
+import mockProject.team3.Vaccination_20.dto.customerDto.CustomerListForReportDto;
 import mockProject.team3.Vaccination_20.dto.report.ChartData;
+import mockProject.team3.Vaccination_20.model.Customer;
 import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineResponseDto5;
 import mockProject.team3.Vaccination_20.model.Vaccine;
 import mockProject.team3.Vaccination_20.service.CustomerService;
@@ -8,6 +10,9 @@ import mockProject.team3.Vaccination_20.service.InjectionResultService;
 import mockProject.team3.Vaccination_20.service.VaccineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -39,44 +44,16 @@ public class ReportController {
         return Files.readString(path);
     }
 
-//    @GetMapping("/injection-result/stats")
-//    public ResponseEntity<List<ReportResponseDto1>> getInjectionResultsByMonth(@RequestParam int year) {
-//        List<ReportResponseDto1> stats = injectionResultService.getInjectionResultsByYear(year);
-//        return ResponseEntity.ok(stats);
-//    }
-
-//    @GetMapping("/injection/getYears")
-//    public ResponseEntity<List<Integer>> getYears() {
-//        List<Integer> years = injectionResultService.findDistinctYears();
-//        return ResponseEntity.ok(years);
-//    }
-
-
-    @GetMapping("/injection/chart")
-    public ResponseEntity<ChartData> getChartData(@RequestParam Integer year) {
-        List<Object[]> resultList = injectionResultService.findInjectionResultsByYear(year);
-
-        List<String> months = new ArrayList<>(Arrays.asList(
-                "January", "February", "March", "April", "May", "June",
-                "July", "August", "September", "October", "November", "December"
-        ));
-
-        List<Integer> results = new ArrayList<>(Collections.nCopies(12, 0));
-
-        for (Object[] result : resultList) {
-            Integer monthIndex = (Integer) result[0];
-            Integer total = ((Number) result[1]).intValue();
-
-            if (monthIndex >= 1 && monthIndex <= 12) {
-                results.set(monthIndex - 1, total);
-            }
-        }
-
-        ChartData chartData = new ChartData();
-        chartData.setMonths(months);
-        chartData.setResults(results);
-
-        return ResponseEntity.ok(chartData);
+    @GetMapping("/customer/list")
+    public ResponseEntity<Page<CustomerListForReportDto>> searchCustomers(
+            @RequestParam(required = false) String fullName,
+            @RequestParam(required = false) String address,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fromDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate toDate,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<CustomerListForReportDto> result = customerService.searchCustomers(fullName, address, fromDate, toDate, page, size);
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/customer/chart")
@@ -134,7 +111,38 @@ public class ReportController {
 
         return ResponseEntity.ok(chartData);
     }
+    @GetMapping("/injection/chart")
+    public ResponseEntity<ChartData> getChartData(@RequestParam Integer year) {
+        List<Object[]> resultList = injectionResultService.findInjectionResultsByYear(year);
 
+        List<String> months = new ArrayList<>(Arrays.asList(
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+        ));
+
+        List<Integer> results = new ArrayList<>(Collections.nCopies(12, 0));
+
+        for (Object[] result : resultList) {
+            Integer monthIndex = (Integer) result[0];
+            Integer total = ((Number) result[1]).intValue();
+
+            if (monthIndex >= 1 && monthIndex <= 12) {
+                results.set(monthIndex - 1, total);
+            }
+        }
+
+        ChartData chartData = new ChartData();
+        chartData.setMonths(months);
+        chartData.setResults(results);
+
+        return ResponseEntity.ok(chartData);
+    }
+
+    @GetMapping("/injection/getYears")
+    public ResponseEntity<List<Integer>> getYears() {
+        List<Integer> years = injectionResultService.findDistinctYears();
+        return ResponseEntity.ok(years);
+    }
     @GetMapping("/vaccine/filter")
     public ResponseEntity<Page<VaccineResponseDto5>> getVaccineListForReport(@RequestParam(value = "beginDate", required = false,defaultValue = "") LocalDate beginDate,
                                                                              @RequestParam(value = "endDate", required = false,defaultValue = "") LocalDate endDate,

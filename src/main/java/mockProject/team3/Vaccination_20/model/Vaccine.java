@@ -49,7 +49,6 @@ public class Vaccine {
     private List<InjectionResult> injectionResults;
 
     @ManyToOne
-    @JoinColumn(name = "vaccineTypeId")
     private VaccineType vaccineType;
 
     @OneToMany(mappedBy = "vaccineFromInjectionSchedule")

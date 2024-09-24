@@ -14,7 +14,7 @@ public class UInjectionResultDTO {
     private String customerId;
     private String vaccineTypeId;
     private String vaccineId;
-    private String injection;
+    private long numberOfInjection;
     private LocalDate injectionDate;
     private LocalDate nextInjectionDate;
     private String injectionPlace;
