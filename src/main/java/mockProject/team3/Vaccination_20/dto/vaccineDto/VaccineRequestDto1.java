@@ -1,5 +1,9 @@
 package mockProject.team3.Vaccination_20.dto.vaccineDto;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import mockProject.team3.Vaccination_20.utils.Status;
 
@@ -9,15 +13,41 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Data
 public class VaccineRequestDto1 {
+    @NotBlank(message = "Vaccine ID must not be empty!")
+    @Size(max = 36, message = "Vaccine ID must not exceed 36 characters!")
     private String vaccineId;
+
+    @Size(max = 500, message = "Contraindication must not exceed 500 characters!")
     private String contraindication;
+
+    @Size(max = 500, message = "Indication must not exceed 500 characters!")
     private String indication;
+
+    @Min(value = 1, message = "Number of injections must be at least 1.")
     private int numberOfInjection;
+
+    @NotBlank(message = "Vaccine origin must not be empty!")
+    @Size(max = 100, message = "Vaccine origin must not exceed 100 characters!")
     private String vaccineOrigin;
+
+    @NotNull(message = "Begin time for the next injection must not be null.")
     private LocalDate timeBeginNextInjection;
-    private LocalDate timeEndNextInjection;
+
+    @NotNull(message = "End time for the next injection must not be null.")
+    private LocalDate timeEndNextInjection; // Consider adding a custom validator to check that it is after timeBeginNextInjection
+
+    @NotBlank(message = "Vaccine usage must not be empty!")
+    @Size(max = 300, message = "Vaccine usage must not exceed 300 characters!")
     private String vaccineUsage;
+
+    @NotBlank(message = "Vaccine name must not be empty!")
+    @Size(max = 100, message = "Vaccine name must not exceed 100 characters!")
     private String vaccineName;
+
+    @NotNull(message = "Vaccine status must not be null.")
     private Status vaccineStatus;
+
+    @NotBlank(message = "Vaccine type must not be empty!")
+    @Size(max = 50, message = "Vaccine type must not exceed 50 characters!")
     private String vaccineType;
 }

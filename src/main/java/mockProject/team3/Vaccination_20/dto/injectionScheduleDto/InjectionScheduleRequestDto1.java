@@ -3,6 +3,7 @@ package mockProject.team3.Vaccination_20.dto.injectionScheduleDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -35,4 +36,9 @@ public class InjectionScheduleRequestDto1 {
 
     @NotNull(message = "vaccineId must not be null")
     private String vaccineId;
+
+    @AssertTrue(message = "Start date must be before end date.")
+    public boolean isStartDateBeforeEndDate(){
+        return startDate.isBefore(endDate);
+    }
 }
