@@ -1,6 +1,7 @@
 package mockProject.team3.Vaccination_20.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineRequestDto1;
 import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineResponseDto3;
 import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineResponseDto4;
@@ -34,7 +35,7 @@ public class VaccineController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> createVaccine(@RequestBody VaccineRequestDto1 vaccineRequestDto1) {
+    public ResponseEntity<String> createVaccine(@Valid  @RequestBody VaccineRequestDto1 vaccineRequestDto1) {
         int result = vaccineService.createVaccine(vaccineRequestDto1);
         return ResponseEntity.ok("add new vaccine success!");
     }

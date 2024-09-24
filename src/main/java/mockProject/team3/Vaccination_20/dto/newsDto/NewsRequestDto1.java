@@ -12,18 +12,17 @@ import lombok.NoArgsConstructor;
 @Data
 public class NewsRequestDto1 {
 
-    @Size(max = 50, message = "Vaccine type ID must not exceed 50 characters!")
-    @NotBlank(message = "Vaccine type ID must not be empty!")
+    @Size(max = 36, message = "News ID must not exceed 36 characters!")
+    @NotBlank(message = "News ID must not be empty!")
     private String newsId;
 
-    @Size(max = 50, message = "Vaccine type ID must not exceed 50 characters!")
-    @NotBlank(message = "Vaccine type ID must not be empty!")
+    @Size(max = 4000, message = "Content must not exceed 4000 characters!")
     private String content;
 
-    @Size(max = 4000, message = "Customer ID must not exceed 4000 characters!")
+    @Size(max = 4000, message = "Preview must not exceed 4000 characters!")
     private String preview;
 
-    @Size(max = 300, message = "Customer ID must not exceed 300 characters!")
+    @Size(max = 300, message = "Title must not exceed 300 characters!")
     private String title;
 
 }

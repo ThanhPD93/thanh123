@@ -205,11 +205,20 @@ function addCustomer() {
     			randomizeCaptchaWithReset();
     		}
     	},
-    	error: function(xhr) {
-    		alert("error fetching data for /api/customer/add");
-    		alert(xhr.status);
-    		alert(xhr.statusText);
-    	}
+        error: function(xhr) {
+            if(xhr.status === 400) {
+                const error = JSON.parse(xhr.responseText);
+                let validationMessage = "";
+                let i = 0;
+                error.errors.forEach(error => {
+                    validationMessage += ++i + "." + error.defaultMessage + "\n";
+                });
+                alert(error.message + " -->\n" + validationMessage);
+            }
+            else {
+                alert("an expected error occurred at /api/employee/add, error code: " + xhr.status);
+            }
+        }
     });
 }
 

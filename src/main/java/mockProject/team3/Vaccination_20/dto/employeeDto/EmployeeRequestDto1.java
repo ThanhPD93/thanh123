@@ -1,9 +1,6 @@
 package mockProject.team3.Vaccination_20.dto.employeeDto;
 
-import jakarta.validation.constraints.AssertTrue;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,48 +13,56 @@ import java.time.Period;
 @NoArgsConstructor
 @Data
 public class EmployeeRequestDto1 {
-    @Size(max = 36, message = "Employee ID must not exceed 36 characters")
+    @Size(max = 36, message = "Employee ID must not exceed 36 characters!")
     @NotBlank(message = "Employee ID must not be blank!")
     private String employeeId;
 
     @NotBlank(message = "Employee's address must not be blank!")
     private String address;
 
-    @NotNull(message = "employee Date of birth must not be null")
+    @NotNull(message = "Employee date of birth must not be null!")
     private LocalDate dateOfBirth;
-    @AssertTrue(message = "Employee must be at least 18 years old")
+
+    @AssertTrue(message = "Employee must be at least 18 years old.")
     public boolean isAgeValid() {
         LocalDate today = LocalDate.now();
         Period age = Period.between(dateOfBirth, today);
         return age.getYears() > 18 || (age.getYears() == 18 && (age.getMonths() > 0 || age.getDays() >= 0));
     }
 
-    @NotBlank(message = "email must not be Blank!")
+    @AssertTrue(message = "Date of birth must be in the past.")
+    public boolean isDateOfBirthInThePast() {
+        return dateOfBirth.isBefore(LocalDate.now());
+    }
+
+    @NotBlank(message = "Email must not be blank!")
+    @Email(message = "Invalid email format!")
     private String email;
 
-    @Size(max = 100, message = "Employee name must not exceed 36 characters")
+    @Size(max = 100, message = "Employee name must not exceed 100 characters.")
     @NotBlank(message = "Employee name must not be blank!")
     private String employeeName;
 
-    @NotNull(message = "employee Date of birth must not be null")
+    @NotNull(message = "Employee gender must not be null!")
     private Gender gender;
 
-    @NotBlank(message = "image must not be Blank!")
+    @NotBlank(message = "Image must not be blank!")
     private String image;
 
-    @Size(max = 20, message = "Employee's phone must not exceed 36 characters")
+    @Size(max = 20, message = "Employee's phone must not exceed 20 characters.")
     @NotBlank(message = "Employee's phone must not be blank!")
+    @Pattern(regexp = "^\\+?[0-9]{7,20}$", message = "Invalid phone number format.")
     private String phone;
 
-    @NotBlank(message = "position must not be Blank!")
+    @NotBlank(message = "Position must not be blank!")
     private String position;
 
-    @NotBlank(message = "working place must not be Blank!")
+    @NotBlank(message = "Working place must not be blank!")
     private String workingPlace;
 
-    @NotBlank(message = "username must not be Blank!")
+    @NotBlank(message = "Username must not be blank!")
     private String username;
 
-    @NotBlank(message = "password must not be Blank!")
+    @NotBlank(message = "Password must not be blank!")
     private String password;
 }

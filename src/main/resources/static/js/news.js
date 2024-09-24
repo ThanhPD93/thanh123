@@ -65,29 +65,69 @@ function updatePageNews(totalPages, currentPage) {
 }
 
 // Function to create news
+// function createNews() {
+//     const title = prompt('Enter news title:');
+//     const content = prompt('Enter news content:');
+//
+//     if (title && content) {
+//         fetch('/api/news', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify({ title, content }),
+//         })
+//         .then(response => {
+//             if (response.ok) {
+//                 alert('News created successfully!');
+//                 search(0); // Reload the news list
+//             } else {
+//                 alert('Failed to create news.');
+//             }
+//         })
+//         .catch(error => console.error('Error creating news:', error));
+//     }
+// }
+
 function createNews() {
     const title = prompt('Enter news title:');
     const content = prompt('Enter news content:');
-    
+
     if (title && content) {
-        fetch('/api/news', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ title, content }),
-        })
-        .then(response => {
-            if (response.ok) {
+        const newsData = {
+            title: title,
+            content: content
+        };
+
+        $.ajax({
+            url: "/api/news",
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(newsData),
+            success: function(response) {
                 alert('News created successfully!');
                 search(0); // Reload the news list
-            } else {
-                alert('Failed to create news.');
+            },
+            error: function(xhr) {
+                if(xhr.status === 400) {
+                    const error = JSON.parse(xhr.responseText);
+                    let validationMessage = "";
+                    let i = 0;
+                    error.errors.forEach(error => {
+                        validationMessage += ++i + "." + error.defaultMessage + "\n";
+                    });
+                    alert(error.message + " -->\n" + validationMessage);
+                }
+                else {
+                    alert("an expected error occurred at /api/new, error code: " + xhr.status);
+                }
             }
-        })
-        .catch(error => console.error('Error creating news:', error));
+        });
+    } else {
+        alert("Title and content are required.");
     }
 }
+
 
 // Function to update news
 function updateNews() {

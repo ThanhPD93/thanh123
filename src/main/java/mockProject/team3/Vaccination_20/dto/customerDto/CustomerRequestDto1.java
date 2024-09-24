@@ -1,8 +1,6 @@
 package mockProject.team3.Vaccination_20.dto.customerDto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,8 +22,14 @@ public class CustomerRequestDto1 {
     @NotNull(message = "Customer date of birth must not be null!")
     private LocalDate dateOfBirth;
 
+    @AssertTrue(message = "Date of birth must be in the past.")
+    public boolean isDateOfBirthInThePast() {
+        return dateOfBirth.isBefore(LocalDate.now());
+    }
+
     @NotBlank(message = "Email must not be empty!")
     @Size(max = 100, message = "Email must not exceed 100 characters!")
+    @Email(message = "Invalid email format!")
     private String email;
 
     @NotBlank(message = "Customer's full name must not be empty!")
@@ -40,12 +44,14 @@ public class CustomerRequestDto1 {
     private String identityCard;
 
     @NotBlank(message = "Password must not be blank!")
+    @Size(min = 8, message = "Password must be at least 8 characters long.")
     private String password;
 
     @NotBlank(message = "Phone number must not be empty!")
     @Size(max = 20, message = "Phone number must not exceed 20 characters!")
+    @Pattern(regexp = "^\\+?[0-9]{7,20}$", message = "Invalid phone number format.")
     private String phone;
-    
+
     @NotBlank(message = "Customer's username must not be empty!")
     private String username;
 }

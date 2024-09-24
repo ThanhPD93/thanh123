@@ -111,10 +111,10 @@ function renderChart(chartData) {
     currentChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: months, // Sử dụng tháng
+            labels: months,
             datasets: [{
                 label: 'Injection Results',
-                data: results, // Dữ liệu kết quả
+                data: results,
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1

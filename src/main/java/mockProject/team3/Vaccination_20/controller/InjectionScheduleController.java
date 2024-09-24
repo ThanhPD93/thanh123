@@ -1,5 +1,6 @@
 package mockProject.team3.Vaccination_20.controller;
 
+import jakarta.validation.Valid;
 import mockProject.team3.Vaccination_20.dto.injectionScheduleDto.InjectionScheduleResponseDto1;
 import mockProject.team3.Vaccination_20.dto.injectionScheduleDto.InjectionScheduleRequestDto1;
 import mockProject.team3.Vaccination_20.service.InjectionScheduleService;
@@ -34,7 +35,7 @@ public class InjectionScheduleController {
     }
 
     @PostMapping("/add")
-    public String add(@RequestBody InjectionScheduleRequestDto1 injectionScheduleRequestDto1) {
+    public String add(@Valid @RequestBody InjectionScheduleRequestDto1 injectionScheduleRequestDto1) {
         int save = injectionScheduleService.save(injectionScheduleRequestDto1);
         if (save == 1) {
             return "add success";

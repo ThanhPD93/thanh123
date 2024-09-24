@@ -188,9 +188,20 @@ function addVaccine(event) {
     		alert(stringData);
     		document.getElementById('add-vaccine-form').reset();
     	},
-    	error: function(xhr) {
-    		console.error("error at /api/vaccine/add, error code: " + xhr.status);
-    	}
+        error: function(xhr) {
+            if(xhr.status === 400) {
+                const error = JSON.parse(xhr.responseText);
+                let validationMessage = "";
+                let i = 0;
+                error.errors.forEach(error => {
+                    validationMessage += ++i + "." + error.defaultMessage + "\n";
+                });
+                alert(error.message + " -->\n" + validationMessage);
+            }
+            else {
+                alert("an expected error occurred at /api/vaccine/add, error code: " + xhr.status);
+            }
+        }
     });
 }
 //---------------------
