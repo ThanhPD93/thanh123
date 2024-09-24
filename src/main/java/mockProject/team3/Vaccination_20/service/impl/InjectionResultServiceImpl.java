@@ -49,27 +49,27 @@ public class InjectionResultServiceImpl implements InjectionResultService {
     @Autowired
     private ModelMapper modelMapper;
 
-    @PostConstruct
-    public void setupMapperCustomerOfResultDto() {
-        modelMapper.addMappings(new PropertyMap<Customer, CustomerResponseDto3>() {
-            @Override
-            protected void configure() {
-                map().setCustomerId(source.getCustomerId());
-                map().setDateOfBirth(source.getDateOfBirth());
-                map().setFullName(source.getFullName());
-            }
-        });
-    }
-    @PostConstruct
-    public void setupMapperVaccineDisplayDto() {
-        modelMapper.addMappings(new PropertyMap<Vaccine, VaccineResponseDto1>() {
-            @Override
-            protected void configure() {
-                map().setVaccineId(source.getVaccineId());
-                map().setVaccineName(source.getVaccineName());
-            }
-        });
-    }
+//    @PostConstruct
+//    public void setupMapperCustomerOfResultDto() {
+//        modelMapper.addMappings(new PropertyMap<Customer, CustomerResponseDto3>() {
+//            @Override
+//            protected void configure() {
+//                map().setCustomerId(source.getCustomerId());
+//                map().setDateOfBirth(source.getDateOfBirth());
+//                map().setFullName(source.getFullName());
+//            }
+//        });
+//    }
+//    @PostConstruct
+//    public void setupMapperVaccineDisplayDto() {
+//        modelMapper.addMappings(new PropertyMap<Vaccine, VaccineResponseDto1>() {
+//            @Override
+//            protected void configure() {
+//                map().setVaccineId(source.getVaccineId());
+//                map().setVaccineName(source.getVaccineName());
+//            }
+//        });
+//    }
 
     @Override
     public InjectionResultResponseDto2 displayDropdown() {
@@ -94,16 +94,6 @@ public class InjectionResultServiceImpl implements InjectionResultService {
         }
         List<InjectionResultResponseDto3> injectionResultResponseDto3s = modelMapper.map(injectionResults.getContent(), new TypeToken<List<InjectionResultResponseDto3>>(){}.getType());
     	return new PageImpl<>(injectionResultResponseDto3s, pageable, injectionResults.getTotalElements());
-    }
-
-    //show all
-    public List<InjectionResultResponseDto1> getAllInjectionResults() {
-        return injectionResultRepository.findAllInjectionResults();
-    }
-    //show with pagination
-    public Page<InjectionResultResponseDto1> findBySearchWithPagination(String searchInput, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        return injectionResultRepository.findAllWithPagination(searchInput, pageable);
     }
 
     //get data from file to dropdown
@@ -145,21 +135,13 @@ public class InjectionResultServiceImpl implements InjectionResultService {
 
     //detail
     @Override
-    public UInjectionResultDTO getInjectionResultById(String id) {
-        InjectionResult injectionResult = injectionResultRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("InjectionResult not found"));
-
-        UInjectionResultDTO dtoDetail = new UInjectionResultDTO();
-        dtoDetail.setInjectionResultId(injectionResult.getInjectionResultId());
-        dtoDetail.setCustomerId(injectionResult.getCustomer().getCustomerId());
-        dtoDetail.setVaccineId(injectionResult.getVaccineFromInjectionResult().getVaccineId());
-        dtoDetail.setVaccineTypeId(injectionResult.getVaccineFromInjectionResult().getVaccineType().getVaccineTypeId());
-        dtoDetail.setNumberOfInjection(injectionResult.getNumberOfInjection());
-        dtoDetail.setInjectionDate(injectionResult.getInjectionDate());
-        dtoDetail.setNextInjectionDate(injectionResult.getNextInjectionDate());
-        dtoDetail.setInjectionPlace(injectionResult.getInjectionPlace());
-
-        return dtoDetail;
+    public InjectionResultResponseDto3 getInjectionResultById(String id) {
+        try {
+            InjectionResult injectionResult = injectionResultRepository.findById(id).get();
+            return modelMapper.map(injectionResult, InjectionResultResponseDto3.class);
+        } catch(Exception e) {
+            return null;
+        }
     }
 
     //-------update

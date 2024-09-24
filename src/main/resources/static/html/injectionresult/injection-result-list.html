@@ -14,13 +14,13 @@
             <div class="btn-group border-bottom border-info rounded-0">
                 <button type="button" class="btn btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
                         id="dropdownMenuButton">
-                    1
+                    10
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" onclick="setPageSize(1); findAllInjectionResult(0);">10</a></li>
-                    <li><a class="dropdown-item" onclick="setPageSize(2); findAllInjectionResults(0);">25</a></li>
-                    <li><a class="dropdown-item" onclick="setPageSize(3); findAllInjectionResults(0);">50</a></li>
-                    <li><a class="dropdown-item" onclick="setPageSize(4); findAllInjectionResults(0);">100</a></li>
+                    <li><a class="dropdown-item" onclick="setPageSize(10); findAllInjectionResult(0);">10</a></li>
+                    <li><a class="dropdown-item" onclick="setPageSize(25); findAllInjectionResults(0);">25</a></li>
+                    <li><a class="dropdown-item" onclick="setPageSize(50); findAllInjectionResults(0);">50</a></li>
+                    <li><a class="dropdown-item" onclick="setPageSize(100); findAllInjectionResults(0);">100</a></li>
                 </ul>
             </div>
             <span>entries</span>
@@ -29,10 +29,9 @@
         <div class="search">
             <div class="d-flex">
                 <span class="me-2">Search:</span>
-                <input type="search" name="searchInput" id="searchInput" class="border-0 border-bottom border-info" style="outline: none;" onfocus="this.style.outline = 'none';" placeholder=". . .">
-                <button id="search-button" onclick="searchInjectionResults(0)" class="rounded-5 border-0 bg-light">
-                    <img src="/images/icons/search.png">
-                </button>
+                <input type="search" name="searchInput" id="searchInput" class="border-0 border-bottom border-info"
+                       style="outline: none;" onfocus="this.style.outline = 'none';"
+                       placeholder=". . ." oninput="findAllInjectionResults(0)">
             </div>
         </div>
     </div>

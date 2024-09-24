@@ -183,8 +183,6 @@ function addVaccineType() {
     } else {
         sendVaccineTypeData(vaccineType);
     }
-    document.getElementById('add-vaccine-type').reset();
-    $("#image-preview")[0].style.display = 'none';
 }
 
 function sendVaccineTypeData(vaccineType) {
@@ -196,10 +194,23 @@ function sendVaccineTypeData(vaccineType) {
     	data: JSON.stringify(vaccineType),
     	success: function(stringData) {
     		alert(stringData);
+    		$('#add-vaccine-type')[0].reset();
+            $("#image-preview")[0].style.display = 'none';
     	},
     	error: function(xhr) {
-    		console.error("error at /api/vaccine-type/add: error code: " + xhr.status);
-    	}
+            if(xhr.status === 400) {
+                const error = JSON.parse(xhr.responseText);
+                let validationMessage = "";
+                let i = 0;
+                error.errors.forEach(error => {
+                    validationMessage += ++i + "." + error.defaultMessage + "\n";
+                });
+                alert(error.message + " -->\n" + validationMessage);
+            }
+            else {
+                alert("an expected error occurred at /api/employee/add, error code: " + xhr.status);
+            }
+       	}
     });
 }
 

@@ -47,28 +47,12 @@ public class InjectionResultController {
         return ResponseEntity.ok(injectionResultService.displayDropdown());
     }
 
-   //show list
-    @GetMapping("/list")
-    public ResponseEntity<List<InjectionResultResponseDto1>> getAllInjectionResults() {
-        List<InjectionResultResponseDto1> injectionResults = injectionResultService.getAllInjectionResults();
-        return new ResponseEntity<>(injectionResults, HttpStatus.OK);
-    }
-
     @GetMapping("/findBySearch")
     public ResponseEntity<Page<InjectionResultResponseDto3>> findBySearch(@RequestParam String searchInput,
                                                                           @RequestParam int page,
                                                                           @RequestParam int size) {
         return ResponseEntity.ok(injectionResultService.findBySearch(searchInput,page,size));
     }
-
-    //show with pagination
-    @GetMapping("/findAllWithPagination")
-    public Page<InjectionResultResponseDto1> findAllWithPagination(@RequestParam String searchInput,
-                                                                   @RequestParam(defaultValue = "0") int page,
-                                                                   @RequestParam(defaultValue = "5") int size) {
-        return injectionResultService.findBySearchWithPagination(searchInput, page, size);
-    }
-
 
     //load data from file injection place
     @GetMapping("/places")
@@ -90,9 +74,9 @@ public class InjectionResultController {
 
     //-detail
     @GetMapping("/detail/{injectionResultId}")
-    public ResponseEntity<UInjectionResultDTO> getInjectionResult(@PathVariable String injectionResultId) {
-        UInjectionResultDTO uInjectionResultDTO = injectionResultService.getInjectionResultById(injectionResultId);
-        return ResponseEntity.ok(uInjectionResultDTO);
+    public ResponseEntity<InjectionResultResponseDto3> getInjectionResult(@PathVariable String injectionResultId) {
+        InjectionResultResponseDto3 injectionResult = injectionResultService.getInjectionResultById(injectionResultId);
+        return ResponseEntity.ok(injectionResult);
     }
 
     //update
