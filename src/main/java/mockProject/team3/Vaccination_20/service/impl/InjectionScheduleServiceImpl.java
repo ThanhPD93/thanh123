@@ -34,15 +34,15 @@ public class InjectionScheduleServiceImpl implements InjectionScheduleService {
     @Autowired
     private ModelMapper modelMapper;
 
-    @PostConstruct
-    public void setupModelMapper() {
-        modelMapper.addMappings(new PropertyMap<Vaccine, VaccineResponseDto4>() {
-            @Override
-            protected void configure() {
-                map().setVaccineName(source.getVaccineName());
-            }
-        });
-    }
+//    @PostConstruct
+//    public void setupModelMapper() {
+//        modelMapper.addMappings(new PropertyMap<Vaccine, VaccineResponseDto4>() {
+//            @Override
+//            protected void configure() {
+//                map().setVaccineName(source.getVaccineName());
+//            }
+//        });
+//    }
 
     @Override
     public Page<InjectionScheduleResponseDto1> findBySearch(String searchInput, int page, int size) {

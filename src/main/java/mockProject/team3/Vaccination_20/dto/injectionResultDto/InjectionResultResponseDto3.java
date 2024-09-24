@@ -12,9 +12,11 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Data
 public class InjectionResultResponseDto3 {
+    private String injectionResultId;
     private VaccineResponseDto2 vaccineFromInjectionResult;
     private long numberOfInjection;
     private LocalDate injectionDate;
     private LocalDate nextInjectionDate;
     private CustomerResponseDto3 customer;
+    private String injectionPlace;
 }

@@ -8,11 +8,9 @@ import java.util.List;
 
 public interface InjectionResultService {
 
-    Page<InjectionResultResponseDto1> findBySearchWithPagination(String searchInput, int page, int size);
-    List<InjectionResultResponseDto1> getAllInjectionResults();
     List<String> getAllInjectionPlaces();
     int addInjectionResult(InjectionResultRequestDto1 dto);
-    UInjectionResultDTO getInjectionResultById(String id);
+    InjectionResultResponseDto3 getInjectionResultById(String id);
     UInjectionResultDTO updateInjectionResult(String injectionResultId, UInjectionResultDTO uInjectionResultDTO);
     void deleteInjectionResults(List<String> ids);
     Page<InjectionResultResponseDto3> findBySearch(String searchInput, int page, int size);

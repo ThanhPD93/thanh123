@@ -45,15 +45,15 @@ public class VaccineServiceImpl implements VaccineService {
     @Autowired
     private ModelMapper modelMapper;
 
-    @PostConstruct
-    public void setupMapperVaccineTypeOfVaccineDto() {
-        modelMapper.addMappings(new PropertyMap<VaccineType, VaccineTypeResponseDto4>() {
-            @Override
-            protected void configure() {
-                map().setVaccineTypeName(source.getVaccineTypeName());
-            }
-        });
-    }
+//    @PostConstruct
+//    public void setupMapperVaccineTypeOfVaccineDto() {
+//        modelMapper.addMappings(new PropertyMap<VaccineType, VaccineTypeResponseDto4>() {
+//            @Override
+//            protected void configure() {
+//                map().setVaccineTypeName(source.getVaccineTypeName());
+//            }
+//        });
+//    }
 
     @Override
     public int createVaccine(VaccineRequestDto1 vaccineRequestDto1) {
@@ -236,6 +236,6 @@ public class VaccineServiceImpl implements VaccineService {
         Pageable pageable = PageRequest.of(page, size);
         Page<Vaccine> vaccines = vaccineRepository.findByFilterForReport(beginDate, endDate, vaccineTypeName, origin, pageable);
         List<VaccineResponseDto5> vaccineResponses = modelMapper.map(vaccines.getContent(), new TypeToken<List<VaccineResponseDto5>>(){}.getType());
-        return new PageImpl<>(vaccineResponses, pageable, vaccines.getTotalElements());
+        return  new PageImpl<>(vaccineResponses, pageable, vaccines.getTotalElements());
     }
 }

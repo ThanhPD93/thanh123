@@ -58,7 +58,7 @@ function switchDisplayTypeVaccine(type) {
 }
 
     // Load years into the dropdown for the chart
-    function loadYears() {
+function loadYears() {
         $.ajax({
             url: '/api/report/injection/getYears',
             method: 'GET',
