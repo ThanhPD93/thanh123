@@ -3,6 +3,7 @@ package mockProject.team3.Vaccination_20.service.impl;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import mockProject.team3.Vaccination_20.dto.customerDto.CustomerResponseDto3;
+import mockProject.team3.Vaccination_20.dto.report.ReportInjectionResultDto;
 import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineResponseDto1;
 import mockProject.team3.Vaccination_20.dto.injectionResultDto.*;
 import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.VaccineTypeResponseDto3;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -189,4 +191,22 @@ public class InjectionResultServiceImpl implements InjectionResultService {
     public List<Object[]> findVaccineCountByMonth(Integer year) {
         return injectionResultRepository.findVaccineCountByMonth(year);
     }
+
+// report list
+    @Override
+    public Page<ReportInjectionResultDto> filterReportInjection(LocalDate startDate, LocalDate endDate, String vaccineTypeName, String vaccineName, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<InjectionResult> injectionResults = injectionResultRepository.filterInjectionResults(startDate, endDate, vaccineTypeName, vaccineName, pageable);
+
+        // Map the content of InjectionResult to ReportInjectionResultDto
+        List<ReportInjectionResultDto> reportInjectionResultDtos = modelMapper.map(
+                injectionResults.getContent(),
+                new TypeToken<List<ReportInjectionResultDto>>() {}.getType()
+        );
+
+        // Return paginated results
+        return new PageImpl<>(reportInjectionResultDtos, pageable, injectionResults.getTotalElements());
+    }
+
+
 }

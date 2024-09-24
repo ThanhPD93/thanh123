@@ -33,7 +33,7 @@ function switchDisplayTypeInjection(type) {
     }
 }
 
-function switchDisplayTypeCustmer(type) {
+function switchDisplayTypeCustomer(type) {
     if (type === 'REPORT') {
         $('#report-section').show();
         $('#chart-section').hide();

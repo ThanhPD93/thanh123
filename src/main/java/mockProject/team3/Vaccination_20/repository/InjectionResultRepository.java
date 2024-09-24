@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -54,8 +55,6 @@ public interface InjectionResultRepository extends JpaRepository<InjectionResult
 
 
 
-//    List<Integer> findDistinctYears();
-
     //report injection
     @Query("SELECT MONTH(ir.injectionDate) AS month, COUNT(ir) AS total "
             + "FROM InjectionResult ir WHERE YEAR(ir.injectionDate) = :year "
@@ -79,5 +78,21 @@ public interface InjectionResultRepository extends JpaRepository<InjectionResult
             "GROUP BY MONTH(ir.injectionDate) " +
             "ORDER BY MONTH(ir.injectionDate)")
     List<Object[]> findVaccineCountByMonth(Integer year);
+
+    @Query("SELECT ir FROM InjectionResult ir " +
+            "JOIN ir.customer c " +
+            "JOIN ir.vaccineFromInjectionResult v " +
+            "JOIN v.vaccineType vt " +
+            "WHERE (:startDate IS NULL OR ir.injectionDate >= :startDate) " +
+            "AND (:endDate IS NULL OR ir.injectionDate <= :endDate) " +
+            "AND (:vaccineTypeName IS NULL OR vt.vaccineTypeName = :vaccineTypeName) " +
+            "AND (:vaccineName IS NULL OR v.vaccineName = :vaccineName)")
+    Page<InjectionResult> filterInjectionResults(@Param("startDate") LocalDate startDate,
+                                                 @Param("endDate") LocalDate endDate,
+                                                 @Param("vaccineTypeName") String vaccineTypeName,
+                                                 @Param("vaccineName") String vaccineName,
+                                                 Pageable pageable);
+
+
 
 }
