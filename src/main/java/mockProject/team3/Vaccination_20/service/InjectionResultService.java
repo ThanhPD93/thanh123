@@ -18,8 +18,8 @@ public interface InjectionResultService {
     Page<InjectionResultResponseDto3> findBySearch(String searchInput, int page, int size);
 	InjectionResultResponseDto2 displayDropdown();
 
-//    //report
-//    List<Integer> findDistinctYears();
+    //report
+    List<Integer> findDistinctYears();
 
     List<Object[]> findInjectionResultsByYear(Integer year);
 

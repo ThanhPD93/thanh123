@@ -17,17 +17,17 @@ public class InjectionResult {
     @Id
     @GeneratedValue(generator = "injection_result_id")
     @GenericGenerator(name = "injection_result_id", strategy = "mockProject.team3.Vaccination_20.utils.InjectionResultIdGenerator")
-    @Column(length = 36)
+    @Column(length = 36, nullable = false)
     private String injectionResultId;
 
+    @Column(length = 36, nullable = false)
     private LocalDate injectionDate;
 
     private String injectionPlace;
 
     private LocalDate nextInjectionDate;
 
-    @Column(length = 100)
-    private String numberOfInjection;
+    private long numberOfInjection;
 
     @Column(length = 100)
     private String prevention;

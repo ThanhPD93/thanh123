@@ -1,5 +1,6 @@
 package mockProject.team3.Vaccination_20.service.impl;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.Arrays;
 import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.VaccineTypeRequestDto1;
 
 import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.VaccineTypeResponseDto1;
@@ -72,6 +73,7 @@ public class VaccineTypeServiceImpl implements VaccineTypeService {
     @Override
     public int addVaccineType(VaccineTypeRequestDto1 vaccineTypeRequestDto1) {
         VaccineType vaccineType = vaccineTypeRepository.findByVaccineTypeId(vaccineTypeRequestDto1.getVaccineTypeId());
+        System.out.println(vaccineTypeRequestDto1.getVaccineTypeImage());
         if(vaccineTypeRequestDto1.getVaccineTypeImage() == null && vaccineType != null) {
             byte[] currentImage = vaccineTypeRepository.findByVaccineTypeId(vaccineTypeRequestDto1.getVaccineTypeId()).getVaccineTypeImage();
             vaccineType = modelMapper.map(vaccineTypeRequestDto1, VaccineType.class);

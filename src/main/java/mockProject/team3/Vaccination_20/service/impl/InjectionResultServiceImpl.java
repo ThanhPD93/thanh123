@@ -154,7 +154,7 @@ public class InjectionResultServiceImpl implements InjectionResultService {
         dtoDetail.setCustomerId(injectionResult.getCustomer().getCustomerId());
         dtoDetail.setVaccineId(injectionResult.getVaccineFromInjectionResult().getVaccineId());
         dtoDetail.setVaccineTypeId(injectionResult.getVaccineFromInjectionResult().getVaccineType().getVaccineTypeId());
-        dtoDetail.setInjection(injectionResult.getNumberOfInjection());
+        dtoDetail.setNumberOfInjection(injectionResult.getNumberOfInjection());
         dtoDetail.setInjectionDate(injectionResult.getInjectionDate());
         dtoDetail.setNextInjectionDate(injectionResult.getNextInjectionDate());
         dtoDetail.setInjectionPlace(injectionResult.getInjectionPlace());
@@ -173,7 +173,7 @@ public class InjectionResultServiceImpl implements InjectionResultService {
         dtoUpdate.setCustomerId(existInjectionResult.getCustomer().getCustomerId());
         dtoUpdate.setVaccineId(existInjectionResult.getVaccineFromInjectionResult().getVaccineId());
         dtoUpdate.setVaccineTypeId(existInjectionResult.getVaccineFromInjectionResult().getVaccineType().getVaccineTypeId());
-        dtoUpdate.setInjection(existInjectionResult.getNumberOfInjection());
+        dtoUpdate.setNumberOfInjection(existInjectionResult.getNumberOfInjection());
         dtoUpdate.setInjectionDate(existInjectionResult.getInjectionDate());
         dtoUpdate.setNextInjectionDate(existInjectionResult.getNextInjectionDate());
         dtoUpdate.setInjectionPlace(existInjectionResult.getInjectionPlace());
@@ -189,10 +189,10 @@ public class InjectionResultServiceImpl implements InjectionResultService {
     }
 
     //for report
-//    @Override
-//    public List<Integer> findDistinctYears() {
-//        return injectionResultRepository.findDistinctYears();
-//    }
+    @Override
+    public List<Integer> findDistinctYears() {
+        return injectionResultRepository.findYears();
+    }
 
     @Override
     public List<Object[]> findInjectionResultsByYear(Integer year) {
