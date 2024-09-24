@@ -1,6 +1,8 @@
 package mockProject.team3.Vaccination_20.service.impl;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.HttpServletResponse;
 import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineRequestDto1;
 import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineResponseDto3;
 import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineResponseDto4;
@@ -27,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -113,13 +116,41 @@ public class VaccineServiceImpl implements VaccineService {
         return 1;
     }
 
+    @Override
+    public void exportTemplate(HttpServletResponse response) throws IOException {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Import Template");
+
+        Row headerRow = sheet.createRow(0);
+        CellStyle headerStyle = workbook.createCellStyle();
+        Font font = workbook.createFont();
+        font.setBold(true);
+        headerStyle.setFont(font);
+
+        String[] headers = {"Vaccine ID", "Contraindication", "Indication", "Number of Injection", "Vaccine Origin", "Time Begin Next Injection", "Time End Next Injection", "Vaccine Usage", "Vaccine Name", "Status"};
+        for (int i = 0; i < headers.length; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue(headers[i]);
+            cell.setCellStyle(headerStyle);
+        }
+
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=import_template.xlsx");
+
+        ServletOutputStream outputStream = response.getOutputStream();
+        workbook.write(outputStream);
+        workbook.close();
+        outputStream.close();
+    }
+
+    @Override
     public List<String> importVaccineFromExcel(MultipartFile file) throws IOException {
         InputStream inputStream = file.getInputStream();
         Workbook workbook = new XSSFWorkbook(inputStream);
         Sheet sheet = workbook.getSheetAt(0);
 
         List<Vaccine> vaccines = new ArrayList<>();
-        List<String> notifications = new ArrayList<>();
+        List<String> notifications = new ArrayList<>(); // List to store notifications
 
         for (int i = 1; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
@@ -182,6 +213,8 @@ public class VaccineServiceImpl implements VaccineService {
                         // Add a notification if vaccineTypeStatus is INACTIVE
                         notifications.add("Cannot add vaccine at row " + (i + 1) + " because the vaccine type is inactive.");
                     }
+                } else {
+                    notifications.add("Cannot add vaccine at row "+ (i+1) + " because the vaccine type was not found.");
                 }
             }
         }
@@ -196,5 +229,13 @@ public class VaccineServiceImpl implements VaccineService {
     public List<VaccineResponseDto4> findAllVaccineName() {
         List<Vaccine> vaccines = vaccineRepository.findAll();
         return modelMapper.map(vaccines, new TypeToken<List<VaccineResponseDto4>>(){}.getType());
+    }
+
+    @Override
+    public Page<VaccineResponseDto5> vaccineListForReportByFilter(LocalDate beginDate, LocalDate endDate, String vaccineTypeName, String origin, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Vaccine> vaccines = vaccineRepository.findByFilterForReport(beginDate, endDate, vaccineTypeName, origin, pageable);
+        List<VaccineResponseDto5> vaccineResponses = modelMapper.map(vaccines.getContent(), new TypeToken<List<VaccineResponseDto5>>(){}.getType());
+        return new PageImpl<>(vaccineResponses, pageable, vaccines.getTotalElements());
     }
 }

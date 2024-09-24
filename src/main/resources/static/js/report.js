@@ -12,7 +12,7 @@ function fetchReport(filename) {
                 $("#ajax-title").html("REPORT CUSTOMER");
             } else {
                 $("#ajax-title").html("REPORT VACCINE");
-
+                loadVaccineTypeName();
             }
         },
         error: function(jqxhr, textStatus, errorThrown) {
@@ -255,3 +255,68 @@ function renderVaccineChart(chartData) {
 $('#year').on('change', fetchChartDataInjection);
 $('#year').on('change', fetchChartDataCustomer);
 $('#year').on('change', fetchChartDataVaccine);
+
+//show list of vaccine with filter
+
+function loadVaccineTypeName() {
+    $.ajax({
+        url: "/api/vaccine-type/vt-for-add-ir",
+        success: function(vaccineTypes) {
+            const vaccineTypeSelect = document.getElementById('vaccineTypeName');
+            console.log(vaccineTypeSelect);
+            vaccineTypeSelect.innerHTML = '<option value="" disabled selected>Select Vaccine Type Name</option>';
+
+            vaccineTypes.forEach(vaccineType => {
+                vaccineTypeSelect.innerHTML += `<option value="${vaccineType.vaccineTypeName}">${vaccineType.vaccineTypeName}</option>`;
+            });
+        },
+        error: function(xhr) {
+            console.error("Error at /api/vaccine-type/vt-for-add-ir \nerrorcode: " + xhr.status + "\n message: " + xhr.responseText);
+        }
+    });
+}
+
+
+function getListWithFilter(page, size){
+     console.log($("#beginDate")[0].value);
+     console.log($("#endDate")[0].value);
+     console.log($("#vaccineTypeName")[0].value);
+     console.log($("#origin")[0].value);
+     console.log(page);
+     console.log(size);
+
+    $.ajax({
+        url: "/api/report/vaccine/filter",
+        data:{
+            beginDate: $("#beginDate")[0].value,
+            endDate: $("#endDate")[0].value,
+            vaccineTypeName: $("#vaccineTypeName")[0].value,
+            origin: $("#origin")[0].value,
+            page: page,
+            size: size
+        },
+        dataType: "json",
+        success: function(vaccines){
+            const tableBody = document.getElementById('report-vaccine-list-content');
+            tableBody.innerHTML = "";
+            console.log(vaccines.content);
+            vaccines.content.forEach(vaccine =>{
+                const row = document.createElement('tr');
+                row.innerHTML =`
+                    <td><a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-uppercase">${vaccine.vaccineId}</a></td>
+                    <td class="text-capitalize text-start">${vaccine.vaccineName}</td>
+                    <td class="text-start">${vaccine.vaccineType.vaccineTypeName}</td>
+                    <td class="text-start">${vaccine.numberOfInjection}</td>
+                    <td class="text-start">${vaccine.timeBeginNextInjection}</td>
+                    <td class="text-start">${vaccine.timeEndNextInjection}</td>
+                    <td class="text-start">${vaccine.vaccineOrigin}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        },
+        error: function(error) {
+            console.error('Error fetching list of vaccines', error);
+        }
+    })
+}
+

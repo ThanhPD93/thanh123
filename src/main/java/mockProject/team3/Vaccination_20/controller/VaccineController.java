@@ -1,5 +1,6 @@
 package mockProject.team3.Vaccination_20.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineRequestDto1;
 import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineResponseDto3;
 import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineResponseDto4;
@@ -64,6 +65,11 @@ public class VaccineController {
         if (result == 0) return ResponseEntity.badRequest().body("no vaccine was selected");
         if (result == 1) return ResponseEntity.ok("Successfully changed 1 vaccine status to in-active");
         return ResponseEntity.ok("Successfully changed " + result + " vaccines' status to in-active");
+    }
+
+    @GetMapping("/export/excel")
+    public void exportTemplate(HttpServletResponse response) throws IOException{
+        vaccineService.exportTemplate(response);
     }
 
     @PostMapping("/import/excel")

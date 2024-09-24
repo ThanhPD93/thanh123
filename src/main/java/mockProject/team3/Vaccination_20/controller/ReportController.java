@@ -1,10 +1,15 @@
 package mockProject.team3.Vaccination_20.controller;
 
 import mockProject.team3.Vaccination_20.dto.report.ChartData;
+import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineResponseDto5;
+import mockProject.team3.Vaccination_20.model.Vaccine;
 import mockProject.team3.Vaccination_20.service.CustomerService;
 import mockProject.team3.Vaccination_20.service.InjectionResultService;
+import mockProject.team3.Vaccination_20.service.VaccineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.*;
 
 @RestController
@@ -23,6 +29,8 @@ public class ReportController {
     private InjectionResultService injectionResultService;
     @Autowired
     private CustomerService customerService;
+    @Autowired
+    private VaccineService vaccineService;
     //call
     @GetMapping("/getAjax")
     public String getDocument(@RequestParam String filename) throws IOException {
@@ -127,6 +135,14 @@ public class ReportController {
         return ResponseEntity.ok(chartData);
     }
 
-
-
+    @GetMapping("/vaccine/filter")
+    public ResponseEntity<Page<VaccineResponseDto5>> getVaccineListForReport(@RequestParam(value = "beginDate", required = false,defaultValue = "") LocalDate beginDate,
+                                                                             @RequestParam(value = "endDate", required = false,defaultValue = "") LocalDate endDate,
+                                                                             @RequestParam(value = "vaccineTypeName", required = false,defaultValue = "") String vaccineTypeName,
+                                                                             @RequestParam(value = "origin", required = false, defaultValue = "") String origin,
+                                                                             @RequestParam(value = "page",required = false, defaultValue = "0") int page,
+                                                                             @RequestParam(value = "size",required = false, defaultValue = "10") int size){
+        Page<VaccineResponseDto5> vaccinePageForReport = vaccineService.vaccineListForReportByFilter(beginDate, endDate, vaccineTypeName, origin, page, size);
+        return ResponseEntity.ok(vaccinePageForReport);
+    }
 }
