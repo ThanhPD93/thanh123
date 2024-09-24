@@ -10,9 +10,13 @@
     <div class="container mt-3 bg-light p-3">
         <!-- Row1 -->
         <div class="d-flex justify-content-between mb-4">
-            <div class="col-12">
+            <div class="col-8">
                 <label class="form-label fw-medium">Import File</label>
                 <input type="file" class="form-control" id="importVaccine" name="file" required>
+            </div>
+            <div class="col-4">
+                <p>Please use this excel template for import vaccine</p>
+                <button onclick="exportExcelFile(event)">Download Excel Template</button>
             </div>
         </div>
         <!-- Row2 -->

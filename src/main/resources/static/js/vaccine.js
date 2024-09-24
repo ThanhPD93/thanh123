@@ -1,7 +1,3 @@
-function setVaccinePageSize(pageSize) {
-	$("#dropdownMenuButton")[0].textContent = pageSize;
-}
-
 //from dashboard
 function fetchVaccine(filename) {
 	$.ajax({
@@ -31,11 +27,13 @@ function fetchVaccine(filename) {
 	});
 }
 
+
 //show list with pagination
 function findAllVaccine(page){
     const searchInputElement = document.getElementById('searchInput');
 	const pageSize = parseInt($("#dropdownMenuButton").text().trim(), 10);
     const query = searchInputElement ? searchInputElement.value : '';
+//    console.log('Search input element:', searchInputElement);
     $.ajax({
         url: "/api/vaccine/search",
         data: {
@@ -301,4 +299,11 @@ function importExcelFile(event){
         console.error('Error:', error);
         alert('Failed to upload and import file.');
     });
+}
+
+//export file excel
+function exportExcelFile(event){
+    event.preventDefault();
+    const apiUrl = 'http://localhost:8080/api/vaccine/export/excel';
+    window.location.href = apiUrl;
 }
