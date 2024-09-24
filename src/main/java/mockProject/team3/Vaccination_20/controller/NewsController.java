@@ -27,39 +27,50 @@ public class NewsController {
 
     @Operation(summary = "Using ajax to load content dynamically")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "ajax html code loaded successfully!"),
-            @ApiResponse(responseCode = "400", description = "ajax file name must not be empty!"),
-            @ApiResponse(responseCode = "404", description = "ajax path could not find file!")
+            @ApiResponse(responseCode = "200", description = "Ajax HTML code loaded successfully!"),
+            @ApiResponse(responseCode = "400", description = "Ajax file name must not be empty!"),
+            @ApiResponse(responseCode = "404", description = "Ajax path could not find file!")
     })
     @GetMapping("/getAjax")
     public ResponseEntity<String> getDocument(@RequestParam String filename) throws IOException {
-        // if user input filename that is empty or null -> return response 400 and appropriate message
-        if(filename == null || filename.isEmpty()) {
-            return ResponseEntity.badRequest().body(MSG.MSG31.getMessage());
+        // Check if the filename is empty or null
+        if (filename == null || filename.isEmpty()) {
+            return ResponseEntity.badRequest().body("Filename must not be empty!");
         }
+
         ClassPathResource resource = new ClassPathResource("static/html/news/" + filename);
         Path path = resource.getFile().toPath();
-        // if the path to the file cannot find the file -> return 404
+
+        // Check if the file exists
         if (!Files.exists(path)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(MSG.MSG32.getMessage());
-        } else {
-            // if file found, return response 200 and the file
-            return ResponseEntity.ok(Files.readString(path));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("HTML file not found!");
         }
+
+        // Return the file content with response 200
+        return ResponseEntity.ok(Files.readString(path));
     }
 
     @Operation(summary = "Add a new news or update an existing one")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "News added or updated successfully!"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data for news!")
+    })
     @PostMapping("/add")
     public ResponseEntity<NewsResponseDto1> addNews(@Valid @RequestBody NewsRequestDto1 newsRequestDto1) {
         NewsResponseDto1 newsResponseDto1 = newsService.addNews(newsRequestDto1);
         return ResponseEntity.ok(newsResponseDto1);
     }
 
+    @Operation(summary = "Find all news items with optional search")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of news items retrieved successfully!"),
+            @ApiResponse(responseCode = "404", description = "No news items found!")
+    })
     @GetMapping("/findAllNews")
     public ResponseEntity<Page<NewsResponseDto1>> findAllNews(
             @RequestParam String searchInput,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size){
+            @RequestParam(defaultValue = "5") int size) {
         Page<NewsResponseDto1> newsResponseDto = newsService.findByTittleOrContent(searchInput, page, size);
         return ResponseEntity.ok(newsResponseDto);
     }

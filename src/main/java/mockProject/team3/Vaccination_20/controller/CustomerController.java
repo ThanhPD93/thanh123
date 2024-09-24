@@ -8,7 +8,9 @@ import mockProject.team3.Vaccination_20.dto.customerDto.CustomerResponseDto1;
 import mockProject.team3.Vaccination_20.dto.customerDto.CustomerResponseDto2;
 import mockProject.team3.Vaccination_20.repository.CustomerRepository;
 import mockProject.team3.Vaccination_20.service.CustomerService;
-import mockProject.team3.Vaccination_20.utils.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,8 +27,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Principal;
 import java.util.List;
-
 import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/api/customer")
@@ -37,73 +39,106 @@ public class CustomerController {
 
     @Autowired
     private CustomerRepository customerRepository;
+
+    @Operation(summary = "Load an HTML file dynamically via AJAX")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "HTML file loaded successfully"),
+            @ApiResponse(responseCode = "404", description = "File not found")
+    })
     @GetMapping("/getAjax")
-    public String getDocument(@RequestParam String filename) throws IOException {
-        ClassPathResource resource = new ClassPathResource("static/html/customer/" + filename);
-        Path path = resource.getFile().toPath();
-        return Files.readString(path);
+    public ResponseEntity<String> getDocument(@RequestParam String filename) throws IOException {
+        try {
+            ClassPathResource resource = new ClassPathResource("static/html/customer/" + filename);
+            Path path = resource.getFile().toPath();
+            return ResponseEntity.ok(Files.readString(path));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File not found");
+        }
     }
 
+    @Operation(summary = "Find all customers with optional search and pagination")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Pagination list of customers found")
+    })
     @GetMapping("/findAllCustomers")
     public ResponseEntity<Page<CustomerResponseDto2>> findAllCustomers(
             @RequestParam String searchInput,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size) {
-        //method body
         Page<CustomerResponseDto2> customers = customerService.findByFullNameOrAddress(searchInput, page, size);
         return ResponseEntity.ok(customers);
     }
 
+    @Operation(summary = "Get the current username")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Current username retrieved successfully")
+    })
     @GetMapping("/getCurrentUsername")
     public ResponseEntity<String> getCurrentUsername(Principal principal) {
         return ResponseEntity.ok(principal.getName());
     }
 
+    @Operation(summary = "Delete one or more customers by customer IDs")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Customers deleted successfully"),
+            @ApiResponse(responseCode = "400", description = "No data deleted"),
+            @ApiResponse(responseCode = "500", description = "An error occurred")
+    })
     @DeleteMapping("/delete")
-    public ResponseEntity<ApiResponse<String>> deleteCustomers(@RequestBody List<String> customerIds) {
+    public ResponseEntity<String> deleteCustomers(@RequestBody List<String> customerIds) {
         if (customerIds == null || customerIds.isEmpty()) {
-            return ResponseEntity.badRequest().body(new ApiResponse<>(400, "No data deleted!", null));
+            return ResponseEntity.badRequest().body("No data deleted!");
         }
 
         try {
             customerService.deleteCustomers(customerIds);
-            return ResponseEntity.ok(new ApiResponse<>(200, "Customers deleted successfully", null));
+            return ResponseEntity.ok("Customers deleted successfully");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>(500, "An error occurred: " + e.getMessage(), null));
+                    .body("An error occurred: " + e.getMessage());
         }
     }
 
+    @Operation(summary = "Add a new customer")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Customer added successfully"),
+            @ApiResponse(responseCode = "400", description = "Failed to add customer")
+    })
     @PostMapping("/add")
     public ResponseEntity<String> addCustomer(@Valid @RequestBody CustomerRequestDto1 customerRequestDto1) {
-        System.out.println("entering /customer/add endpoint!");
         if (customerService.addCustomer(customerRequestDto1)) {
-            System.out.println("enterting if->true!");
             return ResponseEntity.ok("Add customer success!");
         }
-        System.out.println("entering if->false!");
         return ResponseEntity.ok("Fail to add customer!");
     }
 
+    @Operation(summary = "Find a customer by ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Customer found"),
+            @ApiResponse(responseCode = "404", description = "Customer not found")
+    })
     @GetMapping("/findById")
     public ResponseEntity<CustomerResponseDto1> findById(@RequestParam String customerId) {
-        return ResponseEntity.ok().body(customerService.findById(customerId));
+        CustomerResponseDto1 customer = customerService.findById(customerId);
+        return customer != null ? ResponseEntity.ok(customer) : ResponseEntity.notFound().build();
     }
 
-    //------
+    @Operation(summary = "Get customer details by customer ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Customer details found"),
+            @ApiResponse(responseCode = "404", description = "Customer not found")
+    })
     @GetMapping("/detail/{customerInfoId}")
-    public ResponseEntity<ApiResponse<CustomerResponseDto4>> getCustomerDetail(@PathVariable String customerInfoId) {
+    public ResponseEntity<CustomerResponseDto4> getCustomerDetail(@PathVariable String customerInfoId) {
         Optional<Customer> customerOptional = customerRepository.findById(customerInfoId);
 
         if (customerOptional.isPresent()) {
             Customer customer = customerOptional.get();
             CustomerResponseDto4 customerDTO = new CustomerResponseDto4(customer.getCustomerId(), customer.getFullName(), customer.getDateOfBirth());
-            return ResponseEntity.ok(new ApiResponse<>(200, "Customer found", customerDTO));
+            return ResponseEntity.ok(customerDTO);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse<>(404, "Customer not found", null));
+                    .body(null);
         }
     }
 }
-
-

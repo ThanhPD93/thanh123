@@ -73,12 +73,12 @@ public class ReportController {
         List<Integer> results = new ArrayList<>(Collections.nCopies(12, 0));
 
         for (Object[] result : resultList) {
-            Integer monthIndex = (Integer) result[0]; // Lấy chỉ số tháng (1-12)
+            Integer monthIndex = (Integer) result[0];
             Integer total = ((Number) result[1]).intValue();
 
             // Gán giá trị cho tháng tương ứng
             if (monthIndex >= 1 && monthIndex <= 12) {
-                results.set(monthIndex - 1, total); // Cập nhật giá trị
+                results.set(monthIndex - 1, total);
             }
         }
 
