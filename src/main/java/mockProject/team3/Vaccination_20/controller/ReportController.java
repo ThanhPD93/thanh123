@@ -1,10 +1,13 @@
 package mockProject.team3.Vaccination_20.controller;
 
 import mockProject.team3.Vaccination_20.dto.customerDto.CustomerListForReportDto;
+import mockProject.team3.Vaccination_20.dto.injectionResultDto.InjectionResultResponseDto3;
 import mockProject.team3.Vaccination_20.dto.report.ChartData;
 import mockProject.team3.Vaccination_20.model.Customer;
 import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineResponseDto5;
 import mockProject.team3.Vaccination_20.model.Vaccine;
+import mockProject.team3.Vaccination_20.dto.report.ReportInjectionResultDto;
+import mockProject.team3.Vaccination_20.model.InjectionResult;
 import mockProject.team3.Vaccination_20.service.CustomerService;
 import mockProject.team3.Vaccination_20.service.InjectionResultService;
 import mockProject.team3.Vaccination_20.service.VaccineService;
@@ -15,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,6 +59,7 @@ public class ReportController {
         Page<CustomerListForReportDto> result = customerService.searchCustomers(fullName, address, fromDate, toDate, page, size);
         return ResponseEntity.ok(result);
     }
+	//
 
     @GetMapping("/customer/chart")
     public ResponseEntity<ChartData> getVaccinatedCustomerChartData(@RequestParam Integer year) {
@@ -84,6 +89,18 @@ public class ReportController {
         return ResponseEntity.ok(chartData);
     }
 
+	//report injection list
+    @GetMapping("/injection/filter")
+    public ResponseEntity<Page<ReportInjectionResultDto>> filterReportInjectionResults(@RequestParam(value = "startDate",required = false) LocalDate startDate,
+                                                                                       @RequestParam (value = "endDate",required = false)LocalDate endDate,
+                                                                                       @RequestParam(value = "vaccineTypeName",required = false) String vaccineTypeName,
+                                                                                       @RequestParam (value = "vaccineName",required = false)String vaccineName,
+                                                                                       @RequestParam (value = "page",required = false, defaultValue = "0")int page,
+                                                                                       @RequestParam (value = "size",required = false, defaultValue = "10")int size){
+		Page<ReportInjectionResultDto> reportInjectionResultDto = injectionResultService.filterReportInjection(startDate, endDate, vaccineTypeName, vaccineName, page, size);
+        return ResponseEntity.ok(reportInjectionResultDto);
+    }
+
     @GetMapping("/vaccine/chart")
     public ResponseEntity<ChartData> getVaccinatedChartData(@RequestParam Integer year) {
         List<Object[]> resultList = injectionResultService.findVaccineCountByMonth(year);
@@ -111,6 +128,7 @@ public class ReportController {
 
         return ResponseEntity.ok(chartData);
     }
+
     @GetMapping("/injection/chart")
     public ResponseEntity<ChartData> getChartData(@RequestParam Integer year) {
         List<Object[]> resultList = injectionResultService.findInjectionResultsByYear(year);
