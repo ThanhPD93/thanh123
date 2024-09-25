@@ -55,13 +55,13 @@ public interface InjectionResultRepository extends JpaRepository<InjectionResult
 
 
 
-    //report injection
+    //report injection chart
     @Query("SELECT MONTH(ir.injectionDate) AS month, COUNT(ir) AS total "
             + "FROM InjectionResult ir WHERE YEAR(ir.injectionDate) = :year "
             + "GROUP BY MONTH(ir.injectionDate) ORDER BY MONTH(ir.injectionDate)")
     List<Object[]> findInjectionResultsByYear(@Param("year") Integer year);
 
-    //report customer
+    //report customer chart
     @Query("SELECT MONTH(ir.injectionDate) AS month, COUNT(DISTINCT c.customerId) AS count " +
             "FROM InjectionResult ir " +
             "JOIN ir.customer c " +
@@ -70,7 +70,7 @@ public interface InjectionResultRepository extends JpaRepository<InjectionResult
             "ORDER BY MONTH(ir.injectionDate)")
     List<Object[]> findCustomersVaccinatedByMonth(Integer year);
 
-    //report vaccine
+    //report vaccine chart
     @Query("SELECT MONTH(ir.injectionDate) AS month, COUNT(DISTINCT v.vaccineId) AS count " +
             "FROM InjectionResult ir " +
             "JOIN ir.vaccineFromInjectionResult v " +
@@ -79,19 +79,21 @@ public interface InjectionResultRepository extends JpaRepository<InjectionResult
             "ORDER BY MONTH(ir.injectionDate)")
     List<Object[]> findVaccineCountByMonth(Integer year);
 
+    //report injection result for filter
     @Query("SELECT ir FROM InjectionResult ir " +
             "JOIN ir.customer c " +
             "JOIN ir.vaccineFromInjectionResult v " +
             "JOIN v.vaccineType vt " +
             "WHERE (:startDate IS NULL OR ir.injectionDate >= :startDate) " +
             "AND (:endDate IS NULL OR ir.injectionDate <= :endDate) " +
-            "AND (:vaccineTypeName IS NULL OR vt.vaccineTypeName = :vaccineTypeName) " +
-            "AND (:vaccineName IS NULL OR v.vaccineName = :vaccineName)")
+            "AND (:vaccineTypeName IS NULL OR LOWER(vt.vaccineTypeName) LIKE LOWER(CONCAT('%', :vaccineTypeName, '%'))) " +
+            "AND (:vaccineName IS NULL OR LOWER(v.vaccineName) LIKE LOWER(CONCAT('%', :vaccineName, '%')))")
     Page<InjectionResult> filterInjectionResults(@Param("startDate") LocalDate startDate,
                                                  @Param("endDate") LocalDate endDate,
                                                  @Param("vaccineTypeName") String vaccineTypeName,
                                                  @Param("vaccineName") String vaccineName,
                                                  Pageable pageable);
+
 
 
 

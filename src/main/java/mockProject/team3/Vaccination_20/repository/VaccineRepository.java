@@ -31,14 +31,12 @@ public interface VaccineRepository extends JpaRepository<Vaccine, String> {
     @Query("SELECT v FROM Vaccine v WHERE " +
             "(:beginDate IS NULL OR :endDate IS NULL OR " +
             "(v.timeBeginNextInjection BETWEEN :beginDate AND :endDate) " +
-            "AND (v.timeEndNextInjection BETWEEN :beginDate AND :endDate)) " +
-            "AND (:vaccineTypeName IS NULL OR LOWER(v.vaccineType.vaccineTypeName) = LOWER(:vaccineTypeName)) " +
+            "OR (v.timeEndNextInjection BETWEEN :beginDate AND :endDate)) " +
+            "AND (:vaccineTypeName IS NULL OR LOWER(v.vaccineType.vaccineTypeName) LIKE LOWER(CONCAT('%', :vaccineTypeName, '%'))) " +
             "AND (:origin IS NULL OR LOWER(v.vaccineOrigin) LIKE LOWER(CONCAT('%', :origin, '%')))")
     Page<Vaccine> findByFilterForReport(@Param("beginDate") LocalDate beginDate,
                                         @Param("endDate") LocalDate endDate,
                                         @Param("vaccineTypeName") String vaccineTypeName,
                                         @Param("origin") String origin,
                                         Pageable pageable);
-
-
 }
