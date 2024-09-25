@@ -1,6 +1,8 @@
 package mockProject.team3.Vaccination_20.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
@@ -52,8 +54,8 @@ public class NewsController {
 
     @Operation(summary = "Add a new news or update an existing one")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "News added or updated successfully!"),
-            @ApiResponse(responseCode = "400", description = "Invalid input data for news!")
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(type = "string", example = "New news added(updated) success"))),
+            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(type = "string", example = "Add(update) failed")))
     })
     @PostMapping("/add")
     public ResponseEntity<NewsResponseDto1> addNews(@Valid @RequestBody NewsRequestDto1 newsRequestDto1) {
@@ -61,11 +63,8 @@ public class NewsController {
         return ResponseEntity.ok(newsResponseDto1);
     }
 
-    @Operation(summary = "Find all news items with optional search")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "List of news items retrieved successfully!"),
-            @ApiResponse(responseCode = "404", description = "No news items found!")
-    })
+    @Operation(summary = "find all news and put in a pagination list for display")
+    @ApiResponse(responseCode = "200", description = "Pagination list of news found!")
     @GetMapping("/findAllNews")
     public ResponseEntity<Page<NewsResponseDto1>> findAllNews(
             @RequestParam String searchInput,
