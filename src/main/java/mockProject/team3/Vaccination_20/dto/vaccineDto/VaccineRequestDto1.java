@@ -51,5 +51,5 @@ public class VaccineRequestDto1 {
 
     @NotBlank(message = "Vaccine type must not be empty!")
     @Size(max = 50, message = "Vaccine type must not exceed 50 characters!")
-    private String vaccineType;
+    private String vaccineTypeId;
 }

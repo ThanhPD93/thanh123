@@ -57,9 +57,14 @@ public class VaccineServiceImpl implements VaccineService {
 
     @Override
     public int createVaccine(VaccineRequestDto1 vaccineRequestDto1) {
+        System.out.println(vaccineRequestDto1.getVaccineTypeId());
         Vaccine vaccine = modelMapper.map(vaccineRequestDto1, Vaccine.class);
-        VaccineType vaccineType = vaccineTypeRepository.findById(vaccineRequestDto1.getVaccineType()).get();
-        vaccine.setVaccineType(vaccineType);
+        try {
+            VaccineType vaccineType = vaccineTypeRepository.findById(vaccineRequestDto1.getVaccineTypeId()).get();
+            vaccine.setVaccineType(vaccineType);
+        } catch(Exception e) {
+            return 0;
+        }
         vaccineRepository.save(vaccine);
         return 1;
     }
@@ -68,7 +73,7 @@ public class VaccineServiceImpl implements VaccineService {
     public Page<VaccineResponseDto3> getVaccineListBySearchInput(String searchInput, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Vaccine> vaccines;
-        if(searchInput.isEmpty()) {
+        if(searchInput.trim().isEmpty()) {
             vaccines = vaccineRepository.findAll(pageable);
         } else {
             vaccines = vaccineRepository.findBySearchInput(searchInput, pageable);

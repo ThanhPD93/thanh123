@@ -1,5 +1,10 @@
 package mockProject.team3.Vaccination_20.model;
 
+import jakarta.persistence.Entity;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,6 +17,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+@Getter
+@Setter
 public class Admin implements UserDetails {
 
     private final String username;

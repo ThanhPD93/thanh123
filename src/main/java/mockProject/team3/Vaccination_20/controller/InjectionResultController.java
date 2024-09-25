@@ -100,6 +100,17 @@ public class InjectionResultController {
         return ResponseEntity.ok(updatedResult);
     }
 
+    @GetMapping("/displayDropdown")
+    public ResponseEntity<InjectionResultResponseDto2> displayDropdown() {
+        return ResponseEntity.ok(injectionResultService.displayDropdown());
+    }
+
+    @GetMapping("/places")
+    public ResponseEntity<List<String>> getAllInjectionPlaces() {
+        List<String> places = injectionResultService.getAllInjectionPlaces();
+        return new ResponseEntity<>(places, HttpStatus.OK);
+    }
+
     @Operation(summary = "Delete one or more injection results by their IDs")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Injection results deleted successfully!"),

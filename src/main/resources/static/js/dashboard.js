@@ -8,6 +8,9 @@ let injectionScheduleUpdateBtn = false;
 let injectionScheduleIdParam;
 let vaccineOfIsIdParam;
 let injectionScheduleLink = false;
+let InjectionResultUpdateBtn = false;
+let injectionResultTempId;
+let vaccineNameForDropdown;
 
 function checkAllBoxes() {
     const selectAllCheckbox = $("#mother-checkbox")[0];
@@ -26,7 +29,7 @@ function backToHomePage() {
 
 document.addEventListener("DOMContentLoaded", function () {
 	$.ajax({
-		url: "/api/customer/getCurrentUsername",
+		url: "/api/user/getCurrentUsername",
 		method: "GET",
 		dataType: "text",
 		success: function(currentUsername) {

@@ -1,5 +1,6 @@
 package mockProject.team3.Vaccination_20.controller;
 
+import mockProject.team3.Vaccination_20.dto.customerDto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -8,9 +9,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import mockProject.team3.Vaccination_20.dto.customerDto.CustomerResponseDto4;
 import mockProject.team3.Vaccination_20.model.Customer;
 import jakarta.validation.Valid;
-import mockProject.team3.Vaccination_20.dto.customerDto.CustomerRequestDto1;
-import mockProject.team3.Vaccination_20.dto.customerDto.CustomerResponseDto1;
-import mockProject.team3.Vaccination_20.dto.customerDto.CustomerResponseDto2;
 import mockProject.team3.Vaccination_20.repository.CustomerRepository;
 import mockProject.team3.Vaccination_20.service.CustomerService;
 import mockProject.team3.Vaccination_20.utils.MSG;
@@ -34,7 +32,6 @@ import java.nio.file.Path;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
-
 
 @RestController
 @RequestMapping("/api/customer")
@@ -77,19 +74,6 @@ public class CustomerController {
         return ResponseEntity.ok(customers);
     }
 
-    @Operation(summary = "display user name of the current user")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "display user name of the current user"),
-            @ApiResponse(responseCode = "404", description = "can not found user name!")
-    })
-    @GetMapping("/getCurrentUsername")
-    public ResponseEntity<String> getCurrentUsername(Principal principal) {
-        if (principal != null) {
-            return ResponseEntity.ok(principal.getName());
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found or not authenticated");
-        }
-    }
 
     @Operation(summary = "Delete one or more customers by customer IDs")
     @ApiResponses(value = {
@@ -98,18 +82,12 @@ public class CustomerController {
             @ApiResponse(responseCode = "500", description = "An error occurred")
     })
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteCustomers(@RequestBody List<String> customerIds) {
-        if (customerIds == null || customerIds.isEmpty()) {
-            return ResponseEntity.badRequest().body("No data deleted!");
+    public ResponseEntity<String> deleteCustomers(@Valid @RequestBody CustomerRequestDto2 customerIds) {
+        int result = customerService.deleteCustomers(customerIds);
+        if (result == -1) {
+            return ResponseEntity.status(520).body("No customers found in database to delete!");
         }
-
-        try {
-            customerService.deleteCustomers(customerIds);
-            return ResponseEntity.ok("Customers deleted successfully");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("An error occurred: " + e.getMessage());
-        }
+        return ResponseEntity.ok("Delete successfully!");
     }
 
     @Operation(summary = "Add a new customer or update an existing one")
@@ -119,16 +97,9 @@ public class CustomerController {
     })
     @PostMapping("/add")
     public ResponseEntity<String> addCustomer(@Valid @RequestBody CustomerRequestDto1 customerRequestDto1) {
-
-
         if (customerService.addCustomer(customerRequestDto1)) {
-
-            return ResponseEntity.ok("New customer added/updated successfully");
-        } else {
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Add/update failed!");
+            return ResponseEntity.ok("Add customer success!");
         }
-
         return ResponseEntity.ok("Fail to add customer!");
     }
 

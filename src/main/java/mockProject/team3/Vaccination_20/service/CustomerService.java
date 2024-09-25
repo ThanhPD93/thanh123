@@ -17,9 +17,8 @@ import java.util.List;
 
 public interface CustomerService {
     Page<CustomerResponseDto2> findByFullNameOrAddress(String searchInput, int page, int size);
-    void deleteCustomers(List<String> customerIds);
+    int deleteCustomers(CustomerRequestDto2 customerIds);
     boolean addCustomer(CustomerRequestDto1 customerRequestDto1);
     CustomerResponseDto1 findById(String id);
-
     Page<CustomerListForReportDto> searchCustomers(String fullName, String address, LocalDate fromDate, LocalDate toDate, int page, int size);
 }

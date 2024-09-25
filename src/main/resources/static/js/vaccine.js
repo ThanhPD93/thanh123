@@ -140,6 +140,7 @@ function loadVaccineTypeName(vaccineTypeNameParam) {
 			let row = "";
 			if(vaccineTypeNameParam !== undefined) {
 				vaccineTypes.forEach(vaccineType => {
+				console.log(vaccineType.vaccineTypeId);
                     if(vaccineType.vaccineTypeName === vaccineTypeNameParam) {
                         $("#vaccineTypeName")[0].innerHTML += `<option value="${vaccineType.vaccineTypeId}" selected>${vaccineType.vaccineTypeName}</option>`;
                     } else {
@@ -163,20 +164,20 @@ function loadVaccineTypeName(vaccineTypeNameParam) {
 
 function addVaccine(event) {
     event.preventDefault();
-
+	console.log($("#vaccineTypeName")[0].value);
     const activeInput = document.querySelector('input[name = "vaccineStatus"]:checked');
     const vaccine = {
-        vaccineId: document.getElementById('vaccineId').value,
-        contraindication: document.getElementById('vaccineContraindication').value,
-        indication: document.getElementById('vaccineIndication').value,
-        numberOfInjection: document.getElementById('numberOfInjection').value,
-        vaccineOrigin: document.getElementById('vaccineOrigin').value,
-        timeBeginNextInjection: document.getElementById('beginning-time').value,
-        timeEndNextInjection: document.getElementById('ending-time').value,
-        vaccineUsage: document.getElementById('vaccineUsage').value,
-        vaccineName: document.getElementById('vaccineName').value,
+        vaccineId: $('#vaccineId')[0].value,
+        contraindication: $('#vaccineContraindication')[0].value,
+        indication: $('#vaccineIndication')[0].value,
+        numberOfInjection: $('#numberOfInjection')[0].value,
+        vaccineOrigin: $('#vaccineOrigin')[0].value,
+        timeBeginNextInjection: $('#beginning-time')[0].value,
+        timeEndNextInjection: $('#ending-time')[0].value,
+        vaccineUsage: $('#vaccineUsage')[0].value,
+        vaccineName: $('#vaccineName')[0].value,
         vaccineStatus: activeInput ? "ACTIVE" : "INACTIVE",
-        vaccineType: document.getElementById('vaccineTypeName').value
+        vaccineTypeId: $('#vaccineTypeName')[0].value
     };
 
     $.ajax({
@@ -186,7 +187,7 @@ function addVaccine(event) {
     	data: JSON.stringify(vaccine),
     	success: function(stringData) {
     		alert(stringData);
-    		document.getElementById('add-vaccine-form').reset();
+    		$('#add-vaccine-form')[0].reset();
     	},
         error: function(xhr) {
             if(xhr.status === 400) {
