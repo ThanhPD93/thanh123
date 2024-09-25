@@ -1,6 +1,11 @@
 package mockProject.team3.Vaccination_20.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,6 +15,7 @@ import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineResponseDto3;
 import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineResponseDto4;
 import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineResponseDto5;
 import mockProject.team3.Vaccination_20.service.VaccineService;
+import mockProject.team3.Vaccination_20.utils.MSG;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
@@ -29,40 +35,45 @@ public class VaccineController {
     @Autowired
     private VaccineService vaccineService;
 
-    @Operation(summary = "Dynamically load HTML content using AJAX")
+    @Operation(summary = "Using ajax to load content dynamically")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "AJAX HTML code loaded successfully!"),
-            @ApiResponse(responseCode = "400", description = "Filename must not be empty!"),
-            @ApiResponse(responseCode = "404", description = "File not found!")
+            @ApiResponse(responseCode = "200", description = "ajax html code loaded successfully"),
+            @ApiResponse(responseCode = "400", description = "ajax file name must not be empty!"),
+            @ApiResponse(responseCode = "404", description = "ajax path could not find file!")
     })
     @GetMapping("/getAjax")
     public ResponseEntity<String> getDocument(@RequestParam String filename) throws IOException {
-        if (filename == null || filename.isEmpty()) {
-            return ResponseEntity.badRequest().body("Filename must not be empty!");
+        try{
+            if (filename == null || filename.isEmpty()) {
+                return ResponseEntity.badRequest().body(MSG.MSG31.getMessage());
+            }
+            ClassPathResource resource = new ClassPathResource("static/html/vaccine/" + filename);
+            Path path = resource.getFile().toPath();
+            return ResponseEntity.ok(Files.readString(path));
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(MSG.MSG32.getMessage());
+
         }
-
-        ClassPathResource resource = new ClassPathResource("static/html/vaccine/" + filename);
-        Path path = resource.getFile().toPath();
-
-        if (!Files.exists(path)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("File not found!");
-        }
-
-        return ResponseEntity.ok(Files.readString(path));
     }
 
-    @Operation(summary = "Add a new vaccine")
+    @Operation(summary = "Add a new vaccine or update an existing one")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(type = "string", example = "New vaccine added(updated) sucessfully"))),
+            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(type = "string", example = "Add(update) failed!")))
+    })
     @PostMapping("/add")
     public ResponseEntity<String> createVaccine(@Valid @RequestBody VaccineRequestDto1 vaccineRequestDto1) {
         int result = vaccineService.createVaccine(vaccineRequestDto1);
-        if (result > 0) {
-            return ResponseEntity.ok("Add new vaccine success!");
-        } else {
-            return ResponseEntity.badRequest().body("Failed to add new vaccine.");
+        if (result == 0) {
+            System.out.println("Failed to add/updated vaccine ");
+            return ResponseEntity.badRequest().body("cannot add new vaccine");
         }
+        System.out.println("Vaccine added/updated successfully");
+        return ResponseEntity.ok("add new vaccine success!");
     }
 
-    @Operation(summary = "Get a list of vaccines by search input")
+    @Operation(summary = "find all vaccine and put in a pagination list for display")
+    @ApiResponse(responseCode = "200", description = "Pagination list of vaccine found!")
     @GetMapping("/search")
     public ResponseEntity<Page<VaccineResponseDto3>> getVaccineListBySearchInput(
             @RequestParam("searchInput") String searchInput,
@@ -73,17 +84,25 @@ public class VaccineController {
         return ResponseEntity.ok(vaccinePage);
     }
 
-    @Operation(summary = "Get vaccine details by ID")
+    @Operation(summary = "fetch a vaccine from database by vaccine Id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "found a vaccine by vaccine ID provided"),
+            @ApiResponse(responseCode = "404", description = "vaccine not found by vaccine ID provided")
+    })
     @GetMapping("/detail/{vaccineId}")
     public ResponseEntity<VaccineResponseDto5> getVaccineById(@PathVariable String vaccineId) {
         VaccineResponseDto5 vaccineResponseDto5 = vaccineService.getVaccineById(vaccineId);
-        if (vaccineResponseDto5 == null) {
-            return ResponseEntity.badRequest().body(null);
+        if(vaccineResponseDto5 == null) {
+            return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(vaccineResponseDto5);
     }
 
-    @Operation(summary = "Update the status of vaccines")
+    @Operation(summary = "change status of selected vaccines from active to inactive")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Change status successfully!"),
+            @ApiResponse(responseCode = "400", description = "Failed to change vaccine status!")
+    })
     @PutMapping("/change-status")
     public ResponseEntity<String> updateVaccineStatus(@RequestBody List<String> vaccineIds) {
         int result = vaccineService.changeStatusVaccine(vaccineIds);
@@ -94,22 +113,26 @@ public class VaccineController {
         return ResponseEntity.ok("Successfully changed " + result + " vaccines' status to inactive.");
     }
 
-    @Operation(summary = "Export vaccine template to Excel")
+    @Operation(summary = "Export excel template!")
     @GetMapping("/export/excel")
     public void exportTemplate(HttpServletResponse response) throws IOException {
         vaccineService.exportTemplate(response);
     }
 
-    @Operation(summary = "Import vaccines from Excel file")
+    @Operation(summary = "Import vaccine through excel file")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Import success!"),
+            @ApiResponse(responseCode = "400", description = "File import is empty!"),
+            @ApiResponse(responseCode = "500", description = "Failed to upload and import file")
+    })
     @PostMapping("/import/excel")
     public ResponseEntity<String> importFromExcel(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
             return ResponseEntity.badRequest().body("Please upload a valid Excel file.");
         }
         try {
-            List<String> notifications = vaccineService.importVaccineFromExcel(file); // Get notifications from service
+            List<String> notifications = vaccineService.importVaccineFromExcel(file);
 
-            // Create the response message
             StringBuilder responseMessage = new StringBuilder("File uploaded and data imported successfully.");
             if (!notifications.isEmpty()) {
                 responseMessage.append(" However, the following issues were found:\n");
@@ -125,7 +148,8 @@ public class VaccineController {
         }
     }
 
-    @Operation(summary = "Get all vaccine names")
+    @Operation(summary = "find all vaccine")
+    @ApiResponse(responseCode = "200", description = "List of vaccine is found")
     @GetMapping("/findAllVaccineName")
     public ResponseEntity<List<VaccineResponseDto4>> findAllVaccineName() {
         return ResponseEntity.ok(vaccineService.findAllVaccineName());
