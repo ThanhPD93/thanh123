@@ -64,11 +64,7 @@ public class VaccineController {
     @PostMapping("/add")
     public ResponseEntity<String> createVaccine(@Valid @RequestBody VaccineRequestDto1 vaccineRequestDto1) {
         int result = vaccineService.createVaccine(vaccineRequestDto1);
-        if (result == 0) {
-            System.out.println("Failed to add/updated vaccine ");
-            return ResponseEntity.badRequest().body("cannot add new vaccine");
-        }
-        System.out.println("Vaccine added/updated successfully");
+        if(result == 0) return ResponseEntity.status(520).body("no vaccine type found to save to vaccine!");
         return ResponseEntity.ok("add new vaccine success!");
     }
 
@@ -133,6 +129,7 @@ public class VaccineController {
         try {
             List<String> notifications = vaccineService.importVaccineFromExcel(file);
 
+            // Create the response message
             StringBuilder responseMessage = new StringBuilder("File uploaded and data imported successfully.");
             if (!notifications.isEmpty()) {
                 responseMessage.append(" However, the following issues were found:\n");

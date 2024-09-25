@@ -332,23 +332,23 @@ function CustomerReportList(currentPage, pageSize) {
     }
 //show list of vaccine with filter
 
-function loadVaccineTypeName() {
-    $.ajax({
-        url: "/api/vaccine-type/vt-for-add-ir",
-        success: function(vaccineTypes) {
-            const vaccineTypeSelect = document.getElementById('vaccineTypeName');
-            console.log(vaccineTypeSelect);
-            vaccineTypeSelect.innerHTML = '<option value="" disabled selected>Select Vaccine Type Name</option>';
-
-            vaccineTypes.forEach(vaccineType => {
-                vaccineTypeSelect.innerHTML += `<option value="${vaccineType.vaccineTypeName}">${vaccineType.vaccineTypeName}</option>`;
-            });
-        },
-        error: function(xhr) {
-            console.error("Error at /api/vaccine-type/vt-for-add-ir \nerrorcode: " + xhr.status + "\n message: " + xhr.responseText);
-        }
-    });
-}
+//function loadVaccineTypeName() {
+//    $.ajax({
+//        url: "/api/vaccine-type/vt-for-add-ir",
+//        success: function(vaccineTypes) {
+//            const vaccineTypeSelect = document.getElementById('vaccineTypeName');
+//            console.log(vaccineTypeSelect);
+//            vaccineTypeSelect.innerHTML = '<option value="" disabled selected>Select Vaccine Type Name</option>';
+//
+//            vaccineTypes.forEach(vaccineType => {
+//                vaccineTypeSelect.innerHTML += `<option value="${vaccineType.vaccineTypeName}">${vaccineType.vaccineTypeName}</option>`;
+//            });
+//        },
+//        error: function(xhr) {
+//            console.error("Error at /api/vaccine-type/vt-for-add-ir \nerrorcode: " + xhr.status + "\n message: " + xhr.responseText);
+//        }
+//    });
+//}
 
 
 function getListWithFilter(page, size){

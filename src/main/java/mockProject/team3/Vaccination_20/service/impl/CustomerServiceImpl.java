@@ -1,5 +1,6 @@
 package mockProject.team3.Vaccination_20.service.impl;
 
+import jakarta.transaction.Transactional;
 import mockProject.team3.Vaccination_20.dto.customerDto.CustomerRequestDto1;
 import mockProject.team3.Vaccination_20.dto.customerDto.CustomerResponseDto1;
 import mockProject.team3.Vaccination_20.dto.customerDto.CustomerResponseDto2;
@@ -51,13 +52,18 @@ public class CustomerServiceImpl implements CustomerService {
         return new PageImpl<>(responseCustomers, pageable, customers.getTotalElements());
     }
 
+    @Transactional
     @Override
-    public void deleteCustomers(List<String> customerIds) {
-        if (customerIds == null || customerIds.isEmpty()) {
-            throw new IllegalArgumentException("No customers selected for deletion");
+    public int deleteCustomers(CustomerRequestDto2 customerIds) {
+        for (String id : customerIds.getCustomerIds()) {
+            if (customerRepository.findById(id).isEmpty()) {
+                return -1;
+            }
         }
-        customerRepository.deleteCustomersByIds(customerIds);
+        customerRepository.deleteAllById(customerIds.getCustomerIds());
+        return 1;
     }
+
 
     @Override
     public boolean addCustomer(CustomerRequestDto1 customerRequestDto1) {

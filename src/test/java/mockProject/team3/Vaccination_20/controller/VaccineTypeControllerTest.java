@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @WithMockUser
-class VaccineTypeEndToEndTest {
+class VaccineTypeControllerTest {
 
     @Autowired
     private MockMvc mockMvc;

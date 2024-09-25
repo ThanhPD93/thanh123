@@ -109,10 +109,11 @@ function deleteSelectedCustomer() {
         alert("Please select at least one customer to delete");
         return;
     }
-    const customerIds = Array.from(checkboxes).map(checkbox => {
-        return checkbox.closest('tr').querySelector('td:nth-child(1)').textContent.trim();
-    });
-
+    let customerIdList = {
+        customerIds: Array.from(checkboxes).map(checkbox => {
+            return checkbox.closest('tr').querySelector('td:nth-child(1)').textContent.trim();
+        })
+    };
     const confirmed = confirm("Are you sure you want to delete the selected customers?");
     if (!confirmed) {
         return;
@@ -121,18 +122,25 @@ function deleteSelectedCustomer() {
         url: "/api/customer/delete",
         method: "DELETE",
         contentType: "application/json",
-        data: JSON.stringify(customerIds),
-        dataType: "json",
-        success: function(response) {
-            if (response.code === 200) {
-                alert(response.description);
-                listCustomers(0);
-            } else {
-                alert("Error deleting customers: " + response.description);
-            }
+        data: JSON.stringify(customerIdList),
+        success: function(stringData) {
+            alert(stringData);
+            listCustomers(0);
         },
-        error: function(error) {
-            alert("An error occurred while deleting customers.");
+        error: function(xhr) {
+            if(xhr.status === 400) {
+                const error = JSON.parse(xhr.responseText);
+                let validationMessage = "";
+                let i = 0;
+                error.errors.forEach(error => {
+                    validationMessage += ++i + "." + error.defaultMessage + "\n";
+                });
+                alert(error.message + " -->\n" + validationMessage);
+            } else if(xhr.status === 500) {
+            	alert("cannot delete customer: due to foreign key constraints in database!");
+            } else {
+                alert("an expected error occurred at /api/customer/delete, error code: " + xhr.status);
+            }
         }
     });
 }
@@ -170,7 +178,6 @@ function checkCaptcha() {
 	}
 	if($("#customerCaptcha").val() === $("#customerCaptchaCode").val()) {
 		addCustomer();
-		randomizeCaptchaWithReset();
 	} else {
 		alert("Captcha does not match!, please try again");
 	}
