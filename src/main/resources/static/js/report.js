@@ -8,11 +8,12 @@ function fetchReport(filename) {
             $("#ajax-content")[0].innerHTML = data;
             if (filename === "report-injection-result.html") {
                 $("#ajax-title").html("REPORT INJECTION RESULT");
+                setupDropdownForInjectionResultReport();
             } else if(filename === "report-customer.html") {
                 $("#ajax-title").html("REPORT CUSTOMER");
             } else {
                 $("#ajax-title").html("REPORT VACCINE");
-                loadVaccineTypeName();
+                loadVaccineTypeNameForReport();
             }
         },
         error: function(jqxhr, textStatus, errorThrown) {
@@ -332,26 +333,26 @@ function CustomerReportList(currentPage, pageSize) {
     }
 //show list of vaccine with filter
 
-//function loadVaccineTypeName() {
-//    $.ajax({
-//        url: "/api/vaccine-type/vt-for-add-ir",
-//        success: function(vaccineTypes) {
-//            const vaccineTypeSelect = document.getElementById('vaccineTypeName');
-//            console.log(vaccineTypeSelect);
-//            vaccineTypeSelect.innerHTML = '<option value="" disabled selected>Select Vaccine Type Name</option>';
-//
-//            vaccineTypes.forEach(vaccineType => {
-//                vaccineTypeSelect.innerHTML += `<option value="${vaccineType.vaccineTypeName}">${vaccineType.vaccineTypeName}</option>`;
-//            });
-//        },
-//        error: function(xhr) {
-//            console.error("Error at /api/vaccine-type/vt-for-add-ir \nerrorcode: " + xhr.status + "\n message: " + xhr.responseText);
-//        }
-//    });
-//}
+function loadVaccineTypeNameForReport() {
+    $.ajax({
+        url: "/api/vaccine-type/vt-for-add-ir",
+        success: function(vaccineTypes) {
+            const vaccineTypeSelect = document.getElementById('vaccineTypeName');
+            console.log(vaccineTypeSelect);
+            vaccineTypeSelect.innerHTML = '<option value="" disabled selected>Select Vaccine Type Name</option>';
+
+            vaccineTypes.forEach(vaccineType => {
+                vaccineTypeSelect.innerHTML += `<option value="${vaccineType.vaccineTypeName}">${vaccineType.vaccineTypeName}</option>`;
+            });
+        },
+        error: function(xhr) {
+            console.error("Error at /api/vaccine-type/vt-for-add-ir \nerrorcode: " + xhr.status + "\n message: " + xhr.responseText);
+        }
+    });
+}
 
 
-function getListWithFilter(page, size){
+function getListVaccineWithFilter(page, size){
      console.log($("#beginDate")[0].value);
      console.log($("#endDate")[0].value);
      console.log($("#vaccineTypeName")[0].value);
@@ -374,10 +375,11 @@ function getListWithFilter(page, size){
             const tableBody = document.getElementById('report-vaccine-list-content');
             tableBody.innerHTML = "";
             console.log(vaccines.content);
+            let autoIncrement = (page * size) + 1;
             vaccines.content.forEach(vaccine =>{
                 const row = document.createElement('tr');
                 row.innerHTML =`
-                    <td><a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-uppercase">${vaccine.vaccineId}</a></td>
+                    <td><a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-uppercase">${autoIncrement}</a></td>
                     <td class="text-capitalize text-start">${vaccine.vaccineName}</td>
                     <td class="text-start">${vaccine.vaccineType.vaccineTypeName}</td>
                     <td class="text-start">${vaccine.numberOfInjection}</td>
@@ -386,6 +388,7 @@ function getListWithFilter(page, size){
                     <td class="text-start">${vaccine.vaccineOrigin}</td>
                 `;
                 tableBody.appendChild(row);
+                autoIncrement++;
             });
         },
         error: function(error) {
@@ -394,3 +397,88 @@ function getListWithFilter(page, size){
     })
 }
 
+//show list injection result with filter
+
+function getListInjectionResultWithFilter(page, size) {
+    $.ajax({
+        url: "/api/report/injection/filter",
+        data: {
+            startDate: $("#startDate")[0].value,
+            endDate: $("#endDate")[0].value,
+            vaccineTypeName: $("#rp-injection-vaccinetypename")[0].value,
+            vaccineName: $("#rp-injection-vaccinename")[0].value,
+            page: page,
+            size: size
+        },
+        dataType: "json",
+        success: function(injectionResults) {
+            const tableBody = document.getElementById('report-injection-list-content');
+            tableBody.innerHTML = "";
+
+            // Define the auto-increment variable based on the current page and size
+            let autoIncrement = (page * size) + 1;
+
+            injectionResults.content.forEach(injectionResult => {
+                const row = document.createElement('tr');
+
+                // Use the auto-increment variable and increment it with each row
+                row.innerHTML = `
+                    <td><a href="#" class="link-offset-2 link-underline link-underline-opacity-0 text-uppercase">${autoIncrement}</a></td>
+                    <td class="text-capitalize text-start">${injectionResult.vaccineFromInjectionResult.vaccineName}</td>
+                    <td class="text-start">${injectionResult.vaccineFromInjectionResult.vaccineType.vaccineTypeName}</td>
+                    <td class="text-start">${injectionResult.customer.fullName}</td>
+                    <td class="text-start">${injectionResult.injectionDate}</td>
+                    <td class="text-start">${injectionResult.numberOfInjection}</td>
+                `;
+
+                tableBody.appendChild(row);
+
+                // Increment the auto-increment variable
+                autoIncrement++;
+            });
+        },
+        error: function(error) {
+            console.error('Error fetching list of injection result', error);
+        }
+    });
+}
+
+function setupDropdownForInjectionResultReport() {
+    console.log("checkpoint 4: injectionResultTempId = " + injectionResultTempId);
+    $.ajax({
+        url: "/api/injection-result/displayDropdown",
+        success: function (data) {
+            vaccineTypeDisplayObject = data.vaccineTypes;
+            $("#rp-injection-vaccinetypename")[0].innerHTML = '';
+            $("#rp-injection-vaccinename")[0].innerHTML = '';
+
+            // Populate the Vaccine Type dropdown
+            data.vaccineTypes.forEach(vaccineType => {
+                    $("#rp-injection-vaccinetypename")[0].innerHTML += `<option value="${vaccineType.vaccineTypeName}">--${vaccineType.vaccineTypeName}--</option>`;
+            });
+
+            // Reset the temporary variable
+            injectionResultTempId = undefined;
+
+            // Populate the Vaccine Name dropdown based on the selected Vaccine Type
+            dropdownVaccineNameForInjectionResultReport();
+        },
+        error: function (xhr) {
+            alert("Error at /api/injection-result/displayDropdown, error code: " + xhr.status);
+        }
+    });
+}
+
+function dropdownVaccineNameForInjectionResultReport() {
+    $("#rp-injection-vaccinename")[0].innerHTML = '';
+    const vaccineTypeValue = $("#rp-injection-vaccinetypename")[0].value;
+
+    // Populate Vaccine Name dropdown based on selected Vaccine Type
+    vaccineTypeDisplayObject.forEach(vaccineType => {
+        if (vaccineType.vaccineTypeName === vaccineTypeValue) {
+            vaccineType.vaccines.forEach(vaccine => {
+                $("#rp-injection-vaccinename")[0].innerHTML += `<option value="${vaccine.vaccineName}">--${vaccine.vaccineName}--</option>`;
+            });
+        }
+    });
+}

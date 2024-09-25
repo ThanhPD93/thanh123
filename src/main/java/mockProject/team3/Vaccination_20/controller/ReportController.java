@@ -192,10 +192,10 @@ public class ReportController {
     @Operation(summary = "Get list of vaccine by filter with paginantion")
     @ApiResponse(responseCode = "200", description = "Get list success")
     @GetMapping("/vaccine/filter")
-    public ResponseEntity<Page<VaccineResponseDto5>> getVaccineListForReport(@RequestParam(value = "beginDate", required = false,defaultValue = "") LocalDate beginDate,
-                                                                             @RequestParam(value = "endDate", required = false,defaultValue = "") LocalDate endDate,
-                                                                             @RequestParam(value = "vaccineTypeName", required = false,defaultValue = "") String vaccineTypeName,
-                                                                             @RequestParam(value = "origin", required = false, defaultValue = "") String origin,
+    public ResponseEntity<Page<VaccineResponseDto5>> getVaccineListForReport(@RequestParam(value = "beginDate", required = false) LocalDate beginDate,
+                                                                             @RequestParam(value = "endDate", required = false) LocalDate endDate,
+                                                                             @RequestParam(value = "vaccineTypeName", required = false) String vaccineTypeName,
+                                                                             @RequestParam(value = "origin", required = false) String origin,
                                                                              @RequestParam(value = "page",required = false, defaultValue = "0") int page,
                                                                              @RequestParam(value = "size",required = false, defaultValue = "10") int size){
         Page<VaccineResponseDto5> vaccinePageForReport = vaccineService.vaccineListForReportByFilter(beginDate, endDate, vaccineTypeName, origin, page, size);

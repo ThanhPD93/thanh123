@@ -88,7 +88,7 @@
                             <button type="reset" class="btn btn-success border border-black" style="width: 60px;">
                                 Reset
                             </button>
-                            <button type="button" class="btn btn-success border border-black" style="width: 60px;" onclick="getListWithFilter(0,5)">
+                            <button type="button" class="btn btn-success border border-black" style="width: 60px;" onclick="getListVaccineWithFilter(0,5)">
                                 Filter
                             </button>
                         </div>
@@ -115,27 +115,28 @@
             </tbody>
         </table>
     </div>
-    <!-- Chart Section -->
-    <div class="container mt-3 bg-light p-2 text-center" id="chart-section" style="display:none;">
-        <div class="border-bottom">
-            <div class="d-flex justify-content-between">
-                <!-- Select Year -->
-                <div class="input-group d-block">
-                    <div class="d-flex fw-medium">
-                        <label>Year:</label>
-                    </div>
-                    <div class="d-flex p-1">
-                        <div class="input-group" style="width:140px;">
-                            <select class="form-select" id="year">
-                                <option value="" disabled selected>Select Year</option>
-                            </select>
-                        </div>
+</div>
+<!-- Chart Section -->
+<div class="container mt-3 bg-light p-2 text-center" id="chart-section" style="display:none;">
+    <div class="border-bottom">
+        <div class="d-flex justify-content-between">
+            <!-- Select Year -->
+            <div class="input-group d-block">
+                <div class="d-flex fw-medium">
+                    <label>Year:</label>
+                </div>
+                <div class="d-flex p-1">
+                    <div class="input-group" style="width:140px;">
+                        <select class="form-select" id="year">
+                            <option value="" disabled selected>Select Year</option>
+                        </select>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Chart -->
-        <canvas id="vaccineChart"></canvas>
+    </div>
+    <!-- Chart -->
+    <canvas id="vaccineChart"></canvas>
 </div>
 </body>
 </html>
