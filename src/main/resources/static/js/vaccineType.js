@@ -282,28 +282,6 @@ function updateVaccineTypeDetail(vaccineTypeId) {
 			console.error("error at /api/vaccine-type/detail/{id}: error code: " + xhr.status);
 		}
 	});
-
-    fetch(`/api/vaccine-type/detail/` + vaccineTypeId)
-        .then(response => response.json())
-        .then(vaccineType => {
-            document.getElementById('vaccineTypeId').value = vaccineType.vaccineTypeId;
-            document.getElementById('vaccineTypeId').disabled = true;
-            document.getElementById('vaccineTypeName').value = vaccineType.vaccineTypeName;
-            document.getElementById('vaccineTypeDescription').value = vaccineType.vaccineTypeDescription;
-            document.getElementById('status').disabled = false;
-            const statusCheckbox= document.getElementById('status')
-            // status = "ACTIVE" ? checked = true : checked = false
-            statusCheckbox.checked = vaccineType.status === "ACTIVE";
-            // Image preview (optional)
-            if (vaccineType.vaccineTypeImage) {
-                document.getElementById('image-preview').src = `/api/vaccine-type/image/${vaccineType.vaccineTypeId}`;
-                document.getElementById('image-preview').style.display = 'block';
-            } else {
-                document.getElementById('image-preview').style.display = 'none';
-            }
-        }).catch(error => {
-        console.error('Error fetching employee data', error);
-    });
 }
 
 function resetVaccineTypeInput() {

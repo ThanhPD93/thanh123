@@ -16,7 +16,7 @@ import java.util.UUID;
 public class InjectionResult {
     @Id
     @GeneratedValue(generator = "injection_result_id")
-    @GenericGenerator(name = "injection_result_id", strategy = "mockProject.team3.Vaccination_20.utils.InjectionResultIdGenerator")
+    @GenericGenerator(name = "injection_result_id", strategy = "mockProject.team3.Vaccination_20.utils.IdGenerator.InjectionResultIdGenerator")
     @Column(length = 36, nullable = false)
     private String injectionResultId;
 

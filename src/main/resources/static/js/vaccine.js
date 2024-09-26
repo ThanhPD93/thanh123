@@ -60,7 +60,7 @@ function findAllVaccine(page){
             updatePageVaccine(vaccines.number, vaccines.totalPages, pageSize, vaccines.totalElements);
         },
         error: function(xhr) {
-            alert("error at /.../search\nerror code: " + xhr.status + "\nerror status: " + xhr.statusText + "\nerror message: " + xhr.responseText);
+            console.log("error at /.../search\nerror code: " + xhr.status + "\nerror status: " + "\nerror message: " + xhr.responseText);
         }
     });
 }
@@ -162,8 +162,7 @@ function loadVaccineTypeName(vaccineTypeNameParam) {
 	});
 }
 
-function addVaccine(event) {
-    event.preventDefault();
+function addVaccine() {
 	console.log($("#vaccineTypeName")[0].value);
     const activeInput = document.querySelector('input[name = "vaccineStatus"]:checked');
     const vaccine = {
@@ -200,7 +199,7 @@ function addVaccine(event) {
                 alert(error.message + " -->\n" + validationMessage);
             }
             else {
-                alert("an expected error occurred at /api/vaccine/add, error code: " + xhr.status);
+                alert("an expected error occurred at /api/vaccine/add\nerror code: " + xhr.status + "\nerror message: " + xhr.responseText);
             }
         }
     });

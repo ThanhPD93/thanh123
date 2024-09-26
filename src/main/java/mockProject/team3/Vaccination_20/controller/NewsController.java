@@ -71,11 +71,6 @@ public class NewsController {
 
         try {
             Page<NewsResponseDto1> newsResponseDto = newsService.findByTittleOrContent(searchInput, page, size);
-
-            if (newsResponseDto.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // 404 Not Found
-            }
-
             return ResponseEntity.ok(newsResponseDto); // 200 OK
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // 500 Internal Server Error

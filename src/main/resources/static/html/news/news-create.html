@@ -10,9 +10,9 @@
 <div class="container mt-2">
     <form onsubmit="event.preventDefault(); saveNews();" id="news-form"> <!-- Gọi hàm saveNews() khi submit -->
         <div class="row mb-3"> <!-- Tạo hàng chứa hai cột Id và Title -->
-            <div class="col-md-6">
+            <div class="col-md-6 d-none">
                 <label for="newsId" class="form-label">Id <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="newsId" required>
+                <input type="text" class="form-control" id="newsId" disabled>
             </div>
             <div class="col-md-6">
                 <label for="title" class="form-label">Title <span class="text-danger">*</span></label>
