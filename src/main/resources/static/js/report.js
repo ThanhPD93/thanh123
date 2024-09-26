@@ -279,22 +279,22 @@ function CustomerReportList(currentPage, pageSize) {
         success: function (reports) {
             const tableBody = document.getElementById('report-customer-list');
             tableBody.innerHTML = '';  // Clear existing table content
-
+            let autoIncrement = (currentPage * pageSize) + 1;
             // Populate the table with the new filtered data
             reports.content.forEach((report, index) => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td class="text-center">${(currentPage * pageSize) + index + 1}</td>  <!-- Auto-generated number -->
+                    <td class="text-center">${autoIncrement}</td>
                     <td>${report.fullName}</td>
                     <td>${report.dateOfBirth}</td>
                     <td>${report.address}</td>
                     <td>${report.identityCard}</td>
                     <td>${report.totalNumberOfInjection}</td>
                 `;
-                tableBody.appendChild(row);  // Add the row to the table
+                tableBody.appendChild(row);
+                autoIncrement++;
             });
 
-            // Update pagination controls after fetching data
             updateCustomerReportPaginationControls(reports.number, reports.totalPages, pageSize, reports.totalElements);
         },
         error: function () {
@@ -303,34 +303,40 @@ function CustomerReportList(currentPage, pageSize) {
     });
 }
 
-    function updateCustomerReportPaginationControls(currentPage, totalPages, pageSize, totalElements) {
-        $("#start-entry").text(currentPage === 0 ? 1 : (currentPage * pageSize) + 1);
-        $("#end-entry").text(currentPage === totalPages - 1 ? totalElements : (currentPage + 1) * pageSize);
-        $("#total-entries").text(totalElements);
-
-        const paginationContainer = $("#page-buttons");
-        let pageButtons = '';
-
-        // Left button
-        if (currentPage > 0) {
-            pageButtons += `<li class="page-item"><a class="page-link" onclick="CustomerReportList(${currentPage - 1})">&laquo;</a></li>`;
-        } else {
-            pageButtons += `<li class="page-item disabled"><span class="page-link">&laquo;</span></li>`;
-        }
-
-        // direct page buttons
-        for (let i = 0; i < totalPages; i++) {
-            pageButtons += `<li class="page-item ${i === currentPage ? 'disabled active' : ''}"><a class="page-link" onclick="CustomerReportList(${i})">${i + 1}</a></li>`;
-        }
-
-        // Right button
-        if (currentPage < totalPages - 1) {
-            pageButtons += `<li class="page-item"><a class="page-link" onclick="CustomerReportList(${currentPage + 1})">&raquo;</a></li>`;
-        } else {
-            pageButtons += `<li class="page-item disabled"><span class="page-link">&raquo;</span></li>`;
-        }
-        paginationContainer.html(`<ul class="pagination">${pageButtons}</ul>`);
+function updateCustomerReportPaginationControls(currentPage, totalPages, pageSize, totalElements) {
+    if (totalElements === 0) {
+        $("#start-entry")[0].innerHTML = 0;
+        $("#end-entry")[0].innerHTML = 0;
+        $("#total-entries")[0].innerHTML = 0;
+    } else {
+        $("#start-entry")[0].innerHTML = currentPage === 0 ? 1 : currentPage * pageSize + 1;
+        $("#end-entry")[0].innerHTML = currentPage === totalPages - 1 ? totalElements : (currentPage + 1) * pageSize;
+        $("#total-entries")[0].innerHTML = totalElements;
     }
+
+    const paginationContainer = $("#page-buttons");
+    let pageButtons = '';
+
+    // Left button
+    if (currentPage > 0) {
+        pageButtons += `<li class="page-item"><a class="page-link" onclick="CustomerReportList(${currentPage - 1},${pageSize})">&laquo;</a></li>`;
+    } else {
+        pageButtons += `<li class="page-item disabled"><span class="page-link">&laquo;</span></li>`;
+    }
+
+    // direct page buttons
+    for (let i = 0; i < totalPages; i++) {
+        pageButtons += `<li class="page-item ${i === currentPage ? 'disabled active' : ''}"><a class="page-link" onclick="CustomerReportList(${i},${pageSize})">${i + 1}</a></li>`;
+    }
+
+    // Right button
+    if (currentPage < totalPages - 1) {
+        pageButtons += `<li class="page-item"><a class="page-link" onclick="CustomerReportList(${currentPage + 1},${pageSize})">&raquo;</a></li>`;
+    } else {
+        pageButtons += `<li class="page-item disabled"><span class="page-link">&raquo;</span></li>`;
+    }
+    paginationContainer.html(`<ul class="pagination">${pageButtons}</ul>`);
+}
 //show list of vaccine with filter
 
 function loadVaccineTypeNameForReport() {
@@ -370,7 +376,6 @@ function getListVaccineWithFilter(page, size){
             page: page,
             size: size
         },
-        dataType: "json",
         success: function(vaccines){
             const tableBody = document.getElementById('report-vaccine-list-content');
             tableBody.innerHTML = "";
@@ -389,7 +394,9 @@ function getListVaccineWithFilter(page, size){
                 `;
                 tableBody.appendChild(row);
                 autoIncrement++;
+
             });
+            updatePageReportVaccine(vaccines.number, vaccines.totalPages, size, vaccines.totalElements);
         },
         error: function(error) {
             console.error('Error fetching list of vaccines', error);
@@ -436,6 +443,7 @@ function getListInjectionResultWithFilter(page, size) {
                 // Increment the auto-increment variable
                 autoIncrement++;
             });
+            updatePageReportIr(injectionResults.number, injectionResults.totalPages, size, injectionResults.totalElements);
         },
         error: function(error) {
             console.error('Error fetching list of injection result', error);
@@ -449,8 +457,8 @@ function setupDropdownForInjectionResultReport() {
         url: "/api/injection-result/displayDropdown",
         success: function (data) {
             vaccineTypeDisplayObject = data.vaccineTypes;
-            $("#rp-injection-vaccinetypename")[0].innerHTML = '';
-            $("#rp-injection-vaccinename")[0].innerHTML = '';
+            $("#rp-injection-vaccinetypename")[0].innerHTML = `<option value="" selected>-- Select vaccine type --</option>`;
+            $("#rp-injection-vaccinename")[0].innerHTML = `<option value="" selected>-- Select vaccine --</option>`;
 
             // Populate the Vaccine Type dropdown
             data.vaccineTypes.forEach(vaccineType => {
@@ -481,4 +489,151 @@ function dropdownVaccineNameForInjectionResultReport() {
             });
         }
     });
+}
+
+function updatePageReportVaccine(currentPage, totalPages, pageSize, totalElements) {
+	if (totalElements === 0) {
+		$("#start-entry")[0].innerHTML = 0;
+		$("#end-entry")[0].innerHTML = 0;
+		$("#total-entries")[0].innerHTML = 0;
+	} else {
+        $("#start-entry")[0].innerHTML = currentPage === 0 ? 1 : currentPage * pageSize + 1;
+        $("#end-entry")[0].innerHTML = currentPage === totalPages - 1 ? totalElements : (currentPage + 1) * pageSize;
+        $("#total-entries")[0].innerHTML = totalElements;
+	}
+
+    const paginationContainer = $("#page-buttons")[0];
+    let pageButtons = '';
+
+    // Left button
+    if (currentPage > 0) {
+        pageButtons += `<li class="page-item"><a class="page-link" onclick="getListVaccineWithFilter(${currentPage - 1}, ${pageSize})">&laquo;</a></li>`;
+    } else {
+        pageButtons += `<li class="page-item disabled"><span class="page-link">&laquo;</span></li>`;
+    }
+
+    // Show all pages if totalPages < 10
+    if (totalPages <= 10) {
+        for (let i = 0; i < totalPages; i++) {
+            pageButtons += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" onclick="getListVaccineWithFilter(${i}, ${pageSize})">${i + 1}</a></li>`;
+        }
+    } else {
+        // Always show page 1 and 2
+        if (totalPages > 1) {
+            pageButtons += `<li class="page-item ${currentPage === 0 ? 'active' : ''}"><a class="page-link" onclick="getListVaccineWithFilter(0, ${pageSize})">1</a></li>`;
+            if (totalPages > 2) {
+                pageButtons += `<li class="page-item ${currentPage === 1 ? 'active' : ''}"><a class="page-link" onclick="getListVaccineWithFilter(1, ${pageSize})">2</a></li>`;
+            }
+        }
+
+        // Show page numbers around the current page with ellipses
+        if (currentPage > 2) {
+            pageButtons += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+        }
+
+        let startPage = Math.max(2, currentPage - 1);
+        let endPage = Math.min(totalPages - 3, currentPage + 1);
+
+        for (let i = startPage; i <= endPage; i++) {
+            pageButtons += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" onclick="getListVaccineWithFilter(${i}, ${pageSize})">${i + 1}</a></li>`;
+        }
+
+        if (currentPage < totalPages - 4) {
+            pageButtons += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+        }
+
+        // Always show the last two pages
+        if (totalPages > 2) {
+            if (totalPages > 3) {
+                pageButtons += `<li class="page-item ${currentPage === totalPages - 2 ? 'active' : ''}"><a class="page-link" onclick="getListVaccineWithFilter(${totalPages - 2}, ${pageSize})">${totalPages - 1}</a></li>`;
+            }
+            pageButtons += `<li class="page-item ${currentPage === totalPages - 1 ? 'active' : ''}"><a class="page-link" onclick="getListVaccineWithFilter(${totalPages - 1}, ${pageSize})">${totalPages}</a></li>`;
+        }
+    }
+
+    // Right button
+    if (currentPage < totalPages - 1) {
+        pageButtons += `<li class="page-item"><a class="page-link" onclick="getListVaccineWithFilter(${currentPage + 1}, ${pageSize})">&raquo;</a></li>`;
+    } else {
+        pageButtons += `<li class="page-item disabled"><span class="page-link">&raquo;</span></li>`;
+    }
+
+    paginationContainer.innerHTML = `<ul class="pagination">${pageButtons}</ul>`;
+    $("#dropdownMenuButton")[0].innerHTML = pageSize;
+}
+
+function resetReportInjectionResult(){
+    $("#reportIrForm")[0].reset();
+    $("#rp-injection-vaccinename")[0].innerHTML = '';
+}
+
+function updatePageReportIr(currentPage, totalPages, pageSize, totalElements) {
+	if (totalElements === 0) {
+		$("#start-entry")[0].innerHTML = 0;
+		$("#end-entry")[0].innerHTML = 0;
+		$("#total-entries")[0].innerHTML = 0;
+	} else {
+        $("#start-entry")[0].innerHTML = currentPage === 0 ? 1 : currentPage * pageSize + 1;
+        $("#end-entry")[0].innerHTML = currentPage === totalPages - 1 ? totalElements : (currentPage + 1) * pageSize;
+        $("#total-entries")[0].innerHTML = totalElements;
+	}
+
+    const paginationContainer = $("#page-buttons")[0];
+    let pageButtons = '';
+
+    // Left button
+    if (currentPage > 0) {
+        pageButtons += `<li class="page-item"><a class="page-link" onclick="getListInjectionResultWithFilter(${currentPage - 1}, ${pageSize})">&laquo;</a></li>`;
+    } else {
+        pageButtons += `<li class="page-item disabled"><span class="page-link">&laquo;</span></li>`;
+    }
+
+    // Show all pages if totalPages < 10
+    if (totalPages <= 10) {
+        for (let i = 0; i < totalPages; i++) {
+            pageButtons += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" onclick="getListInjectionResultWithFilter(${i}, ${pageSize})">${i + 1}</a></li>`;
+        }
+    } else {
+        // Always show page 1 and 2
+        if (totalPages > 1) {
+            pageButtons += `<li class="page-item ${currentPage === 0 ? 'active' : ''}"><a class="page-link" onclick="getListInjectionResultWithFilter(0, ${pageSize})">1</a></li>`;
+            if (totalPages > 2) {
+                pageButtons += `<li class="page-item ${currentPage === 1 ? 'active' : ''}"><a class="page-link" onclick="getListInjectionResultWithFilter(1, ${pageSize})">2</a></li>`;
+            }
+        }
+
+        // Show page numbers around the current page with ellipses
+        if (currentPage > 2) {
+            pageButtons += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+        }
+
+        let startPage = Math.max(2, currentPage - 1);
+        let endPage = Math.min(totalPages - 3, currentPage + 1);
+
+        for (let i = startPage; i <= endPage; i++) {
+            pageButtons += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" onclick="getListInjectionResultWithFilter(${i}, ${pageSize})">${i + 1}</a></li>`;
+        }
+
+        if (currentPage < totalPages - 4) {
+            pageButtons += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+        }
+
+        // Always show the last two pages
+        if (totalPages > 2) {
+            if (totalPages > 3) {
+                pageButtons += `<li class="page-item ${currentPage === totalPages - 2 ? 'active' : ''}"><a class="page-link" onclick="getListInjectionResultWithFilter(${totalPages - 2}, ${pageSize})">${totalPages - 1}</a></li>`;
+            }
+            pageButtons += `<li class="page-item ${currentPage === totalPages - 1 ? 'active' : ''}"><a class="page-link" onclick="getListInjectionResultWithFilter(${totalPages - 1}, ${pageSize})">${totalPages}</a></li>`;
+        }
+    }
+
+    // Right button
+    if (currentPage < totalPages - 1) {
+        pageButtons += `<li class="page-item"><a class="page-link" onclick="getListInjectionResultWithFilter(${currentPage + 1}, ${pageSize})">&raquo;</a></li>`;
+    } else {
+        pageButtons += `<li class="page-item disabled"><span class="page-link">&raquo;</span></li>`;
+    }
+
+    paginationContainer.innerHTML = `<ul class="pagination">${pageButtons}</ul>`;
+    $("#dropdownMenuButton")[0].innerHTML = pageSize;
 }

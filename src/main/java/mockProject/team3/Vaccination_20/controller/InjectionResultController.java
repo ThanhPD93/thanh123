@@ -102,6 +102,10 @@ public class InjectionResultController {
 
     @GetMapping("/displayDropdown")
     public ResponseEntity<InjectionResultResponseDto2> displayDropdown() {
+        InjectionResultResponseDto2 injectionResultResponseDto2 = injectionResultService.displayDropdown();
+        if(injectionResultResponseDto2 == null){
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(injectionResultService.displayDropdown());
     }
 
