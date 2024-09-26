@@ -42,10 +42,12 @@ function findNews(currentPage){
                             <div class="col-md-12">
                                 <div class="card">
                                     <div class="card-header">
-                                        <span class="post-date text-muted">Ngày đăng: ${data.postDate}</span>
+                                        <span class="post-date text-muted">Posting Date: ${data.postDate}</span>
                                     </div>
                                     <div class="card-body">
-                                        <h5 class="card-title">${data.title}</h5>
+                                        <a class="card-title link-offset-2 link-underline link-underline-opacity-0" href="https://fpt.com/vi/tin-tuc">
+                                        <h5>${data.title}</h5>
+                                        </a>
                                         <p class="card-text">${data.content.replace(/\n/g, '<br>')}</p>
                                     </div>
                                 </div>
