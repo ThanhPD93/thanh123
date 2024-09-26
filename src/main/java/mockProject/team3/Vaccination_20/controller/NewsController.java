@@ -35,20 +35,14 @@ public class NewsController {
     })
     @GetMapping("/getAjax")
     public ResponseEntity<String> getDocument(@RequestParam String filename) throws IOException {
-        // Check if the filename is empty or null
         if (filename == null || filename.isEmpty()) {
             return ResponseEntity.badRequest().body("Filename must not be empty!");
         }
-
         ClassPathResource resource = new ClassPathResource("static/html/news/" + filename);
         Path path = resource.getFile().toPath();
-
-        // Check if the file exists
         if (!Files.exists(path)) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("HTML file not found!");
         }
-
-        // Return the file content with response 200
         return ResponseEntity.ok(Files.readString(path));
     }
 
@@ -63,14 +57,32 @@ public class NewsController {
         return ResponseEntity.ok(newsResponseDto1);
     }
 
-    @Operation(summary = "find all news and put in a pagination list for display")
+    @Operation(summary = "Find all news and put in a pagination list for display")
     @ApiResponse(responseCode = "200", description = "Pagination list of news found!")
+    @ApiResponse(responseCode = "404", description = "No news found for the given search input")
+    @ApiResponse(responseCode = "400", description = "Invalid input provided")
+    @ApiResponse(responseCode = "500", description = "Internal server error")
     @GetMapping("/findAllNews")
     public ResponseEntity<Page<NewsResponseDto1>> findAllNews(
             @RequestParam String searchInput,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size) {
-        Page<NewsResponseDto1> newsResponseDto = newsService.findByTittleOrContent(searchInput, page, size);
-        return ResponseEntity.ok(newsResponseDto);
+
+        try {
+            if (searchInput == null || searchInput.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body(null); // 400 Bad Request
+            }
+
+            Page<NewsResponseDto1> newsResponseDto = newsService.findByTittleOrContent(searchInput, page, size);
+
+            if (newsResponseDto.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // 404 Not Found
+            }
+
+            return ResponseEntity.ok(newsResponseDto); // 200 OK
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // 500 Internal Server Error
+        }
     }
+
 }

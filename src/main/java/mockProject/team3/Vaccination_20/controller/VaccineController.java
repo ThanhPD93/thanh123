@@ -14,6 +14,7 @@ import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineRequestDto1;
 import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineResponseDto3;
 import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineResponseDto4;
 import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineResponseDto5;
+import mockProject.team3.Vaccination_20.exception.vaccine_exception.VaccineAlreadyExistsException;
 import mockProject.team3.Vaccination_20.service.VaccineService;
 import mockProject.team3.Vaccination_20.utils.MSG;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/vaccine")
@@ -52,73 +54,124 @@ public class VaccineController {
             return ResponseEntity.ok(Files.readString(path));
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(MSG.MSG32.getMessage());
-
         }
     }
 
     @Operation(summary = "Add a new vaccine or update an existing one")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(type = "string", example = "New vaccine added(updated) sucessfully"))),
-            @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(type = "string", example = "Add(update) failed!")))
+        @ApiResponse(responseCode = "200", description = "New vaccine added/updated successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid data! Please check input fields."),
+        @ApiResponse(responseCode = "404", description = "Vaccine type not found!"),
+        @ApiResponse(responseCode = "409", description = "Vaccine already existed!"),
+        @ApiResponse(responseCode = "500", description = "Internal server error! Please try again later.")
     })
     @PostMapping("/add")
     public ResponseEntity<String> createVaccine(@Valid @RequestBody VaccineRequestDto1 vaccineRequestDto1) {
-        int result = vaccineService.createVaccine(vaccineRequestDto1);
-        if(result == 0) return ResponseEntity.status(520).body("no vaccine type found to save to vaccine!");
-        return ResponseEntity.ok("add new vaccine success!");
+        try{
+            int result = vaccineService.createVaccine(vaccineRequestDto1);
+            if(result == 0) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vaccine type not found!");
+            }
+            return ResponseEntity.ok("add new vaccine success!");
+        } catch (VaccineAlreadyExistsException e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error! Please try again later.");
+        }
     }
 
-    @Operation(summary = "find all vaccine and put in a pagination list for display")
-    @ApiResponse(responseCode = "200", description = "Pagination list of vaccine found!")
+    @Operation(summary = "Search for vaccines based on input with pagination")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Vaccines retrieved successfully"),
+            @ApiResponse(responseCode = "204", description = "No vaccines found"),
+            @ApiResponse(responseCode = "400", description = "Invalid input provided"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @GetMapping("/search")
     public ResponseEntity<Page<VaccineResponseDto3>> getVaccineListBySearchInput(
             @RequestParam("searchInput") String searchInput,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size) {
-
-        Page<VaccineResponseDto3> vaccinePage = vaccineService.getVaccineListBySearchInput(searchInput, page, size);
-        return ResponseEntity.ok(vaccinePage);
+        try {
+            Page<VaccineResponseDto3> vaccinePage = vaccineService.getVaccineListBySearchInput(searchInput, page, size);
+            if (vaccinePage.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            }
+            return ResponseEntity.ok(vaccinePage);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     @Operation(summary = "fetch a vaccine from database by vaccine Id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "found a vaccine by vaccine ID provided"),
-            @ApiResponse(responseCode = "404", description = "vaccine not found by vaccine ID provided")
+            @ApiResponse(responseCode = "404", description = "vaccine not found by vaccine ID provided"),
+            @ApiResponse(responseCode = "500", description = "internal server error occurred")
     })
     @GetMapping("/detail/{vaccineId}")
     public ResponseEntity<VaccineResponseDto5> getVaccineById(@PathVariable String vaccineId) {
-        VaccineResponseDto5 vaccineResponseDto5 = vaccineService.getVaccineById(vaccineId);
-        if(vaccineResponseDto5 == null) {
+        try{
+            VaccineResponseDto5 vaccineResponseDto5 = vaccineService.getVaccineById(vaccineId);
+            if(vaccineResponseDto5 == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(vaccineResponseDto5);
+        } catch (NoSuchElementException e){
             return ResponseEntity.notFound().build();
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        return ResponseEntity.ok(vaccineResponseDto5);
     }
 
-    @Operation(summary = "change status of selected vaccines from active to inactive")
+    @Operation(summary = "Change status of selected vaccines from active to inactive")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Change status successfully!"),
-            @ApiResponse(responseCode = "400", description = "Failed to change vaccine status!")
+            @ApiResponse(responseCode = "400", description = "Failed to change vaccine status!"),
+            @ApiResponse(responseCode = "500", description = "Unexpected server error!")
     })
     @PutMapping("/change-status")
     public ResponseEntity<String> updateVaccineStatus(@RequestBody List<String> vaccineIds) {
         int result = vaccineService.changeStatusVaccine(vaccineIds);
-        if (result == -2) return ResponseEntity.badRequest().body("Could not find a vaccine with the given IDs.");
-        if (result == -1) return ResponseEntity.badRequest().body("Please select only vaccines with inactive status.");
-        if (result == 0) return ResponseEntity.badRequest().body("No vaccine was selected.");
 
-        return ResponseEntity.ok("Successfully changed " + result + " vaccines' status to inactive.");
+        switch (result) {
+            case -2:
+                return ResponseEntity.badRequest().body("Could not find a vaccine with the given IDs.");
+            case -1:
+                return ResponseEntity.badRequest().body("Please select only vaccines with ACTIVE status.");
+            case 0:
+                return ResponseEntity.badRequest().body("No vaccine was selected.");
+            case -3:
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred while changing the vaccine status.");
+            default:
+                return ResponseEntity.ok("Successfully changed " + result + " vaccines' status to inactive.");
+        }
     }
 
-    @Operation(summary = "Export excel template!")
+
+    @Operation(summary = "Export Excel template for vaccine import.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Template exported successfully!"),
+            @ApiResponse(responseCode = "500", description = "Failed to export template due to server error.")
+    })
     @GetMapping("/export/excel")
-    public void exportTemplate(HttpServletResponse response) throws IOException {
-        vaccineService.exportTemplate(response);
+    public ResponseEntity<String> exportTemplate(HttpServletResponse response) {
+        try {
+            vaccineService.exportTemplate(response);
+            return ResponseEntity.ok("Template exported successfully!");
+        } catch (IOException e) {
+            System.out.println("Error occurred while exporting the template: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to export template due to server error.");
+        }
     }
+
 
     @Operation(summary = "Import vaccine through excel file")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Import success!"),
-            @ApiResponse(responseCode = "400", description = "File import is empty!"),
+            @ApiResponse(responseCode = "400", description = "File import is empty or contains errors!"),
             @ApiResponse(responseCode = "500", description = "Failed to upload and import file")
     })
     @PostMapping("/import/excel")
@@ -128,8 +181,15 @@ public class VaccineController {
         }
         try {
             List<String> notifications = vaccineService.importVaccineFromExcel(file);
-
-            // Create the response message
+            boolean hasCriticalErrors = notifications.stream()
+                    .anyMatch(notification -> notification.contains("Header mismatch") || notification.contains("not found"));
+            if (hasCriticalErrors) {
+                StringBuilder responseMessage = new StringBuilder("File contains critical errors and cannot be imported:\n");
+                for (String notification : notifications) {
+                    responseMessage.append(notification).append("\n");
+                }
+                return ResponseEntity.badRequest().body(responseMessage.toString());
+            }
             StringBuilder responseMessage = new StringBuilder("File uploaded and data imported successfully.");
             if (!notifications.isEmpty()) {
                 responseMessage.append(" However, the following issues were found:\n");
@@ -137,18 +197,28 @@ public class VaccineController {
                     responseMessage.append(notification).append("\n");
                 }
             }
-
             return ResponseEntity.ok(responseMessage.toString());
-
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload and import file.");
         }
     }
 
-    @Operation(summary = "find all vaccine")
-    @ApiResponse(responseCode = "200", description = "List of vaccine is found")
+
+    @Operation(summary = "Find all vaccines")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of vaccines found"),
+            @ApiResponse(responseCode = "204", description = "No vaccines found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @GetMapping("/findAllVaccineName")
     public ResponseEntity<List<VaccineResponseDto4>> findAllVaccineName() {
-        return ResponseEntity.ok(vaccineService.findAllVaccineName());
+        List<VaccineResponseDto4> vaccineList = vaccineService.findAllVaccineName();
+
+        if (vaccineList.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(vaccineList);
     }
+
 }
