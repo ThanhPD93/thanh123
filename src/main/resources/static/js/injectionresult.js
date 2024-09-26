@@ -244,6 +244,7 @@ function loadInjectionPlace(injectionPlace) {
 
 function addInjectionResult() {
     const injectionResult = {
+    	injectionResultId: $("#injectionresultid")[0].value !== "" ? $("#injectionresultid")[0].value : null,
         customerId: $("#customer")[0].value,
         vaccineTypeId: $("#vaccineTypeName")[0].value,
         vaccineId: $("#vaccineName")[0].value,
@@ -386,23 +387,11 @@ function deleteSelectedInjectionResults() {
 }
 
 function resetInputInjectionResult() {
-    const injectionResultId = document.getElementById('injectionresultid');
-    const injection = document.getElementById('injection');
-    const injectionDate = document.getElementById('injectiondate');
-
-    const customerDropdown = document.getElementById('customer');
-    const vaccineTypeDropdown = document.getElementById('vaccineTypeName');
-    const vaccineNameDropdown = document.getElementById('vaccineName');
-    const placeOfInjectionDropdown = document.getElementById('injectionplace');
-
-    if (!injectionResultId.disabled) injectionResultId.value = '';
-    if (!injection.disabled) injection.value = '';
-    if (!injectionDate.disabled) injectionDate.value = '';
-
-    if (!customerDropdown.disabled) customerDropdown.selectedIndex = 0;
-    if (!vaccineTypeDropdown.disabled) vaccineTypeDropdown.selectedIndex = 0;
-    if (!vaccineNameDropdown.disabled) vaccineNameDropdown.selectedIndex = 0;
-    if (!placeOfInjectionDropdown.disabled) placeOfInjectionDropdown.selectedIndex = 0;
+	const tempId = $("#injectionresultid")[0].value;
+    $("#add-injection-result-form")[0].reset();
+    $("#injectionresultid")[0].value = tempId;
+    setupDropdown();
+    loadInjectionPlace();
 }
 
 

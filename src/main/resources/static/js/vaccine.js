@@ -276,6 +276,7 @@ function resetVaccineInput(){
 	if($("#vaccineId")[0].disabled === true) {
 		const vaccineId = $("#vaccineId")[0].value;
 		$("#add-vaccine-form")[0].reset();
+		loadVaccineTypeName();
 		$("#vaccineId")[0].value = vaccineId;
 	} else {
     	$("#add-vaccine-form")[0].reset();

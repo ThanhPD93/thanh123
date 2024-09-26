@@ -1,5 +1,4 @@
 package mockProject.team3.Vaccination_20.repository;
-
 import mockProject.team3.Vaccination_20.model.News;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,4 +12,7 @@ public interface NewsRepository extends JpaRepository<News, String> {
             "LOWER(n.title) LIKE LOWER(CONCAT('%', :searchInput, '%')) OR " +
             "LOWER(n.content) LIKE LOWER(CONCAT('%', :searchInput, '%'))")
     Page<News> findBySearch(String searchInput, Pageable pageable);
+
+    News findByNewsId(String id);
+
 }

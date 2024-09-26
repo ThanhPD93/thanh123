@@ -6,7 +6,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import mockProject.team3.Vaccination_20.dto.newsDto.NewsDeleteDto;
 import mockProject.team3.Vaccination_20.dto.newsDto.NewsRequestDto1;
+import mockProject.team3.Vaccination_20.dto.newsDto.NewsResponseDto;
 import mockProject.team3.Vaccination_20.dto.newsDto.NewsResponseDto1;
 import mockProject.team3.Vaccination_20.service.NewsService;
 import mockProject.team3.Vaccination_20.utils.MSG;
@@ -52,9 +54,9 @@ public class NewsController {
             @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(type = "string", example = "Add(update) failed")))
     })
     @PostMapping("/add")
-    public ResponseEntity<NewsResponseDto1> addNews(@Valid @RequestBody NewsRequestDto1 newsRequestDto1) {
-        NewsResponseDto1 newsResponseDto1 = newsService.addNews(newsRequestDto1);
-        return ResponseEntity.ok(newsResponseDto1);
+    ResponseEntity<String> addNews(@Valid @RequestBody NewsRequestDto1 newsAddRequestDto) {
+        NewsResponseDto newsResponseDto = newsService.addNews(newsAddRequestDto);
+        return ResponseEntity.ok("add success");
     }
 
     @Operation(summary = "Find all news and put in a pagination list for display")
@@ -63,7 +65,7 @@ public class NewsController {
     @ApiResponse(responseCode = "400", description = "Invalid input provided")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @GetMapping("/findAllNews")
-    public ResponseEntity<Page<NewsResponseDto1>> findAllNews(
+    ResponseEntity<Page<NewsResponseDto>> findAllNews(
             @RequestParam String searchInput,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size) {
@@ -85,4 +87,17 @@ public class NewsController {
         }
     }
 
+
+    @GetMapping("/findById")
+    public ResponseEntity<NewsResponseDto> findById(@RequestParam String id){
+        return ResponseEntity.ok(newsService.findById(id));
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> delete(@RequestBody NewsDeleteDto ids){
+        if(newsService.deleteByIds(ids)){
+            return ResponseEntity.ok("delete success");
+        }
+        return ResponseEntity.badRequest().body("delete fail");
+    }
 }

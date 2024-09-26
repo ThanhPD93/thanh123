@@ -9,6 +9,9 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class InjectionResultRequestDto1 {
+
+    private String injectionResultId;
+
     @NotBlank(message = "Customer ID must not be empty!")
     @Size(max = 36, message = "Customer ID must not exceed 36 characters!")
     @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Customer ID must be alphanumeric.")

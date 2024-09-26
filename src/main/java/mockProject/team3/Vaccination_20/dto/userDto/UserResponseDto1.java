@@ -1,4 +1,4 @@
-package mockProject.team3.Vaccination_20.dto.UserDto;
+package mockProject.team3.Vaccination_20.dto.userDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,5 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class UserResponseDto1 {
-	private String name;
+	private String username;
+    private String email;
 }
