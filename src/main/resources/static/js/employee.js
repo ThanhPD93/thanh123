@@ -11,34 +11,64 @@ function setPageSize(pageSize) {
 
 //---------------------------
 function fetchEmployee(filename) {
-	const checkbox = $(".check-boxes input[type='checkbox']:checked");
-	if(employeeUpdateBtn === true) {
-        if(checkbox.length != 1) {
+    const checkbox = $(".check-boxes input[type='checkbox']:checked");
+    if (employeeUpdateBtn === true) {
+        if (checkbox.length != 1) {
             alert("Please select only 1 employee to update!");
             return;
         }
     }
-	$.ajax({
-		url: "/api/employee/getAjax",
-		data: {filename: filename},
-		success: function(data) {
-			$("#ajax-content")[0].innerHTML = data;
-			if(filename === "employee-list.html") {
-				$("#ajax-title")[0].innerHTML = "EMPLOYEE LIST";
-				findAllEmployee(0);
-			} else {
-				if(employeeUpdateBtn === true) {
-					const employeeId = checkbox[0].closest('tr').querySelector('td:nth-child(2)').textContent;
-					arrangeUpdateEmployeeInfoToInput(employeeId);
-				}
-				$("#image")[0].setAttribute('required', '');
-				$("#ajax-title")[0].innerHTML = "CREATE EMPLOYEE";
-			}
-		},
-		error: function(error) {
-			alert("Error fetching employee document!");
-		}
-	});
+
+    const minLoadingTime = 100; // Minimum time to show loading (2 seconds)
+    const startTime = new Date().getTime(); // Track the start time of the request
+
+    // Ensure the loading overlay and content height fits correctly
+    $('#loading-overlay').css({
+        display: 'flex', // Ensure it's visible and centered with flexbox
+        height: $("#ajax-content").outerHeight(), // Match the height of #ajax-content
+        top: $("#ajax-content").offset().top, // Adjust position relative to #ajax-content
+        left: $("#ajax-content").offset().left,
+        width: $("#ajax-content").outerWidth()
+    });
+
+    $.ajax({
+        url: "/api/employee/getAjax",
+        data: { filename: filename },
+        beforeSend: function() {
+            // Show the loading overlay only over #ajax-content
+            $("#loading-overlay").show();
+        },
+        success: function(data) {
+            $("#ajax-content")[0].innerHTML = data;
+
+            if (filename === "employee-list.html") {
+                $("#ajax-title")[0].innerHTML = "EMPLOYEE LIST";
+                findAllEmployee(0);
+            } else {
+                if (employeeUpdateBtn === true) {
+                    const employeeId = checkbox[0].closest('tr').querySelector('td:nth-child(2)').textContent;
+                    arrangeUpdateEmployeeInfoToInput(employeeId);
+                }
+                $("#image")[0].setAttribute('required', '');
+                $("#ajax-title")[0].innerHTML = "CREATE EMPLOYEE";
+            }
+        },
+        error: function(error) {
+            alert("Error fetching employee document!");
+        },
+        complete: function() {
+            const endTime = new Date().getTime(); // Track the end time
+            const timeElapsed = endTime - startTime; // Calculate time taken for the AJAX request
+
+            const remainingTime = minLoadingTime - timeElapsed; // Calculate remaining time to reach 2 seconds
+            const delay = Math.max(remainingTime, 0); // Ensure non-negative delay
+
+            // Hide the loading overlay after the remaining time
+            setTimeout(function() {
+                $("#loading-overlay").hide();
+            }, delay);
+        }
+    });
 }
 
 function findAllEmployee(page) {

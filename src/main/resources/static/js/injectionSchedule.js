@@ -165,6 +165,7 @@ function updatePageInjectionSchedule(currentPage, totalPages, pageSize, totalEle
 function resetInjectionSchedule(){
 	const tempId = $("#injection-schedule-id")[0].value;
     $("#injection-schedule-create-form")[0].reset();
+    findAllVaccineName();
     $("#injection-schedule-id")[0].value = tempId;
 }
 

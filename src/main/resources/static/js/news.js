@@ -1,23 +1,81 @@
-function fetchNewsAjax(filename) {
-	$.ajax({
-		url: "/api/news/getAjax",
-		data: {filename: filename},
-		success: function(ajaxData) {
-			$("#ajax-content")[0].innerHTML = ajaxData;
-			if(filename === "news-list.html") {
-				$("#ajax-title")[0].innerHTML = "NEWS LIST";
-			} else {
-				$("#ajax-title")[0].innerHTML = "CREATE NEWS";
-			}
-		},
-		error: function(xhr) {
-			alert("error at /api/news/getAjax, error code: " + xhr.status);
-		}
-	});
+function ajaxNews(filename){
+    $.ajax({
+        url: "/api/news/getAjax",
+        data: {filename: filename},
+        success: function(stringData){
+            $("#ajax-content")[0].innerHTML = stringData;
+            if (filename === "show-news.html") {
+            	$("#ajax-title")[0].innerHTML = "WELCOME TO VACCINE MANAGEMENT SYSTEM";
+            	findNews(0);
+            }
+            else if(filename === "news-list.html"){
+                $("#ajax-title")[0].innerHTML = "NEWS LIST";
+                findNews(0);
+            } else {
+                $("#ajax-title")[0].innerHTML = "CREATE NEWS";
+            }
+        },
+        error: function(xhr){
+            alert("error at /api/news/getAjax, error code: " + xhr.status);
+        }
+    });
 }
 
-// Function to search news
-function newsSearch(pageNumber) {
+function findNews(currentPage){
+	let pageSize;
+    if($("#ajax-title")[0].textContent === "NEWS LIST") {
+       pageSize = parseInt($("#dropdownMenuButton")[0].textContent, 10);
+	}
+    $.ajax({
+        url: "/api/news/findAllNews",
+        data: {
+            searchInput: $("#searchInput")[0] === undefined ? "" : $("#searchInput")[0].value,
+            page: currentPage,
+            size: $("#dropdownMenuButton")[0] === undefined ? 10 : parseInt($("#dropdownMenuButton")[0].textContent, 10)
+        },
+        success: function(pageData){
+        	if($("#ajax-title")[0].textContent === "WELCOME TO VACCINE MANAGEMENT SYSTEM") {
+        		$("#news-show-content")[0].innerHTML = "";
+        		pageData.content.forEach(data => {
+        		$("#news-show-content")[0].innerHTML += `
+                    <div class="row mb-4">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <span class="post-date text-muted">Ngày đăng: ${data.postDate}</span>
+                                    </div>
+                                    <div class="card-body">
+                                        <h5 class="card-title">${data.title}</h5>
+                                        <p class="card-text">${data.content.replace(/\n/g, '<br>')}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+        		});
+        	} else {
+                $("#news-list-content")[0].innerHTML = "";
+                pageData.content.forEach(data => {
+                    $("#news-list-content")[0].innerHTML += `
+                    <tr>
+                        <td class="d-none"><input type="text" value="${data.newsId}" disabled></td>
+                        <td class="text-center check-boxes"><input type="checkbox"></td>
+                        <td>${data.title}</td>
+                        <td>${data.content}</td>
+                        <td>${data.postDate}</td>
+                    </tr>
+                    `;
+                });
+                updateNewsPageControls(pageData.number, pageData.totalPages, pageSize, pageData.totalElements);
+        	}
+        },
+        error: function(xhr){
+            alert("error at /api/news/getAjax, error code: " + xhr.status);
+        }
+    });
+}
+
+function search(pageNumber) {
     const searchInput = document.getElementById('searchInput').value;
     const entries = document.getElementById('show').value;
 
@@ -43,211 +101,229 @@ function newsSearch(pageNumber) {
             // Update pagination and entries info
             document.getElementById('start-entry').innerText = data.start;
             document.getElementById('end-entry').innerText = data.end;
-            document.getElementById('total-entries').innerText = data.total;
-            updatePageNews(data.totalPages, pageNumber);
+document.getElementById('total-entries').innerText = data.total;
+            updatePagination(data.totalPages, pageNumber);
         })
         .catch(error => console.error('Error fetching news:', error));
 }
-
-// Function to handle pagination
-function updatePageNews(totalPages, currentPage) {
-    const pageButtons = document.getElementById('page-buttons');
-    pageButtons.innerHTML = ''; // Clear current pagination
-
-    // Add pagination buttons
-    for (let i = 0; i < totalPages; i++) {
-        pageButtons.innerHTML += `
-            <button onclick="search(${i})" class="btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-secondary'}">
-                ${i + 1}
-            </button>
-        `;
-    }
-}
-
-// Function to create news
-// function createNews() {
-//     const title = prompt('Enter news title:');
-//     const content = prompt('Enter news content:');
-//
-//     if (title && content) {
-//         fetch('/api/news', {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//             },
-//             body: JSON.stringify({ title, content }),
-//         })
-//         .then(response => {
-//             if (response.ok) {
-//                 alert('News created successfully!');
-//                 search(0); // Reload the news list
-//             } else {
-//                 alert('Failed to create news.');
-//             }
-//         })
-//         .catch(error => console.error('Error creating news:', error));
-//     }
-// }
 
 function createNews() {
     const title = prompt('Enter news title:');
     const content = prompt('Enter news content:');
 
     if (title && content) {
-        const newsData = {
-            title: title,
-            content: content
-        };
-
-        $.ajax({
-            url: "/api/news",
-            method: "POST",
-            contentType: "application/json",
-            data: JSON.stringify(newsData),
-            success: function(response) {
-                alert('News created successfully!');
-                search(0); // Reload the news list
-            },
-            error: function(xhr) {
-                if(xhr.status === 400) {
-                    const error = JSON.parse(xhr.responseText);
-                    let validationMessage = "";
-                    let i = 0;
-                    error.errors.forEach(error => {
-                        validationMessage += ++i + "." + error.defaultMessage + "\n";
-                    });
-                    alert(error.message + " -->\n" + validationMessage);
-                }
-                else {
-                    alert("an expected error occurred at /api/new, error code: " + xhr.status);
-                }
-            }
-        });
-    } else {
-        alert("Title and content are required.");
-    }
-}
-
-
-// Function to update news
-function updateNews() {
-    const selectedNews = getSelectedNews();
-    if (!selectedNews) {
-        alert('Please select news to update.');
-        return;
-    }
-
-    const newTitle = prompt('Update title:', selectedNews.title);
-    const newContent = prompt('Update content:', selectedNews.content);
-
-    if (newTitle && newContent) {
-        fetch(`/api/news/${selectedNews.id}`, {
-            method: 'PUT',
+        fetch('/api/news', {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ title: newTitle, content: newContent }),
+            body: JSON.stringify({ title, content }),
         })
         .then(response => {
             if (response.ok) {
-                alert('News updated successfully!');
+                alert('News created successfully!');
                 search(0); // Reload the news list
             } else {
-                alert('Failed to update news.');
+                alert('Failed to create news.');
             }
         })
-        .catch(error => console.error('Error updating news:', error));
+        .catch(error => console.error('Error creating news:', error));
     }
 }
 
-// Function to delete news
+function updateNews() {
+    const checkboxes = $(".check-boxes input[type='checkbox']:checked");
+    if (checkboxes.length != 1) {
+        alert("Please select only 1 news item to update!");
+        return;
+    }
+    const id = checkboxes[0].closest("tr").querySelector("td:nth-child(1) input").value;
+    ajaxNews('news-create.html');
+
+    $.ajax({
+        url: "/api/news/findById",
+        data: {id: id},
+        success: function(news){
+            $("#newsId")[0].value = news.newsId;
+            $("#newsId")[0].disabled = true;
+            $("#title")[0].value = news.title;
+            $("#preview")[0].value = news.preview;
+            $("#content")[0].value = news.content;
+
+        },
+        error: function(xhr){
+            alert("error at /api/news/findById, error code: " + xhr.status);
+        }
+    });
+}
+
 function deleteNews() {
-    const selectedNews = getSelectedNews();
-    if (!selectedNews) {
-        alert('Please select news to delete.');
+    const checkboxes = document.querySelectorAll(".check-boxes input[type='checkbox']:checked");
+    if (checkboxes.length < 1) {
+        alert("Please select at least 1 news to delete!");
         return;
     }
 
-    const confirmDelete = confirm(`Are you sure you want to delete news "${selectedNews.title}"?`);
-    if (confirmDelete) {
-        fetch(`/api/news/${selectedNews.id}`, {
-            method: 'DELETE',
-        })
-        .then(response => {
-            if (response.ok) {
-                alert('News deleted successfully!');
-                search(0); // Reload the news list
-            } else {
-                alert('Failed to delete news.');
-            }
-        })
-        .catch(error => console.error('Error deleting news:', error));
-    }
+    let idRequest = {
+        ids: []
+    };
+
+    checkboxes.forEach(checkbox => {
+        idRequest.ids.push(checkbox.closest("tr").querySelector("td:nth-child(1) input").value); // Sửa 'add' thành 'push'
+    });
+
+    $.ajax({
+        url: "/api/news/delete",
+        method: "DELETE",
+        contentType: "application/json",
+        data: JSON.stringify(idRequest),
+        success: function(responseData) {
+            alert(responseData);
+            findNews(0);
+        },
+        error: function(xhr) {
+            alert("Error at /api/news/delete, error code: " + xhr.status);
+        }
+    });
 }
-
-// Utility function to get selected news
-function getSelectedNews() {
-    const checkboxes = document.querySelectorAll('#news-list-content input[type="checkbox"]:checked');
-    if (checkboxes.length !== 1) {
-        alert('Please select exactly one news item.');
-        return null;
-    }
-
-    const newsId = checkboxes[0].value;
-    const selectedRow = checkboxes[0].closest('tr');
-    const title = selectedRow.children[1].innerText;
-    const content = selectedRow.children[2].innerText;
-
-    return { id: newsId, title, content };
-}
-
-// Attach event listeners to buttons
 
 function saveNews() {
     // Lấy giá trị từ form
-    const title = document.getElementById('title').value.trim();
-    const preview = document.getElementById('preview').value.trim();
-    const content = document.getElementById('content').value.trim();
+    const newsId = $('#newsId').val().trim();
+    const title = $('#title').val().trim();
+    const preview = $('#preview').val().trim();
+    const content = $('#content').val().trim();
 
     // Kiểm tra nếu các trường bắt buộc có giá trị không
     if (!title || !preview || !content) {
         alert("Please fill all required fields.");
         return;
-    }
+}
 
     // Đối tượng tin tức mới
     const news = {
+        newsId: newsId,
         title: title,
         preview: preview,
         content: content
     };
 
     // Gửi request POST để lưu tin tức
-    fetch('/news/save', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
+    $.ajax({
+        url: "/api/news/add",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(news),
+        success: function(stringData) {
+                alert(stringData);
+                ajaxNews('news-list.html');
         },
-        body: JSON.stringify(news),
-    })
-    .then(response => response.json())
-    .then(apiResponse => {
-        if (apiResponse.code === 200) {
-            alert("News saved successfully!");
-            window.location.href = 'news-list.html'; // Điều hướng về trang danh sách tin tức
-        } else {
-            alert("Error saving news: " + apiResponse.description);
+        error: function(xhr) {
+            alert("An error occurred while saving news.");
+            console.error('Error:', xhr.status, xhr.statusText);
         }
-    })
-    .catch(error => {
-        console.error('Error saving news:', error);
-        alert("An error occurred while saving news.");
     });
 }
 
-function resetReportInput() {
-    document.getElementById('title').value = '';
-    document.getElementById('preview').value = '';
-    document.getElementById('content').value = '';
+function resetInput() {
+	if($("#newsId")[0].disabled === true) {
+    	const tempId = $("#newsId")[0].value;
+    	$("#news-form")[0].reset();
+    	$("#newsId")[0].value = tempId;
+	} else {
+		$("#news-form")[0].reset();
+	}
 }
 
+function fetchNews(filename) {
+    $.ajax({
+        url: "/api/news/getAjax",
+        data: { filename: filename },
+        dataType: "text",
+        success: function(data) {
+            // Inject the response content into the DOM
+            $("#ajax-content")[0].innerHTML = data;
+            if (filename === "news-list.html") {
+                $("#ajax-title").html("NEWS LIST");
+                listNews(0);
+            } else {
+                $("#ajax-title").html("CREATE NEWS");
+                randomizeCaptcha();
+            }
+        },
+        error: function(jqxhr, textStatus, errorThrown) {
+            console.error("AJAX error:", textStatus, errorThrown);
+        }
+    });
+}
+
+function updateNewsPageControls(currentPage, totalPages, pageSize, totalElements) {
+    if (totalElements === 0) {
+       $("#start-entry")[0].innerHTML = 0;
+       $("#end-entry")[0].innerHTML = 0;
+       $("#total-entries")[0].innerHTML = 0;
+    } else {
+        $("#start-entry")[0].innerHTML = currentPage === 0 ? 1 : currentPage * pageSize + 1;
+        $("#end-entry")[0].innerHTML = currentPage === totalPages - 1 ? totalElements : (currentPage + 1) * pageSize;
+        $("#total-entries")[0].innerHTML = totalElements;
+    }
+
+    const paginationContainer = $("#page-buttons")[0];
+    let pageButtons = '';
+
+    // Left button
+    if (currentPage > 0) {
+        pageButtons += `<li class="page-item"><a class="page-link" onclick="findNews(${currentPage - 1}, ${pageSize})">&laquo;</a></li>`;
+    } else {
+        pageButtons += `<li class="page-item disabled"><span class="page-link">&laquo;</span></li>`;
+    }
+
+    // Show all pages if totalPages < 10
+    if (totalPages <= 10) {
+        for (let i = 0; i < totalPages; i++) {
+            pageButtons += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" onclick="findNews(${i}, ${pageSize})">${i + 1}</a></li>`;
+        }
+    } else {
+        // Always show page 1 and 2
+        if (totalPages > 1) {
+            pageButtons += `<li class="page-item ${currentPage === 0 ? 'active' : ''}"><a class="page-link" onclick="findNews(0, ${pageSize})">1</a></li>`;
+            if (totalPages > 2) {
+pageButtons += `<li class="page-item ${currentPage === 1 ? 'active' : ''}"><a class="page-link" onclick="findNews(1, ${pageSize})">2</a></li>`;
+            }
+        }
+
+        // Show page numbers around the current page with ellipses
+        if (currentPage > 2) {
+            pageButtons += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+        }
+
+        let startPage = Math.max(2, currentPage - 1);
+        let endPage = Math.min(totalPages - 3, currentPage + 1);
+
+        for (let i = startPage; i <= endPage; i++) {
+            pageButtons += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" onclick="findNews(${i}, ${pageSize})">${i + 1}</a></li>`;
+        }
+
+        if (currentPage < totalPages - 4) {
+            pageButtons += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+        }
+
+        // Always show the last two pages
+        if (totalPages > 2) {
+            if (totalPages > 3) {
+                pageButtons += `<li class="page-item ${currentPage === totalPages - 2 ? 'active' : ''}"><a class="page-link" onclick="findNews(${totalPages - 2}, ${pageSize})">${totalPages - 1}</a></li>`;
+            }
+            pageButtons += `<li class="page-item ${currentPage === totalPages - 1 ? 'active' : ''}"><a class="page-link" onclick="findNews(${totalPages - 1}, ${pageSize})">${totalPages}</a></li>`;
+        }
+    }
+
+    // Right button
+    if (currentPage < totalPages - 1) {
+        pageButtons += `<li class="page-item"><a class="page-link" onclick="findNews(${currentPage + 1}, ${pageSize})">&raquo;</a></li>`;
+    } else {
+        pageButtons += `<li class="page-item disabled"><span class="page-link">&raquo;</span></li>`;
+    }
+
+    paginationContainer.innerHTML = `<ul class="pagination">${pageButtons}</ul>`;
+    $("#dropdownMenuButton")[0].innerHTML = pageSize;
+}

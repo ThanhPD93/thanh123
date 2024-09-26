@@ -118,21 +118,19 @@ public class InjectionResultServiceImpl implements InjectionResultService {
     //add
     public int addInjectionResult(InjectionResultRequestDto1 dto) {
         InjectionResult injectionResult = modelMapper.map(dto, InjectionResult.class);
-        Customer customer;
-        Vaccine vaccine;
-        VaccineType vaccineType;
         try {
-            customer = customerRepository.findById(dto.getCustomerId()).get();
-            vaccine = vaccineRepository.findById(dto.getVaccineId()).get();
-            vaccineType = vaccineTypeRepository.findById(dto.getVaccineTypeId()).get();
+           	Customer customer = customerRepository.findById(dto.getCustomerId()).get();
+           	Vaccine vaccine = vaccineRepository.findById(dto.getVaccineId()).get();
+           	VaccineType vaccineType = vaccineTypeRepository.findById(dto.getVaccineTypeId()).get();
+            vaccine.setVaccineType(vaccineType);
+            injectionResult.setCustomer(customer);
+            injectionResult.setVaccineFromInjectionResult(vaccine);
+            System.out.println(injectionResult.getInjectionResultId());
+            injectionResultRepository.save(injectionResult);
+            return 1;
         } catch (Exception e) {
             return 0;
         }
-        vaccine.setVaccineType(vaccineType);
-        injectionResult.setCustomer(customer);
-        injectionResult.setVaccineFromInjectionResult(vaccine);
-        injectionResultRepository.save(injectionResult);
-        return 1;
     }
 
     //detail
