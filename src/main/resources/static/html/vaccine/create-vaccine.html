@@ -4,117 +4,148 @@
     <meta charset="UTF-8">
     <title>Vaccine Create</title>
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css">
+    <style>
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+        }
+    </style>
 </head>
 <body class="bg-body-secondary">
-    <div class="container mt-3 bg-light p-3">
-        <form id="add-vaccine-form" onsubmit="event.preventDefault(); addVaccine(event);">
-<!--            Row 1-->
-            <div class="d-flex justify-content-between mb-4">
-<!--                vaccine ID-->
-                <div class="col-8 d-none">
-                    <label class="form-label fw-medium">Vaccine ID <span class="text-danger">(*)</span></label>
-                    <div class="input-group">
-                        <img src="/images/icons/people.png" class="input-group-text border-0">
-                        <input type="text" class="form-control d-none" id="vaccineId" disabled>
-                    </div>
+<div class="container mt-3 bg-light p-3">
+    <form id="add-vaccine-form" onsubmit="event.preventDefault(); addVaccine(event);">
+        <!--            Row 1-->
+        <div class="d-flex justify-content-start mb-4">
+            <!--                vaccine ID-->
+            <div class="col-4">
+                <label class="form-label fw-medium">Vaccine ID <span class="text-danger">(*)</span></label>
+                <div class="input-group">
+                    <img src="/images/icons/vaccination.png" class="input-group-text border-0">
+                    <input type="text" class="form-control" id="vaccineId" required>
                 </div>
-<!--                vaccine status-->
-                <div class="col-4">
+            </div>
+            <!--                vaccine status-->
+            <div class="col-3 mx-5">
+                <label class="form-label fw-medium">Status <span class="text-danger">(*)</span></label>
+                <div class="input-group">
+                    <img src="/images/icons/status.png" class="input-group-text border-0">
                     <div class="mt-2">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" name="vaccineStatus" id="vaccineStatus" value="ACTIVE" disabled checked >
-                            <label class="form-check-label" >Active</label>
+                            <input class="form-check-input" type="checkbox" name="vaccineStatus" id="vaccineStatus"
+                                   value="ACTIVE" disabled checked>
+                            <label class="form-check-label">Active</label>
                         </div>
                     </div>
                 </div>
             </div>
-<!--            Row 2-->
-            <div class="d-flex justify-content-between mb-4">
-<!--                vaccine name-->
-                <div class="col-4">
-                    <label class="form-label fw-medium">Vaccine Name <span class="text-danger">(*)</span></label>
+        </div>
+        <!--            Row 2-->
+        <div class="d-flex justify-content-between mb-4">
+            <!--                vaccine name-->
+            <div class="col-4">
+                <label class="form-label fw-medium">Vaccine Name <span class="text-danger">(*)</span></label>
+                <div class="d-flex">
+                    <img src="/images/icons/vaccine.png" class="input-group-text border-0">
                     <div class="input-group">
                         <input type="text" class="form-control text-capitalize" id="vaccineName" required>
                     </div>
                 </div>
-<!--                vaccine type-->
-                <div class="col-4">
-                    <label class="form-label fw-medium">Vaccine Type <span class="text-danger">(*)</span></label>
+            </div>
+            <!--                vaccine type-->
+            <div class="col-4">
+                <label class="form-label fw-medium">Vaccine Type <span class="text-danger">(*)</span></label>
+                <div class="d-flex">
+                    <img src="/images/icons/vaccination2.png" class="input-group-text border-0">
                     <div class="input-group">
                         <select class="form-select" id="vaccineTypeName" required>
                             <option value="" disabled selected>--Select Vaccine Type--</option>
                         </select>
                     </div>
                 </div>
-<!--                number of injection-->
-                <div class="col-4">
-                    <label class="form-label fw-medium">Number of injection</label>
+            </div>
+            <!--                number of injection-->
+            <div class="col-3">
+                <label class="form-label fw-medium">Number of injection</label>
+                <div class="d-flex">
+                    <img src="/images/icons/vaccine-bottle.png" class="input-group-text border-0">
                     <div class="input-group">
                         <input type="number" class="form-control text-capitalize" id="numberOfInjection" required>
                     </div>
                 </div>
             </div>
-<!--            Row 3-->
-            <div class="d-flex justify-content-between mb-4">
-<!--                Usage      -->
-                <div class="col-4">
-                    <label class="form-label fw-medium">Usage</label>
-                    <div>
-                        <textarea name="vaccineUsage" id="vaccineUsage" cols="40" rows="10" required></textarea>
-                    </div>
+        </div>
+        <!--            Row 3-->
+        <div class="d-flex justify-content-between mb-4">
+            <!--                Usage      -->
+            <div class="col-4">
+                <label class="form-label fw-medium">Usage</label>
+                <div class="input-group ps-4">
+                    <textarea class="form-control" name="vaccineUsage" id="vaccineUsage" cols="36" rows="3" required></textarea>
                 </div>
-<!--                Indication-->
-                <div class="col-4">
-                    <label class="form-label fw-medium">Indication</label>
-                    <div class="input-group">
-                        <textarea name="vaccineUsage" id="vaccineIndication" cols="40" rows="10" required></textarea>
-                    </div>
+            </div>
+            <!--                Indication-->
+            <div class="col-4">
+                <label class="form-label fw-medium">Indication</label>
+                <div class="input-group ps-4">
+                    <textarea class="form-control" name="vaccineUsage" id="vaccineIndication" cols="36" rows="3" required></textarea>
                 </div>
-<!--                Contraindication-->
-                <div class="col-4">
-                    <label class="form-label fw-medium">Contraindication</label>
+            </div>
+            <!--                Contraindication-->
+            <div class="col-3">
+                <label class="form-label fw-medium">Contraindication</label>
+                <div class="input-group ps-4">
+                    <textarea class="form-control" name="vaccineUsage" id="vaccineContraindication" cols="36" rows="3" required></textarea>
+                </div>
+            </div>
+        </div>
+        <!--            Row 4-->
+        <div class="d-flex justify-content-between mb-4">
+            <!--                Time of beginning next injection-->
+            <div class="col-4">
+                <label class="form-label fw-medium">Time of beginning next injection</label>
+                <div class="d-flex">
+                    <img src="/images/icons/calendar.png" class="input-group-text border-0">
                     <div class="input-group">
-                        <textarea name="vaccineUsage" id="vaccineContraindication" cols="40" rows="10" required></textarea>
+                        <input type="date" class="form-control" id="beginning-time" required>
                     </div>
                 </div>
             </div>
-<!--            Row 4-->
-            <div class="d-flex justify-content-between mb-4">
-<!--                Time of beginning next injection-->
-                <div class="col-4">
-                    <label class="form-label fw-medium">Time of beginning next injection</label>
+            <!--                Time of ending next injection-->
+            <div class="col-4">
+                <label class="form-label fw-medium">Time of ending next injection</label>
+                <div class="d-flex">
+                    <img src="/images/icons/calendar.png" class="input-group-text border-0">
                     <div class="input-group">
-                        <input type="date" class="form-control text-capitalize" id="beginning-time" required>
-                    </div>
-                </div>
-<!--                Time of ending next injection-->
-                <div class="col-4">
-                    <label class="form-label fw-medium">Time of ending next injection</label>
-                    <div class="input-group">
-                        <input type="date" class="form-control text-capitalize" id="ending-time" required>
-                    </div>
-                </div>
-<!--                Origin-->
-                <div class="col-4">
-                    <label class="form-label fw-medium">Origin</label>
-                    <div class="input-group">
-                        <input type="text" class="form-control text-capitalize" id="vaccineOrigin" required>
+                        <input type="date" class="form-control" id="ending-time" required>
                     </div>
                 </div>
             </div>
-<!--            Row 5 button-->
-            <div class="d-flex">
-                <div class="me-2">
-                    <button type="submit" class="btn btn-success" style="width: 100px;">Save</button>
-                </div>
-                <div class="me-2">
-                    <button type="button" class="btn btn-info text-white" style="width: 100px;" onclick="resetVaccineInput()">Reset</button>
-                </div>
-                <div>
-                    <a class="btn btn-warning text-white" onclick="fetchVaccine('vaccine-list.html')" style="width: 100px;">Cancel</a>
+            <!--                Origin-->
+            <div class="col-3">
+                <label class="form-label fw-medium">Origin</label>
+                <div class="d-flex">
+                    <img src="/images/icons/maps-and-flags.png" class="input-group-text border-0">
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="vaccineOrigin" required>
+                    </div>
                 </div>
             </div>
-        </form>
-    </div>
+        </div>
+        <!--            Row 5 button-->
+        <div class="d-flex">
+            <div class="me-2">
+                <button type="submit" class="btn btn-success" style="width: 100px;">Save</button>
+            </div>
+            <div class="me-2">
+                <button type="button" class="btn btn-info text-white" style="width: 100px;"
+                        onclick="resetVaccineInput()">Reset
+                </button>
+            </div>
+            <div>
+                <a class="btn btn-warning text-white" onclick="fetchVaccine('vaccine-list.html')" style="width: 100px;">Cancel</a>
+            </div>
+        </div>
+    </form>
+</div>
 </body>
 </html>

@@ -35,13 +35,13 @@
             <div class="col-3">
                 <label class="form-label fw-medium">Status <span class="text-danger">(*)</span></label>
                 <div class="input-group">
-                    <img src="/images/icons/vaccine.png" class="input-group-text border-0">
+                    <img src="/images/icons/status.png" class="input-group-text border-0">
                     <div class="mt-2">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" name="vaccineTypeStatus" id="vaccineTypeStatus" value="ACTIVE" disabled checked >
-                            <label class="form-check-label" >Active</label>
+                            <input class="form-check-input" type="checkbox" name="vaccineTypeStatus"
+                                   id="vaccineTypeStatus" value="ACTIVE" disabled checked>
+                            <label class="form-check-label">Active</label>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -52,9 +52,10 @@
                 <label class="form-label fw-medium">Description <span class="text-danger">(*)</span></label>
                 <div class="input-group">
                     <div>
-                        <img src="/images/icons/calendar.png" class="input-group-text border-0">
+                        <img src="/images/icons/document.png" class="input-group-text border-0">
                     </div>
-                    <textarea type="text" class="form-control" id="vaccineTypeDescription" maxlength="200" rows="5" style="resize: none;" required></textarea>
+                    <textarea type="text" class="form-control" id="vaccineTypeDescription" maxlength="200" rows="3"
+                              style="resize: none;" required></textarea>
                 </div>
             </div>
         </div>
@@ -64,7 +65,7 @@
                 <label class="form-label fw-medium">Image</label>
                 <div class="input-group">
                     <img src="/images/icons/image.png" class="input-group-text border-0">
-                    <input type="file" class="form-control" id="image" onchange="previewImage()" >
+                    <input type="file" class="form-control" id="image" onchange="previewImage()">
                 </div>
             </div>
         </div>
@@ -75,16 +76,19 @@
             </div>
         </div>
         <!--            row 6 : buttons-->
-        <div class="d-flex col-4 m-auto">
+        <div class="d-flex col-4">
             <div class="me-2 ">
-                <button type="submit" class="btn btn-success"  style="width: 100px;" >Save</button>
+                <button type="submit" class="btn btn-success" style="width: 100px;">Save</button>
             </div>
             <div class="me-2">
                 <button type="button" class="btn btn-info text-white" style="width: 100px;"
-                        onclick="resetVaccineTypeInput()">Reset</button>
+                        onclick="resetVaccineTypeInput()">Reset
+                </button>
             </div>
             <div>
-                <button type="reset" class="btn btn-warning text-white" style="width: 100px;" onclick="fetchVaccineType('vaccine-type-list.html')">Cancel</button>
+                <button type="reset" class="btn btn-warning text-white" style="width: 100px;"
+                        onclick="fetchVaccineType('vaccine-type-list.html')">Cancel
+                </button>
             </div>
         </div>
     </form>

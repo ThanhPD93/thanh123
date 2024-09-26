@@ -5,78 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Injection Schedule</title>
     <link rel="stylesheet" href="/css/bootstrap/bootstrap.min.css">
-    <style>
-        .form-label {
-            font-weight: bold;
-        }
-        .row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-        .row .form-group {
-            flex: 1;
-            margin-right: 15px;
-        }
-        .row .form-group:last-child {
-            margin-right: 0;
-        }
-        textarea, select, input {
-            height: 45px;
-        }
-        /* Set height of Place and Note to be the same */
-        textarea#place, textarea#note {
-            height: 90px;
-        }
-        .btn-group {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .btn-group button, .btn-group a {
-            width: 120px;
-            margin: 0 10px;
-        }
-        .btn-group a {
-            text-align: center;
-        }
-    </style>
 </head>
-<body>
-<div class="container my-5">
-    <form onsubmit="event.preventDefault(); addInjectionSchedule();" id="injection-schedule-create-form">
-        <div class="row">
-            <input type="text" class="d-none" id="injection-schedule-id">
-            <div class="form-group">
-                <label for="vaccineName" class="form-label">Vaccine<span class="text-danger">(*)</span>:</label>
-                <select class="form-select" id="vaccineName">
-                    <option selected>-- Select Vaccine --</option>
-                </select>
+<body class="bg-body-secondary">
+<div class="container mt-3 bg-light p-3">
+    <form id="injection-schedule-create-form" onsubmit="event.preventDefault(); addInjectionSchedule();">
+        <!-- Row 1 -->
+        <div class="d-flex justify-content-between mb-4">
+            <!-- Vaccine Name -->
+            <div class="col-4">
+                <label class="form-label fw-medium">Vaccine <span class="text-danger">(*)</span></label>
+                <div class="input-group">
+                    <img src="/images/icons/vaccination.png" class="input-group-text border-0">
+                    <select class="form-select" id="vaccineName">
+                        <option value="" disabled selected>-- Select Vaccine --</option>
+                    </select>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="from" class="form-label">From<span class="text-danger">(*)</span>:</label>
-                <input type="date" class="form-control" id="from">
+            <!-- From Date -->
+            <div class="col-4">
+                <label class="form-label fw-medium">From <span class="text-danger">(*)</span></label>
+                <div class="input-group">
+                    <img src="/images/icons/calendar.png" class="input-group-text border-0">
+                    <input type="date" class="form-control" id="from">
+                </div>
             </div>
-            <div class="form-group">
-                <label for="to" class="form-label">To<span class="text-danger">(*)</span>:</label>
-                <input type="date" class="form-control" id="to">
+            <!-- To Date -->
+            <div class="col-3">
+                <label class="form-label fw-medium">To <span class="text-danger">(*)</span></label>
+                <div class="input-group">
+                    <img src="/images/icons/calendar.png" class="input-group-text border-0">
+                    <input type="date" class="form-control" id="to">
+                </div>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-4">
-                <label for="place" class="form-label">Place<span class="text-danger">(*)</span>:</label>
-                <textarea class="form-control" id="place"></textarea>
+        <!-- Row 2 -->
+        <div class="d-flex justify-content-between mb-4">
+            <!-- Place -->
+            <div class="col-4">
+                <label class="form-label fw-medium">Place <span class="text-danger">(*)</span></label>
+                <div class="input-group ps-4">
+                    <textarea class="form-control" id="place"></textarea>
+                </div>
             </div>
-            <div class="col-md-8">
-                <label for="note" class="form-label">Note:</label>
-                <textarea class="form-control" id="note"></textarea>
+            <!-- Note -->
+            <div class="col-7 me-4">
+                <label class="form-label fw-medium">Note</label>
+                <div class="input-group ps-4">
+                    <textarea class="form-control" id="note"></textarea>
+                </div>
             </div>
         </div>
 
-        <div class="btn-group">
-            <button type="submit" class="btn btn-success">Save</button>
-            <button type="button" class="btn btn-info text-white" onclick="resetInjectionSchedule()">Reset</button>
-            <a class="btn btn-warning text-white" onclick="unPressInjectionScheduleUpdateButton(); fetchInjectionSchedule('injection-schedule-list.html');">Cancel</a>
+        <!-- Row 3: Buttons -->
+        <div class="d-flex">
+            <div class="me-2">
+                <button type="submit" class="btn btn-success" style="width: 100px;">Save</button>
+            </div>
+            <div class="me-2">
+                <button type="button" class="btn btn-info text-white" style="width: 100px;" onclick="resetInjectionSchedule()">Reset</button>
+            </div>
+            <div>
+                <a class="btn btn-warning text-white" onclick="unPressInjectionScheduleUpdateButton(); fetchInjectionSchedule('injection-schedule-list.html');" style="width: 100px;">Cancel</a>
+            </div>
         </div>
     </form>
 </div>
