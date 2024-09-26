@@ -8,6 +8,7 @@ import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineResponseDto3;
 import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineResponseDto4;
 import mockProject.team3.Vaccination_20.dto.vaccineDto.VaccineResponseDto5;
 import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.VaccineTypeResponseDto4;
+import mockProject.team3.Vaccination_20.exception.vaccine_exception.VaccineAlreadyExistsException;
 import mockProject.team3.Vaccination_20.model.Vaccine;
 import mockProject.team3.Vaccination_20.model.VaccineType;
 import mockProject.team3.Vaccination_20.repository.VaccineRepository;
@@ -16,6 +17,7 @@ import mockProject.team3.Vaccination_20.service.VaccineService;
 import mockProject.team3.Vaccination_20.utils.Status;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.hibernate.service.spi.ServiceException;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.modelmapper.TypeToken;
@@ -31,6 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -57,10 +60,13 @@ public class VaccineServiceImpl implements VaccineService {
 
     @Override
     public int createVaccine(VaccineRequestDto1 vaccineRequestDto1) {
-        System.out.println(vaccineRequestDto1.getVaccineTypeId());
+        if (vaccineRepository.existsById(vaccineRequestDto1.getVaccineId())){
+            throw new VaccineAlreadyExistsException("Vaccine with ID " + vaccineRequestDto1.getVaccineId() + " already exists.");
+        }
         Vaccine vaccine = modelMapper.map(vaccineRequestDto1, Vaccine.class);
         try {
-            VaccineType vaccineType = vaccineTypeRepository.findById(vaccineRequestDto1.getVaccineTypeId()).get();
+            VaccineType vaccineType = vaccineTypeRepository.findById(vaccineRequestDto1.getVaccineTypeId())
+                    .orElseThrow(() -> new IllegalArgumentException("Vaccine Type not found"));
             vaccine.setVaccineType(vaccineType);
         } catch(Exception e) {
             return 0;
@@ -85,10 +91,11 @@ public class VaccineServiceImpl implements VaccineService {
     @Override
     public VaccineResponseDto5 getVaccineById(String vaccineId) {
         try {
-            Vaccine vaccine = vaccineRepository.findById(vaccineId).get();
-            return modelMapper.map(vaccine, VaccineResponseDto5.class);
-        } catch(Exception e) {
-            return new VaccineResponseDto5();
+            return vaccineRepository.findById(vaccineId)
+                    .map(vaccine -> modelMapper.map(vaccine, VaccineResponseDto5.class))
+                    .orElse(null);
+        } catch (Exception e) {
+            throw new RuntimeException("Error occurred while fetching vaccine", e);
         }
     }
 
@@ -111,14 +118,17 @@ public class VaccineServiceImpl implements VaccineService {
                 selectedVaccine.setVaccineStatus(Status.INACTIVE);
                 vaccineRepository.save(selectedVaccine);
             }
+            if(vaccineIds.size() > 1) {
+                return vaccineIds.size();
+            }
+            return 1;
         } catch (NoSuchElementException e) {
             System.out.println("could not find a vaccine with given vaccine IDs");
             return -2;
+        } catch (RuntimeException e) {
+            System.out.println("An unexpected error occurred: " + e.getMessage());
+            return -3;
         }
-        if(vaccineIds.size() > 1) {
-            return vaccineIds.size();
-        }
-        return 1;
     }
 
     @Override
@@ -132,7 +142,7 @@ public class VaccineServiceImpl implements VaccineService {
         font.setBold(true);
         headerStyle.setFont(font);
 
-        String[] headers = {"Vaccine ID", "Contraindication", "Indication", "Number of Injection", "Vaccine Origin", "Time Begin Next Injection", "Time End Next Injection", "Vaccine Usage", "Vaccine Name", "Status"};
+        String[] headers = {"Vaccine ID", "Contraindication", "Indication", "Number of Injection", "Vaccine Origin", "Time Begin Next Injection", "Time End Next Injection", "Vaccine Usage", "Vaccine Name", "Status", "Vaccine Type"};
         for (int i = 0; i < headers.length; i++) {
             Cell cell = headerRow.createCell(i);
             cell.setCellValue(headers[i]);
@@ -157,25 +167,37 @@ public class VaccineServiceImpl implements VaccineService {
         List<Vaccine> vaccines = new ArrayList<>();
         List<String> notifications = new ArrayList<>(); // List to store notifications
 
+        // Define the expected headers
+        String[] expectedHeaders = {"Vaccine ID", "Contraindication", "Indication", "Number of Injection", "Vaccine Origin", "Time Begin Next Injection", "Time End Next Injection", "Vaccine Usage", "Vaccine Name", "Status", "Vaccine Type"};
+
+        // Validate header row
+        Row headerRow = sheet.getRow(0);
+        if (headerRow == null || headerRow.getLastCellNum() != expectedHeaders.length) {
+            notifications.add("Header row is missing or does not match the template.");
+            workbook.close();
+            return notifications;
+        }
+
+        for (int i = 0; i < expectedHeaders.length; i++) {
+            Cell cell = headerRow.getCell(i);
+            if (cell == null || !expectedHeaders[i].equals(cell.getStringCellValue())) {
+                notifications.add("Header mismatch at column " + (i + 1) + ". Expected: " + expectedHeaders[i]);
+                workbook.close();
+                return notifications;
+            }
+        }
+
+        // Process data rows
         for (int i = 1; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
-
             if (row == null) {
-                System.out.println("Row " + i + " is empty.");
+                notifications.add("Row " + (i + 1) + " is empty.");
                 continue;
-            }
-
-            for (int j = 0; j <= 10; j++) {
-                Cell cell = row.getCell(j);
-                if (cell == null) {
-                    System.out.println("Cell " + j + " in row " + i + " is null.");
-                } else {
-                    System.out.println("Cell " + j + " in row " + i + " contains: " + cell.toString());
-                }
             }
 
             Vaccine vaccine = new Vaccine();
 
+            // Read and set fields from the row
             if (row.getCell(0) != null) {
                 vaccine.setVaccineId(row.getCell(0).getStringCellValue());
             }
@@ -204,9 +226,15 @@ public class VaccineServiceImpl implements VaccineService {
                 vaccine.setVaccineName(row.getCell(8).getStringCellValue());
             }
             if (row.getCell(9) != null) {
-                vaccine.setVaccineStatus(Status.valueOf(row.getCell(9).getStringCellValue()));
+                try {
+                    vaccine.setVaccineStatus(Status.valueOf(row.getCell(9).getStringCellValue().toUpperCase()));
+                } catch (IllegalArgumentException e) {
+                    notifications.add("Invalid status at row " + (i + 1) + ". Expected 'ACTIVE' or 'INACTIVE'.");
+                    continue;
+                }
             }
 
+            // Check for Vaccine Type
             if (row.getCell(10) != null) {
                 String vaccineTypeId = row.getCell(10).getStringCellValue();
                 VaccineType vaccineType = vaccineTypeRepository.findById(vaccineTypeId).orElse(null);
@@ -219,22 +247,38 @@ public class VaccineServiceImpl implements VaccineService {
                         notifications.add("Cannot add vaccine at row " + (i + 1) + " because the vaccine type is inactive.");
                     }
                 } else {
-                    notifications.add("Cannot add vaccine at row "+ (i+1) + " because the vaccine type was not found.");
+                    notifications.add("Cannot add vaccine at row " + (i + 1) + " because the vaccine type was not found.");
                 }
+            } else {
+                notifications.add("Vaccine type is missing at row " + (i + 1) + ".");
             }
         }
 
-        System.out.println("Vaccines to be saved: " + vaccines.size());
-        vaccineRepository.saveAll(vaccines);
+        // Save all valid vaccines
+        if (!vaccines.isEmpty()) {
+            vaccineRepository.saveAll(vaccines);
+            notifications.add("Successfully imported " + vaccines.size() + " vaccines.");
+        }
 
         workbook.close();
         return notifications; // Return notifications to the controller
     }
 
+
     public List<VaccineResponseDto4> findAllVaccineName() {
-        List<Vaccine> vaccines = vaccineRepository.findAll();
-        return modelMapper.map(vaccines, new TypeToken<List<VaccineResponseDto4>>(){}.getType());
+        try {
+            List<Vaccine> vaccines = vaccineRepository.findAll();
+            if (vaccines.isEmpty()) {
+                System.out.println("No vaccines found.");
+                return Collections.emptyList();
+            }
+            return modelMapper.map(vaccines, new TypeToken<List<VaccineResponseDto4>>(){}.getType());
+        } catch (RuntimeException e) {
+            System.out.println("An error occurred while fetching the vaccine list: " + e.getMessage());
+            throw new ServiceException("Unable to fetch vaccines.", e);
+        }
     }
+
 
     @Override
     public Page<VaccineResponseDto5> vaccineListForReportByFilter(LocalDate beginDate, LocalDate endDate, String vaccineTypeName, String origin, int page, int size) {
