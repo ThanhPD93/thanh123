@@ -17,7 +17,7 @@ public class VaccineTypeIdGenerator implements IdentifierGenerator {
 
         // Use session.doWork() to obtain the JDBC connection
         session.doWork(connection -> {
-            String query = "SELECT injection_result_id FROM injection_result ORDER BY injection_result_id DESC LIMIT 1";
+            String query = "SELECT vaccine_type_id FROM vaccine_type ORDER BY vaccine_type_id DESC LIMIT 1";
             try (Statement statement = connection.createStatement()) {
                 ResultSet rs = statement.executeQuery(query);
                 if (rs.next()) {

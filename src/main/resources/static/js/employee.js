@@ -384,7 +384,7 @@ function sendEmployeeData(employee) {
                 alert(error.message + " -->\n" + validationMessage);
             }
             else {
-                alert("an expected error occurred at /api/employee/add, error code: " + xhr.status);
+                alert("an unexpected error occurred at /api/employee/add, error code: " + xhr.status + "\nerror message: " + xhr.responseText);
             }
 		}
 	});
