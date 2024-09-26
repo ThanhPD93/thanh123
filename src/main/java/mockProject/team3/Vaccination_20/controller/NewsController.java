@@ -62,19 +62,14 @@ public class NewsController {
     @Operation(summary = "Find all news and put in a pagination list for display")
     @ApiResponse(responseCode = "200", description = "Pagination list of news found!")
     @ApiResponse(responseCode = "404", description = "No news found for the given search input")
-    @ApiResponse(responseCode = "400", description = "Invalid input provided")
     @ApiResponse(responseCode = "500", description = "Internal server error")
     @GetMapping("/findAllNews")
-    ResponseEntity<Page<NewsResponseDto>> findAllNews(
+    ResponseEntity<Page<NewsResponseDto1>> findAllNews(
             @RequestParam String searchInput,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size) {
 
         try {
-            if (searchInput == null || searchInput.trim().isEmpty()) {
-                return ResponseEntity.badRequest().body(null); // 400 Bad Request
-            }
-
             Page<NewsResponseDto1> newsResponseDto = newsService.findByTittleOrContent(searchInput, page, size);
 
             if (newsResponseDto.isEmpty()) {

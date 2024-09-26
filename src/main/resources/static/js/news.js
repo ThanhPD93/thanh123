@@ -22,8 +22,9 @@ function ajaxNews(filename){
 }
 
 function findNews(currentPage){
-    if($("#ajax-title")[0].innerHTML === "NEWS LIST") {
-        const pageSize = parseInt($("#dropdownMenuButton")[0].textContent, 10);
+	let pageSize;
+    if($("#ajax-title")[0].textContent === "NEWS LIST") {
+       pageSize = parseInt($("#dropdownMenuButton")[0].textContent, 10);
 	}
     $.ajax({
         url: "/api/news/findAllNews",
