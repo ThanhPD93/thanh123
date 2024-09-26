@@ -3,7 +3,6 @@ package mockProject.team3.Vaccination_20.model;
 import jakarta.persistence.*;
 import lombok.*;
 import mockProject.team3.Vaccination_20.utils.InjectionScheduleStatus;
-import mockProject.team3.Vaccination_20.utils.InjectionScheduleIdGenerator;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDate;
@@ -19,7 +18,7 @@ public class InjectionSchedule {
     @GeneratedValue(generator = "injection_schedule_id_generator")
     @GenericGenerator(
         name = "injection_schedule_id_generator",
-        strategy = "mockProject.team3.Vaccination_20.utils.InjectionScheduleIdGenerator"
+        strategy = "mockProject.team3.Vaccination_20.utils.IdGenerator.InjectionScheduleIdGenerator"
     )
     @Column(length = 36)
     private String injectionScheduleId;

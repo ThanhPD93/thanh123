@@ -18,11 +18,11 @@
     <form id="add-vaccine-type" onsubmit="event.preventDefault(); addVaccineType();">
         <!--        row 1-->
         <div class="d-flex justify-content-between mb-4">
-            <div class="col-4">
+            <div class="col-4 d-none">
                 <label class="form-label fw-medium">Vaccine Type Code <span class="text-danger">(*)</span></label>
                 <div class="input-group">
                     <img src="/images/icons/vaccine.png" class="input-group-text border-0">
-                    <input type="text" class="form-control" id="vaccineTypeId" maxlength="50" required>
+                    <input type="text" class="form-control" id="vaccineTypeId" maxlength="50" disabled>
                 </div>
             </div>
             <div class="col-4">

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import mockProject.team3.Vaccination_20.utils.Gender;
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +21,8 @@ import java.util.*;
 @Setter
 public class Employee implements UserDetails {
     @Id
+    @GeneratedValue(generator = "employee_id")
+    @GenericGenerator(name = "employee_id", strategy = "mockProject.team3.Vaccination_20.utils.IdGenerator.EmployeeIdGenerator")
     @Column(length = 36)
     private String employeeId;
 

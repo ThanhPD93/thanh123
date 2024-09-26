@@ -60,9 +60,9 @@ public class VaccineServiceImpl implements VaccineService {
 
     @Override
     public int createVaccine(VaccineRequestDto1 vaccineRequestDto1) {
-        if (vaccineRepository.existsById(vaccineRequestDto1.getVaccineId())){
-            throw new VaccineAlreadyExistsException("Vaccine with ID " + vaccineRequestDto1.getVaccineId() + " already exists.");
-        }
+//        if (vaccineRepository.existsById(vaccineRequestDto1.getVaccineId())){
+//            throw new VaccineAlreadyExistsException("Vaccine with ID " + vaccineRequestDto1.getVaccineId() + " already exists.");
+//        }
         Vaccine vaccine = modelMapper.map(vaccineRequestDto1, Vaccine.class);
         try {
             VaccineType vaccineType = vaccineTypeRepository.findById(vaccineRequestDto1.getVaccineTypeId())

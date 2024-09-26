@@ -10,7 +10,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Data
 public class VaccineRequestDto1 {
-    @NotBlank(message = "Vaccine ID must not be empty!")
     @Size(max = 36, message = "Vaccine ID must not exceed 36 characters!")
     private String vaccineId;
 

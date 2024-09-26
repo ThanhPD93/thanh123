@@ -17,7 +17,6 @@ import java.time.Period;
 @Data
 public class EmployeeRequestDto2 {
     @Size(max = 36, message = "Employee ID must not exceed 36 characters")
-    @NotBlank(message = "Employee ID must not be blank!")
     private String employeeId;
 
     @NotBlank(message = "Employee's address must not be blank!")

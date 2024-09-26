@@ -73,8 +73,6 @@ public class VaccineController {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vaccine type not found!");
             }
             return ResponseEntity.ok("add new vaccine success!");
-        } catch (VaccineAlreadyExistsException e){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error! Please try again later.");
         }
@@ -94,9 +92,6 @@ public class VaccineController {
             @RequestParam(value = "size", defaultValue = "10") int size) {
         try {
             Page<VaccineResponseDto3> vaccinePage = vaccineService.getVaccineListBySearchInput(searchInput, page, size);
-            if (vaccinePage.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-            }
             return ResponseEntity.ok(vaccinePage);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);

@@ -13,7 +13,6 @@ import java.time.LocalDate;
 @Data
 public class CustomerRequestDto1 {
     @Size(max = 36, message = "Customer ID must not exceed 36 characters!")
-    @NotBlank(message = "Customer ID must not be empty!")
     private String customerId;
 
     @NotBlank(message = "Customer address must not be empty!")

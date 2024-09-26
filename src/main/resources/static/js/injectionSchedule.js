@@ -213,11 +213,10 @@ function addInjectionSchedule(){
         data: JSON.stringify(injectionSchedule),
         success: function(stringData) {
             alert(stringData);
-            if(stringData === "add success") {
+            if(stringData === "Add success") {
                 resetInjectionSchedule();
             }
         },
-
         error: function(xhr) {
             if(xhr.status === 400) {
                 const error = JSON.parse(xhr.responseText);

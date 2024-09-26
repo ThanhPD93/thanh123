@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import mockProject.team3.Vaccination_20.utils.Status;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.util.List;
 
@@ -16,6 +17,8 @@ import java.util.List;
 @Setter
 public class VaccineType {
     @Id
+    @GeneratedValue(generator = "vaccine_type_id")
+    @GenericGenerator(name = "vaccine_type_id", strategy = "mockProject.team3.Vaccination_20.utils.IdGenerator.VaccineTypeIdGenerator")
     @Column(length = 36, unique = true, nullable = false)
     private String vaccineTypeId;
 
