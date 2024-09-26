@@ -16,20 +16,20 @@
     <form id="add-employee-form" onsubmit="event.preventDefault(); addEmployee();">
         <!-- Row 1 -->
         <div class="d-flex justify-content-between mb-4">
-            <!--employee ID-->
-            <div class="col-4 d-none">
-                <label class="form-label fw-medium">Employee ID <span class="text-danger">(*)</span></label>
-                <div class="input-group">
-                    <img src="/images/icons/people.png" class="input-group-text border-0">
-                    <input type="text" class="form-control" id="employeeId" maxlength="12" disabled>
-                </div>
-            </div>
             <!--employee name-->
             <div class="col-4">
                 <label class="form-label fw-medium">Employee Name <span class="text-danger">(*)</span></label>
                 <div class="input-group">
                     <img src="/images/icons/people.png" class="input-group-text border-0">
                     <input type="text" class="form-control text-capitalize" id="employeeName" maxlength="100">
+                </div>
+            </div>
+            <!--date of birth-->
+            <div class="col-4">
+                <label class="form-label fw-medium">Date of Birth <span class="text-danger">(*)</span></label>
+                <div class="input-group">
+                    <img src="/images/icons/calendar.png" class="input-group-text border-0">
+                    <input type="date" class="form-control" id="dateOfBirth" required>
                 </div>
             </div>
             <!--gender-->
@@ -39,7 +39,8 @@
                     <img src="/images/icons/gender.png" class="input-group-text border-0">
                     <div class="mt-2">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="gender" id="gender-male" value="MALE" checked>
+                            <input class="form-check-input" type="radio" name="gender" id="gender-male" value="MALE"
+                                   checked>
                             <label class="form-check-label" for="gender-male">Male</label>
                         </div>
                         <div class="form-check form-check-inline">
@@ -53,20 +54,20 @@
         </div>
         <!-- Row 2 -->
         <div class="d-flex justify-content-between mb-4">
-            <!--date of birth-->
-            <div class="col-4">
-                <label class="form-label fw-medium">Date of Birth <span class="text-danger">(*)</span></label>
-                <div class="input-group">
-                    <img src="/images/icons/calendar.png" class="input-group-text border-0">
-                    <input type="date" class="form-control" id="dateOfBirth" required>
-                </div>
-            </div>
             <!--phone-->
             <div class="col-4">
                 <label class="form-label fw-medium">Phone <span class="text-danger">(*)</span></label>
                 <div class="input-group">
                     <img src="/images/icons/old-typical-phone.png" class="input-group-text border-0">
                     <input type="number" class="form-control" id="phone" maxlength="50" required>
+                </div>
+            </div>
+            <!--email-->
+            <div class="col-4">
+                <label class="form-label fw-medium">Email <span class="text-danger">(*)</span></label>
+                <div class="input-group">
+                    <img src="/images/icons/email.png" class="input-group-text border-0">
+                    <input type="email" class="form-control" id="email" maxlength="100">
                 </div>
             </div>
             <!--address-->
@@ -79,17 +80,9 @@
             </div>
         </div>
         <!-- Row 3 -->
-        <div class="d-flex justify-content-between mb-4">
-            <!--email-->
-            <div class="col-4">
-                <label class="form-label fw-medium">Email <span class="text-danger">(*)</span></label>
-                <div class="input-group">
-                    <img src="/images/icons/email.png" class="input-group-text border-0">
-                    <input type="email" class="form-control" id="email" maxlength="100">
-                </div>
-            </div>
+        <div class="d-flex mb-4">
             <!--working place-->
-            <div class="col-4">
+            <div class="col-4 me-5">
                 <label class="form-label fw-medium">Working Place</label>
                 <div class="input-group">
                     <img src="/images/icons/building.png" class="input-group-text border-0">
@@ -97,13 +90,22 @@
                 </div>
             </div>
             <!--position-->
-            <div class="col-3">
+            <div class="col-4">
                 <label class="form-label fw-medium">Position</label>
                 <div class="input-group">
                     <img src="/images/icons/employee.png" class="input-group-text border-0">
                     <input type="text" class="form-control text-capitalize" id="position" maxlength="100" required>
                 </div>
             </div>
+            <!--employee ID-->
+            <div class="col-3 d-none">
+                <label class="form-label fw-medium">Employee ID <span class="text-danger">(*)</span></label>
+                <div class="input-group">
+                    <img src="/images/icons/people.png" class="input-group-text border-0">
+                    <input type="text" class="form-control" id="employeeId" maxlength="12" disabled>
+                </div>
+            </div>
+
         </div>
         <!-- Row 4 -->
         <div class="d-flex justify-content-between mb-4">
@@ -112,7 +114,7 @@
                 <label class="form-label fw-medium">Image</label>
                 <div class="input-group">
                     <img src="/images/icons/image.png" class="input-group-text border-0">
-                        <input type="file" class="form-control" id="image" onchange="previewImage()" required>
+                    <input type="file" class="form-control" id="image" onchange="previewImage()" required>
                 </div>
             </div>
             <!--username-->
@@ -143,21 +145,21 @@
             </div>
         </div>
         <!-- Row 6: buttons -->
-            <!--button-->
-            <div class="d-flex">
-                <div class="me-2">
-                    <button type="submit" class="btn btn-success" style="width: 100px;">Save</button>
-                </div>
-                <div class="me-2">
-                    <button type="button" class="btn btn-info text-white" style="width: 100px;"
-                            onclick="resetEmployeeInput()">Reset
-                    </button>
-                </div>
-                <div>
-                    <a class="btn btn-warning text-white" onclick="fetchEmployee('employee-list.html')"
-                       style="width: 100px;">Cancel</a>
-                </div>
+        <!--button-->
+        <div class="d-flex">
+            <div class="me-2">
+                <button type="submit" class="btn btn-success" style="width: 100px;">Save</button>
             </div>
+            <div class="me-2">
+                <button type="button" class="btn btn-info text-white" style="width: 100px;"
+                        onclick="resetEmployeeInput()">Reset
+                </button>
+            </div>
+            <div>
+                <a class="btn btn-warning text-white" onclick="fetchEmployee('employee-list.html')"
+                   style="width: 100px;">Cancel</a>
+            </div>
+        </div>
     </form>
 </div>
 

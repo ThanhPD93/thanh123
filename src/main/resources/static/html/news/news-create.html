@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,26 +8,27 @@
     <link rel="stylesheet" href="/css/bootstrap/bootstrap.min.css">
 </head>
 <body class="bg-body-secondary">
-<div class="container mt-3 bg-light p-2 text-center">
+<div class="container mt-3 bg-light p-3">
     <form onsubmit="event.preventDefault(); saveNews();" id="news-form">
-        <div class="row mb-3">
-            <div class="col-md-6 d-none">
-                <label for="newsId" class="form-label">Id <span class="text-danger">*</span></label>
-                <input type="text" class="form-control" id="newsId" disabled>
-            </div>
-            <div class="col-md-6">
-                <label for="title" class="form-label">Title <span class="text-danger">*</span></label>
+        <!-- Row 1: Title and Preview -->
+        <div class="d-flex justify-content-between mb-4">
+            <!-- Title -->
+            <div class="col-6">
+                <label for="title" class="form-label fw-medium">Title <span class="text-danger">(*)</span></label>
                 <input type="text" class="form-control" id="title" required>
             </div>
         </div>
-        <div class="mb-3">
-            <label for="preview" class="form-label">Preview <span class="text-danger">*</span></label>
-            <textarea class="form-control" id="preview" rows="3" required></textarea>
+        <!-- Preview -->
+        <div class="mb-4">
+                <label for="preview" class="form-label fw-medium">Preview <span class="text-danger">(*)</span></label>
+                <textarea class="form-control" id="preview" rows="3" required></textarea>
         </div>
-        <div class="mb-3">
-            <label for="content" class="form-label">Content <span class="text-danger">*</span></label>
+        <!-- Row 3: Content -->
+        <div class="mb-4">
+            <label for="content" class="form-label fw-medium">Content <span class="text-danger">(*)</span></label>
             <textarea class="form-control" id="content" rows="5" required></textarea>
         </div>
+        <!-- Row 4: Buttons -->
         <div class="d-flex">
             <div class="me-2">
                 <button type="submit" class="btn btn-success" style="width: 100px;">Save</button>
@@ -37,6 +39,10 @@
             <div>
                 <a class="btn btn-warning text-white" href="#" onclick="ajaxNews('news-list.html')" style="width: 100px;">Cancel</a>
             </div>
+        </div>
+        <div class="col-md-6 d-none">
+            <label for="newsId" class="form-label">Id <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="newsId" disabled>
         </div>
     </form>
 </div>

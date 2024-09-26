@@ -4,30 +4,28 @@
     <meta charset="UTF-8">
     <title>Dashboard</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/css/dashboard.css">
     <link rel="stylesheet" type="text/css" href="/css/employee-list.css">
     <link rel="stylesheet" type="text/css" href="/css/customer.css">
 
 </head>
 <body>
-<div class="container-fluid " style="background-color: rgb(233, 233, 233)" >
+<div class="container-fluid" style="background-color: rgb(233, 233, 233)">
     <div class="row">
         <div class="d-flex justify-content-between " style="background-color: rgb(0, 150, 136)">
             <div class="p-3">
-                <a><img style="width: 70px" src="/images/Logo-FPT.webp" alt="FPT"></a>
+                <a href="https://fpt.com/vi"><img style="width: 70px" src="/images/Logo-FPT.webp" alt="FPT"></a>
             </div>
-            <div class="p-3 align-baseline" >
-                    <span> <img src="/images/loupe.png" alt="img"></span>
-             </div>
         </div>
     </div>
     <div class="row">
-        <div class="col-3 px-0 ">
-            <div class="pb-1" style="background: url(./images/profile-bg.png)" >
+        <div class="col-3 px-0">
+            <div class="pb-1" style="background: url(./images/profile-bg.png)">
                 <img class="w-25 p-1" src="/images/profile.png" alt="profile">
                 <p class="px-3 text-warning fw-medium" id="current-username"></p>
-                <a class="nav-link text-black d-flex justify-content-between" data-bs-toggle="collapse" data-bs-target="#logout"
+                <a class="nav-link text-black d-flex justify-content-between" data-bs-toggle="collapse"
+                   data-bs-target="#logout"
                    aria-expanded="false" aria-controls="logout">
                     <div>
                         <p class="px-3 text-warning" id="userEmail"></p>
@@ -50,7 +48,8 @@
                     </a>
                     <!-- employee management here -->
                     <div id="employeeManagementLocation"></div>
-                    <a class="nav-link text-black d-flex justify-content-between" data-bs-toggle="collapse" data-bs-target="#customerManagement"
+                    <a class="nav-link text-black d-flex justify-content-between" data-bs-toggle="collapse"
+                       data-bs-target="#customerManagement"
                        aria-expanded="false" aria-controls="customerManagement">
                         <div class="fw-medium">
                             Customer Management
@@ -61,13 +60,15 @@
                     </a>
                     <div class="sub-menu collapse" id="customerManagement">
                         <a class="nav-link fw-medium" onclick="fetchCustomer('customer-list.html')">
-                           Customer List
+                            Customer List
                         </a>
-                        <a class="nav-link fw-medium" onclick="customerUpdateNotPressed(); fetchCustomer('customer-create.html');">
-                           Create Customer
+                        <a class="nav-link fw-medium"
+                           onclick="customerUpdateNotPressed(); fetchCustomer('customer-create.html');">
+                            Create Customer
                         </a>
                     </div>
-                    <a class="nav-link text-black d-flex justify-content-between" data-bs-toggle="collapse" data-bs-target="#vaccineType"
+                    <a class="nav-link text-black d-flex justify-content-between" data-bs-toggle="collapse"
+                       data-bs-target="#vaccineType"
                        aria-expanded="false" aria-controls="vaccineType">
                         <div class="fw-medium">
                             Vaccine Type Management
@@ -80,14 +81,16 @@
                         <a class="nav-link fw-medium" onclick="fetchVaccineType('vaccine-type-list.html')">
                             Vaccine Type List
                         </a>
-                        <a class="nav-link fw-medium" onclick="vaccineTypeUpdateNotPressed(); fetchVaccineType('vaccine-type-create.html');">
+                        <a class="nav-link fw-medium"
+                           onclick="vaccineTypeUpdateNotPressed(); fetchVaccineType('vaccine-type-create.html');">
                             Create Vaccine Type
                         </a>
                     </div>
-                    <a class="nav-link text-black d-flex justify-content-between" data-bs-toggle="collapse" data-bs-target="#vaccine"
+                    <a class="nav-link text-black d-flex justify-content-between" data-bs-toggle="collapse"
+                       data-bs-target="#vaccine"
                        aria-expanded="false" aria-controls="vaccine">
                         <div class="fw-medium">
-                            Vaccine management
+                            Vaccine Management
                         </div>
                         <div>
                             <i class="bi bi-plus"></i>
@@ -95,13 +98,14 @@
                     </a>
                     <div class="sub-menu collapse" id="vaccine">
                         <a class="nav-link fw-medium" onclick="fetchVaccine('vaccine-list.html')">
-                           Vaccine List
+                            Vaccine List
                         </a>
                         <a class="nav-link fw-medium" onclick="fetchVaccine('create-vaccine.html')">
-                           Create Vaccine
+                            Create Vaccine
                         </a>
                     </div>
-                    <a class="nav-link text-black d-flex justify-content-between" data-bs-toggle="collapse" data-bs-target="#injectionSchedule"
+                    <a class="nav-link text-black d-flex justify-content-between" data-bs-toggle="collapse"
+                       data-bs-target="#injectionSchedule"
                        aria-expanded="false" aria-controls="injectionSchedule">
                         <div class="fw-medium">
                             Injection Schedule
@@ -111,15 +115,18 @@
                         </div>
                     </a>
                     <div class="sub-menu collapse" id="injectionSchedule">
-                        <a class="nav-link fw-medium" onclick="unPressInjectionScheduleUpdateButton(); fetchInjectionSchedule('injection-schedule-list.html');">
+                        <a class="nav-link fw-medium"
+                           onclick="unPressInjectionScheduleUpdateButton(); fetchInjectionSchedule('injection-schedule-list.html');">
                             Injection Schedule List
                         </a>
-                        <a class="nav-link fw-medium" onclick="unPressInjectionScheduleUpdateButton(); fetchInjectionSchedule('injection-schedule-create.html');">
+                        <a class="nav-link fw-medium"
+                           onclick="unPressInjectionScheduleUpdateButton(); fetchInjectionSchedule('injection-schedule-create.html');">
                             Create Injection Schedule
                         </a>
                     </div>
                     <!--                    injection result-->
-                    <a class="nav-link text-black d-flex justify-content-between" data-bs-toggle="collapse" data-bs-target="#injectionResult"
+                    <a class="nav-link text-black d-flex justify-content-between" data-bs-toggle="collapse"
+                       data-bs-target="#injectionResult"
                        aria-expanded="false" aria-controls="injectionResult">
                         <div class="fw-medium">
                             Injection Result
@@ -129,16 +136,19 @@
                         </div>
                     </a>
                     <div class="sub-menu collapse" id="injectionResult">
-                        <a class="nav-link fw-medium" onclick="unPressIrUpdateButton(); fetchInjectionResult('injection-result-list.html');">
+                        <a class="nav-link fw-medium"
+                           onclick="unPressIrUpdateButton(); fetchInjectionResult('injection-result-list.html');">
                             Injection Result List
                         </a>
-                        <a class="nav-link fw-medium" onclick="unPressIrUpdateButton(); fetchInjectionResult('injection-result-create.html');">
+                        <a class="nav-link fw-medium"
+                           onclick="unPressIrUpdateButton(); fetchInjectionResult('injection-result-create.html');">
                             Create Injection Result
                         </a>
                     </div>
 
                     <!--                    news-->
-                    <a class="nav-link text-black d-flex justify-content-between" data-bs-toggle="collapse" data-bs-target="#news"
+                    <a class="nav-link text-black d-flex justify-content-between" data-bs-toggle="collapse"
+                       data-bs-target="#news"
                        aria-expanded="false" aria-controls="news">
                         <div class="fw-medium">
                             News
@@ -155,8 +165,9 @@
                             Create News Result
                         </a>
                     </div>
-<!--                    report-->
-                    <a class="nav-link text-black d-flex justify-content-between" data-bs-toggle="collapse" data-bs-target="#report"
+                    <!--                    report-->
+                    <a class="nav-link text-black d-flex justify-content-between" data-bs-toggle="collapse"
+                       data-bs-target="#report"
                        aria-expanded="false" aria-controls="report">
                         <div class="fw-medium">
                             Report
@@ -180,7 +191,7 @@
                 </nav>
             </div>
         </div>
-        <div class="col-9 " >
+        <div class="col-9 ">
             <div class="row text-center my-4">
                 <h3 id="ajax-title">WELCOME TO VACCINE MANAGEMENT SYSTEM</h3>
             </div>
@@ -195,15 +206,13 @@
 </div>
 
 <!-- Loading overlay and icon -->
-
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/js/employee.js"></script>
 <script src="/js/customer.js"></script>
 <script src="/js/vaccine.js"></script>
 <script src="/js/vaccineType.js"></script>
-<script src="/js/injectionresult.js"> </script>
+<script src="/js/injectionresult.js"></script>
 <script src="/js/vaccineType.js"></script>
 <script src="/js/injectionSchedule.js"></script>
 <script src="/js/report.js"></script>
