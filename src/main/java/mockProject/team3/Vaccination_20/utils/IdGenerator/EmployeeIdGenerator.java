@@ -17,7 +17,7 @@ public class EmployeeIdGenerator implements IdentifierGenerator {
 
         // Use session.doWork() to obtain the JDBC connection
         session.doWork(connection -> {
-            String query = "SELECT injection_result_id FROM injection_result ORDER BY injection_result_id DESC LIMIT 1";
+            String query = "SELECT employee_id FROM employee ORDER BY employee_id DESC LIMIT 1";
             try (Statement statement = connection.createStatement()) {
                 ResultSet rs = statement.executeQuery(query);
                 if (rs.next()) {
