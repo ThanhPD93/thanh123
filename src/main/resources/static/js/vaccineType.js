@@ -41,10 +41,15 @@ function findAllVaccineType(page) {
 }
 
 function updatePageVaccineType(currentPage, totalPages, pageSize, totalElements) {
-    document.getElementById("start-entry").innerHTML = currentPage === 0 ? 1 : currentPage * pageSize + 1;
-    document.getElementById("end-entry").innerHTML = currentPage === totalPages - 1 ? totalElements : (currentPage + 1) * pageSize;
-    document.getElementById("total-entries").innerHTML = totalElements;
-
+    if (totalElements === 0) {
+    		$("#start-entry")[0].innerHTML = 0;
+    		$("#end-entry")[0].innerHTML = 0;
+    		$("#total-entries")[0].innerHTML = 0;
+    	} else {
+            $("#start-entry")[0].innerHTML = currentPage === 0 ? 1 : currentPage * pageSize + 1;
+            $("#end-entry")[0].innerHTML = currentPage === totalPages - 1 ? totalElements : (currentPage + 1) * pageSize;
+            $("#total-entries")[0].innerHTML = totalElements;
+    	}
     const paginationContainer = document.getElementById("page-buttons");
     let pageButtons = '';
 

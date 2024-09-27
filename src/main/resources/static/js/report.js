@@ -558,7 +558,6 @@ function updatePageReportVaccine(currentPage, totalPages, pageSize, totalElement
     }
 
     paginationContainer.innerHTML = `<ul class="pagination">${pageButtons}</ul>`;
-    $("#dropdownMenuButton")[0].innerHTML = pageSize;
 }
 
 function resetReportInjectionResult(){
@@ -634,5 +633,4 @@ function updatePageReportIr(currentPage, totalPages, pageSize, totalElements) {
     }
 
     paginationContainer.innerHTML = `<ul class="pagination">${pageButtons}</ul>`;
-    $("#dropdownMenuButton")[0].innerHTML = pageSize;
 }
