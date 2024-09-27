@@ -1,4 +1,3 @@
-DELETE FROM employee;
 DELETE FROM injection_result;
 DELETE FROM injection_schedule;
 DELETE FROM vaccine;

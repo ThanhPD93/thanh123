@@ -1,4 +1,11 @@
 DELETE FROM employee;
+DELETE FROM injection_result;
+DELETE FROM injection_schedule;
+DELETE FROM vaccine;
+DELETE FROM customer;
+DELETE FROM vaccine_type;
+DELETE FROM news;
+DELETE FROM news_type;
 
 INSERT INTO Employee (employee_Id, address, date_of_birth, email, employee_name, gender, image, password, phone, position, username, working_place) VALUES
 ('EM0001', '123 Main St', '1990-01-15', 'john.doe@example.com', 'John Doe', 0, 'image1.png', 'password1', '1234567890', 'Manager', 'jdoe', 'Office A'),

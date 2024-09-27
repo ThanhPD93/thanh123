@@ -1,5 +1,7 @@
 package mockProject.team3.Vaccination_20.service.impl;
 import jakarta.persistence.EntityNotFoundException;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import mockProject.team3.Vaccination_20.dto.vaccineTypeDto.VaccineTypeRequestDto1;
 
@@ -39,6 +41,9 @@ public class VaccineTypeServiceImpl implements VaccineTypeService {
                 .stream()
                 .filter(vaccineType -> vaccineType.getVaccineTypeStatus() == Status.ACTIVE)
                 .collect(Collectors.toList());
+        if(vaccineTypes.isEmpty()) {
+            return new ArrayList<>();
+        }
         return modelMapper.map(vaccineTypes, new TypeToken<List<VaccineTypeResponseDto5>>(){}.getType());
     }
 
@@ -73,7 +78,6 @@ public class VaccineTypeServiceImpl implements VaccineTypeService {
     @Override
     public int addVaccineType(VaccineTypeRequestDto1 vaccineTypeRequestDto1) {
         VaccineType vaccineType = vaccineTypeRepository.findByVaccineTypeId(vaccineTypeRequestDto1.getVaccineTypeId());
-        System.out.println(vaccineTypeRequestDto1.getVaccineTypeImage());
         if(vaccineTypeRequestDto1.getVaccineTypeImage() == null && vaccineType != null) {
             byte[] currentImage = vaccineTypeRepository.findByVaccineTypeId(vaccineTypeRequestDto1.getVaccineTypeId()).getVaccineTypeImage();
             vaccineType = modelMapper.map(vaccineTypeRequestDto1, VaccineType.class);
@@ -110,7 +114,7 @@ public class VaccineTypeServiceImpl implements VaccineTypeService {
         }
         for (VaccineType vaccineType : vaccineTypes) {
             if(vaccineType.getVaccineTypeStatus() == Status.INACTIVE) {
-                return 0;
+                return -1;
             }
             vaccineType.setVaccineTypeStatus(Status.INACTIVE);
             count++;

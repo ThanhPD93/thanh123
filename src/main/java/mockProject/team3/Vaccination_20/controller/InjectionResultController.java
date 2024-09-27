@@ -91,14 +91,6 @@ public class InjectionResultController {
             @ApiResponse(responseCode = "200", description = "Injection result updated successfully!"),
             @ApiResponse(responseCode = "404", description = "Injection result not found!")
     })
-    @PutMapping("/update/{injectionResultId}")
-    public ResponseEntity<UInjectionResultDTO> updateInjectionResult(@PathVariable String injectionResultId, @RequestBody UInjectionResultDTO uInjectionResultDTO) {
-        UInjectionResultDTO updatedResult = injectionResultService.updateInjectionResult(injectionResultId, uInjectionResultDTO);
-        if (updatedResult == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(updatedResult);
-    }
 
     @GetMapping("/displayDropdown")
     public ResponseEntity<InjectionResultResponseDto2> displayDropdown() {

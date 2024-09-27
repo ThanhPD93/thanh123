@@ -14,8 +14,7 @@ import java.util.List;
 
 @Repository
 public interface VaccineRepository extends JpaRepository<Vaccine, String> {
-    Vaccine findByVaccineId(String vaccineName);
-
+    Vaccine findByVaccineId(String vaccineId);
 
     //use for add-ir
     List<Vaccine> findAll();
