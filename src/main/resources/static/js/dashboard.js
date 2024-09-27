@@ -56,8 +56,8 @@ document.addEventListener("DOMContentLoaded", function () {
                      <a class="nav-link fw-medium" onclick="unPressEmployeeUpdateButton(); fetchEmployee('employee-create.html');">
                          Create Employee
                      </a>
-                 </div>
-
+                 </div>`;
+				$("#vaccineTypeManagementLocation")[0].innerHTML = `
                  <a class="nav-link text-black d-flex justify-content-between" data-bs-toggle="collapse"
                     data-bs-target="#vaccineType"
                     aria-expanded="false" aria-controls="vaccineType">
