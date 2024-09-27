@@ -98,12 +98,17 @@ public class EmployeeController {
     }
 
     @Operation(summary = "return a picture (in byte[] format)")
-    @ApiResponse(responseCode = "200", description = "picture return successfully!")
-    @GetMapping("/image/{id}")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "picture return successfully!"),
+            @ApiResponse(responseCode = "400", description = "picture not found")
+    })
+            @GetMapping("/image/{id}")
     public ResponseEntity<byte[]> getEmployeeImage(@PathVariable String id) {
         Employee employee = employeeService.findEmployeeById(id);
         byte[] imageBytes = employee.getImage();
-
+        if(imageBytes == null) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_JPEG)  // Or IMAGE_PNG based on your image type
                 .body(imageBytes);
@@ -116,7 +121,6 @@ public class EmployeeController {
         if (employeeIds == null || employeeIds.isEmpty()) {
             return ResponseEntity.badRequest().body("No data deleted!");
         }
-
         try {
             employeeService.deleteEmployees(employeeIds);
             return ResponseEntity.ok("Employees deleted successfully");

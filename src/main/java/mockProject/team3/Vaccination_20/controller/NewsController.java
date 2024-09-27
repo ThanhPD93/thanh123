@@ -56,6 +56,9 @@ public class NewsController {
     @PostMapping("/add")
     ResponseEntity<String> addNews(@Valid @RequestBody NewsRequestDto1 newsAddRequestDto) {
         NewsResponseDto newsResponseDto = newsService.addNews(newsAddRequestDto);
+        if(newsResponseDto == null) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok("add success");
     }
 

@@ -63,26 +63,31 @@ public class VaccineTypeController {
     }
 
     @Operation(summary = "get list of vaccine type for drop-down list")
-    @ApiResponse(responseCode = "200", description = "list of vaccine type found")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of active vaccine type found"),
+            @ApiResponse(responseCode = "400", description = "No vaccine type that is active")
+    })
     @GetMapping("/vt-for-add-ir")
     public ResponseEntity<List<VaccineTypeResponseDto5>> getAllVaccineTypes() {
         List<VaccineTypeResponseDto5> vaccineTypeResponseDto5s = vaccineTypeService.getAllVaccineTypes();
+        if(vaccineTypeResponseDto5s.isEmpty()) {
+            return ResponseEntity.badRequest().body(vaccineTypeResponseDto5s);
+        }
         return ResponseEntity.ok(vaccineTypeResponseDto5s);
     }
 
     @Operation(summary = "Add a new vaccine type or update an existing one")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(type = "string", example = "New vaccine type added(updated) sucessfully"))),
+            @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(type = "string", example = "New vaccine type added(updated) successfully"))),
             @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(type = "string", example = "Add(update) failed!")))
     })
     @PostMapping("/add")
     public ResponseEntity<String> addVaccineType(@Valid @RequestBody VaccineTypeRequestDto1 vaccineTypeRequestDto1) {
         int result = vaccineTypeService.addVaccineType(vaccineTypeRequestDto1);
     	if (result == 0) {
-            System.out.println("Failed to add/updated vaccine type");
+
             return ResponseEntity.badRequest().body("cannot add new vaccineType, due to image fault");
         }
-        System.out.println("Vaccine type added/updated successfully");
         return ResponseEntity.ok("add new vaccine type success!");
     }
 
@@ -107,8 +112,10 @@ public class VaccineTypeController {
         int count = vaccineTypeService.makeInactive(vaccineTypeRequestDto2.getVaccineTypeListIds());
         if (count > 0) {
             return ResponseEntity.ok("Made " + count + " vaccine types inactive successfully.");
+        } else if(count == -1) {
+            return ResponseEntity.badRequest().body("Please select only active vaccine types");
         }
-        return ResponseEntity.ok("No active vaccine types found.");
+        return ResponseEntity.badRequest().body("No active vaccine types found.");
     }
 
     @Operation(summary = "display vaccine type image")

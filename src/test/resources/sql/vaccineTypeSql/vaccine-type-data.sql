@@ -17,4 +17,4 @@ VALUES
     ('UUID-007', 'This is a description for VaccineType 7', 'VaccineType 7', 1, '7'),
     ('UUID-008', 'This is a description for VaccineType 8', 'VaccineType 8', 1, '8'),
     ('UUID-009', 'This is a description for VaccineType 9', 'VaccineType 9', 1, '9'),
-    ('UUID-010', 'This is a description for VaccineType 10', 'VaccineType 10', 1, '10');
+    ('UUID-010', 'This is a description for VaccineType 10', 'VaccineType 10', 1, null);

@@ -54,7 +54,7 @@ public class ReportController {
             @ApiResponse(responseCode = "404", description = "ajax path could not find file!")
     })
     @GetMapping("/getAjax")
-    public ResponseEntity<String> getDocument(@RequestParam String filename) throws IOException {
+    public ResponseEntity<String> getDocument(@RequestParam String filename)  throws IOException {
         // if user input filename that is empty or null -> return response 400 and appropriate message
         if(filename == null || filename.isEmpty()) {
             return ResponseEntity.badRequest().body(MSG.MSG31.getMessage());
@@ -104,25 +104,27 @@ public class ReportController {
                 results.set(monthIndex - 1, total);
             }
         }
-
         ChartData chartData = new ChartData();
         chartData.setMonths(months);
         chartData.setResults(results);
 
         return ResponseEntity.ok(chartData);
     }
-
     //report injection list
     @GetMapping("/injection/filter")
-    public ResponseEntity<Page<ReportInjectionResultDto>> filterReportInjectionResults(@RequestParam(value = "startDate",required = false) LocalDate startDate,
-                                                                                       @RequestParam (value = "endDate",required = false)LocalDate endDate,
-                                                                                       @RequestParam(value = "vaccineTypeName",required = false) String vaccineTypeName,
-                                                                                       @RequestParam (value = "vaccineName",required = false)String vaccineName,
-                                                                                       @RequestParam (value = "page",required = false, defaultValue = "0")int page,
-                                                                                       @RequestParam (value = "size",required = false, defaultValue = "10")int size){
-        Page<ReportInjectionResultDto> reportInjectionResultDto = injectionResultService.filterReportInjection(startDate, endDate, vaccineTypeName, vaccineName, page, size);
+    public ResponseEntity<Page<ReportInjectionResultDto>> filterReportInjectionResults(
+            @RequestParam(value = "startDate",required = false) LocalDate startDate,
+            @RequestParam (value = "endDate",required = false)LocalDate endDate,
+            @RequestParam(value = "vaccineTypeName",required = false) String vaccineTypeName,
+            @RequestParam (value = "vaccineName",required = false)String vaccineName,
+            @RequestParam (value = "page",required = false, defaultValue = "0")int page,
+            @RequestParam (value = "size",required = false, defaultValue = "10")int size)
+    {
+        Page<ReportInjectionResultDto> reportInjectionResultDto =
+                injectionResultService.filterReportInjection(startDate, endDate, vaccineTypeName, vaccineName, page, size);
         return ResponseEntity.ok(reportInjectionResultDto);
     }
+
 
     @Operation(summary = "fetch chart for customer")
     @ApiResponse(responseCode = "200", description = "Get chart success")
@@ -134,9 +136,7 @@ public class ReportController {
                 "January", "February", "March", "April", "May", "June",
                 "July", "August", "September", "October", "November", "December"
         ));
-
         List<Integer> results = new ArrayList<>(Collections.nCopies(12, 0));
-
         for (Object[] result : resultList) {
             Integer monthIndex = (Integer) result[0]; // Lấy chỉ số tháng (1-12)
             Integer total = ((Number) result[1]).intValue();
@@ -146,7 +146,6 @@ public class ReportController {
                 results.set(monthIndex - 1, total); // Cập nhật giá trị
             }
         }
-
         ChartData chartData = new ChartData();
         chartData.setMonths(months);
         chartData.setResults(results);
@@ -192,13 +191,15 @@ public class ReportController {
     @Operation(summary = "Get list of vaccine by filter with paginantion")
     @ApiResponse(responseCode = "200", description = "Get list success")
     @GetMapping("/vaccine/filter")
-    public ResponseEntity<Page<VaccineResponseDto5>> getVaccineListForReport(@RequestParam(value = "beginDate", required = false) LocalDate beginDate,
-                                                                             @RequestParam(value = "endDate", required = false) LocalDate endDate,
-                                                                             @RequestParam(value = "vaccineTypeName", required = false) String vaccineTypeName,
-                                                                             @RequestParam(value = "origin", required = false) String origin,
-                                                                             @RequestParam(value = "page",required = false, defaultValue = "0") int page,
-                                                                             @RequestParam(value = "size",required = false, defaultValue = "10") int size){
-        Page<VaccineResponseDto5> vaccinePageForReport = vaccineService.vaccineListForReportByFilter(beginDate, endDate, vaccineTypeName, origin, page, size);
+    public ResponseEntity<Page<VaccineResponseDto5>> getVaccineListForReport(
+            @RequestParam(value = "beginDate", required = false) LocalDate beginDate,
+            @RequestParam(value = "endDate", required = false) LocalDate endDate,
+            @RequestParam(value = "vaccineTypeName", required = false) String vaccineTypeName,
+            @RequestParam(value = "origin", required = false) String origin,
+            @RequestParam(value = "page",required = false, defaultValue = "0") int page,
+            @RequestParam(value = "size",required = false, defaultValue = "10") int size){
+        Page<VaccineResponseDto5> vaccinePageForReport =
+                vaccineService.vaccineListForReportByFilter(beginDate, endDate, vaccineTypeName, origin, page, size);
         return ResponseEntity.ok(vaccinePageForReport);
     }
 }

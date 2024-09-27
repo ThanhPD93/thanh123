@@ -88,6 +88,9 @@ public class InjectionScheduleServiceImpl implements InjectionScheduleService {
     @Override
     public InjectionScheduleResponseDto1 findByInjectionScheduleId(String id) {
         InjectionSchedule injectionSchedule = injectionScheduleRepository.findByInjectionScheduleId(id);
+        if(injectionSchedule == null){
+            return null;
+        }
         return modelMapper.map(injectionSchedule, InjectionScheduleResponseDto1.class);
     }
 

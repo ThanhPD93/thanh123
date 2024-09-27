@@ -129,9 +129,10 @@ public class EmployeeServiceImpl implements EmployeeService, UserDetailsService 
 
     @Override
     public EmployeeResponseDto1 findById(String id) {
+        if(employeeRepository.findById(id).isEmpty()) {
+            return null;
+        }
         Employee employee = employeeRepository.findById(id).get();
-//        employee.setPassword(passwordEncoder.);
-
         EmployeeResponseDto1 employeeResponseDto1 = modelMapper.map(employee, EmployeeResponseDto1.class);
         return employeeResponseDto1;
     }
