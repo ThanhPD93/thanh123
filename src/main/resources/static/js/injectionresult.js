@@ -27,9 +27,7 @@ $.ajax({
          }
     },
     error: function(xhr) {
-        alert("error at /api/injection-result/getAjax, error code: " + xhr.status);
-        console.log("response code: " + xhr.status);
-        console.log("response body: " + JSON.parse(xhr.responseText).message);
+        console.error("error at getting ajax document for result\nerror code: " + xhr.status + "\nerror message: " + xhr.responseText);
     }
 });
 }
@@ -76,7 +74,7 @@ function setupDropdown(customerName, vaccineTypeName) {
 			}
 		},
 		error: function(xhr) {
-			alert("error at /api/injection-result/displayDropdown, error code: " + xhr.status);
+			console.error("error at displaying dropdown list\nerror code: " + xhr.status + "\nerror message: " + xhr.responseText);
 		}
 	});
 }
@@ -142,7 +140,7 @@ function findAllInjectionResults(page) {
             updatePageInjectionResult(injectionResults.number, injectionResults.totalPages, pageSize, injectionResults.totalElements);
 		},
 		error: function(xhr) {
-			alert("error at /api/injection-result/findBySearch, error code: " + xhr.status + ", " + xhr.statusText);
+			console.error("error at finding result,\nerror code: " + xhr.status + "\nerror message: " + xhr.responseText);
 		}
 	});
 }
@@ -262,19 +260,24 @@ function addInjectionResult() {
 		success: function(stringData) {
 			alert(stringData);
 			$('#add-injection-result-form')[0].reset();
+			setupDropdown();
 		},
         error: function(xhr) {
             if(xhr.status === 400) {
-                const error = JSON.parse(xhr.responseText);
-                let validationMessage = "";
-                let i = 0;
-                error.errors.forEach(error => {
-                    validationMessage += ++i + "." + error.defaultMessage + "\n";
-                });
-                alert(error.message + " -->\n" + validationMessage);
+                try {
+                    const error = JSON.parse(xhr.responseText);
+                    let validationMessage = "";
+                    let i = 0;
+                    error.errors.forEach(error => {
+                        validationMessage += ++i + "." + error.defaultMessage + "\n";
+                    });
+                    alert(error.message + " -->\n" + validationMessage);
+                } catch (error) {
+                	console.error("an expected error occurred at create/update result\nerror code: " + xhr.status + "\nerror message: " + xhr.responseText);
+                }
             }
             else {
-                alert("an expected error occurred at /api/injection-result/add, error code: " + xhr.status);
+                console.error("an expected error occurred at create/update result\nerror code: " + xhr.status + "\nerror message: " + xhr.responseText);
             }
         }
 	});
@@ -315,7 +318,7 @@ function updateInjectionResultDetail(injectionResultId) {
 			loadInjectionPlace(ir.injectionPlace);
 		},
 		error: function(xhr) {
-			alert("error at /.../detail/..., error code: " + xhr.status);
+			console.error("error at getting result detail\nerror code: " + xhr.status + "\nerror message: " + xhr.responseText);
 		}
 	});
 }
@@ -336,7 +339,7 @@ function showInjectionResultDetails(injectionResultId) {
             modal.show();
 		},
 		error: function(xhr) {
-			alert("error at /..../detail/id, error code:" + xhr.status);
+			console.error("error at getting result detail\nerror code: " + xhr.status + "\nerror message: " + xhr.responseText);
 		}
 	});
 }
@@ -366,24 +369,19 @@ function deleteSelectedInjectionResults() {
         return;
     }
 
-    // Send delete request
-    fetch('/api/injection-result/delete', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(idsToDelete)
-    })
-        .then(response => response.json())
-        .then(result => {
-            if (result.code === 200) { // Assuming 200 indicates success
-                alert('Deletion successful');
-                fetchInjectionResult('injection-result-list.html'); // Reload the list
-            } else {
-                alert('Deletion failed: ' + result.description);
-            }
-        })
-        .catch(error => console.error('Error deleting injection results:', error));
+	$.ajax({
+		url: "/api/injection-result/delete",
+		method: "DELETE",
+		contentType: "application/json",
+		data: JSON.stringify(idsToDelete),
+		success: function(stringData) {
+			alert(stringData);
+			fetchInjectionResult('injection-result-list.html');
+		},
+		error: function(xhr) {
+			console.error("error deleting detail\nerror code: " + xhr.status + "\nerror message: " + xhr.responseText);
+		}
+	});
 }
 
 function resetInputInjectionResult() {

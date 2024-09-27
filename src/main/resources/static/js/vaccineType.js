@@ -5,35 +5,9 @@ function vaccineTypeUpdateNotPressed() {
 	vaccineTypeUpdateBtn = false;
 }
 
-function searchVaccineType(page) {
-    const query = document.getElementById('searchInput').value;
-    const currentPageSize = parseInt(document.getElementById("dropdownMenuButton").innerHTML, 10);
-
-    fetch(`/api/vaccine-type/findAll?searchInput=${encodeURIComponent(query)}&page=${page}&size=${currentPageSize}`)
-        .then(response => response.json())
-        .then(vaccineTypes => {
-            const tableBody = document.getElementById('vaccine-type-list');
-            tableBody.innerHTML = '';
-            vaccineTypes.content.forEach(vaccineType => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td class="text-center check-boxes"><input type="checkbox"></td>
-                    <td><a href="#" class="link-offset-2 link-underline link-underline-opacity-0"
-                    onclick="vaccineTypeUpdatePressed(); fetchVaccineType('vaccine-type-create.html');">${vaccineType.vaccineTypeId}</a></td>
-                    <td>${vaccineType.vaccineTypeName}</td>
-                    <td>${vaccineType.vaccineTypeDescription}</td>
-                    <td>${vaccineType.status}</td>
-                `;
-                tableBody.appendChild(row);
-            });
-            updatePageVaccineType(vaccineTypes.number, vaccineTypes.totalPages, currentPageSize, vaccineTypes.totalElements);
-        })
-        .catch(error => console.error('Error fetching vaccineType data:', error));
-}
-
-function findAllVaccineType(page, pageSize) {
+function findAllVaccineType(page) {
     const query = $("#searchInput")[0].value;
-
+	const pageSize = parseInt($("#dropdownMenuButton")[0].textContent, 10);
     $.ajax({
     	url: "/api/vaccine-type/findAll",
     	data: {
@@ -60,8 +34,8 @@ function findAllVaccineType(page, pageSize) {
             });
             updatePageVaccineType(vaccineTypes.number, vaccineTypes.totalPages, pageSize, vaccineTypes.totalElements);
     	},
-    	error: function() {
-    		alert("fail to fetch /api/vaccine-type/findAll");
+    	error: function(xhr) {
+    		console.error("fail to fetch list of vaccine type\nerror code: " + xhr.status + "\nerror message: " + xhr.responseText);
     	}
     });
 }
@@ -149,20 +123,15 @@ function fetchVaccineType(filename) {
                 	}
                 }
 		},
-		error: function() {
-			alert("error fetching ajax for vaccineType list");
+		error: function(xhr) {
+			console.error("error fetching ajax document for vaccineType list\nerror code: " + xhr.status + "\nerror message: " + xhr.responseText);
 		}
 	});
 }
 
 // Add new vaccine type
 function addVaccineType() {
-    // const form = document.getElementById('add-vaccine-type');
-    //
-    // const formData = new FormData(form);
-
     const activeInput = document.querySelector('input[name="vaccineTypeStatus"]:checked');
-
     const vaccineType = {
         vaccineTypeId : document.getElementById('vaccineTypeId').value,
         vaccineTypeName: document.getElementById('vaccineTypeName').value,
@@ -186,7 +155,9 @@ function addVaccineType() {
 }
 
 function sendVaccineTypeData(vaccineType) {
-    const vaccineTypeId = document.getElementById('vaccineTypeId');
+	if (vaccineTypeUpdateBtn === true && vaccineType.vaccineTypeImage === null) {
+		vaccineType.vaccineTypeImage = "null-image";
+	}
     $.ajax({
     	url: "/api/vaccine-type/add",
     	method: "POST",
@@ -196,19 +167,25 @@ function sendVaccineTypeData(vaccineType) {
     		alert(stringData);
     		$('#add-vaccine-type')[0].reset();
             $("#image-preview")[0].style.display = 'none';
+            vaccineTypeUpdateNotPressed();
+            $("#image")[0].required = true;
     	},
     	error: function(xhr) {
             if(xhr.status === 400) {
-                const error = JSON.parse(xhr.responseText);
-                let validationMessage = "";
-                let i = 0;
-                error.errors.forEach(error => {
-                    validationMessage += ++i + "." + error.defaultMessage + "\n";
-                });
-                alert(error.message + " -->\n" + validationMessage);
+            	try {
+                    const error = JSON.parse(xhr.responseText);
+                    let validationMessage = "";
+                    let i = 0;
+                    error.errors.forEach(error => {
+                        validationMessage += ++i + "." + error.defaultMessage + "\n";
+                    });
+                    alert(error.message + " -->\n" + validationMessage);
+            	} catch (error) {
+            		alert(xhr.responseText);
+            	}
             }
             else {
-                alert("an expected error occurred at /api/vaccine-type/add, error code: " + xhr.status);
+                console.error("an expected error occurred at create/update vaccien type\nerror code: " + xhr.status + "\nerror message: " + xhr.responseText);
             }
        	}
     });
@@ -216,35 +193,34 @@ function sendVaccineTypeData(vaccineType) {
 
 // Make the vaccine type in-active in order to
 function makeInactive() {
+    let makeInactiveBody;
     const checkboxes = document.querySelectorAll('.check-boxes input[type="checkbox"]:checked');
     if(checkboxes.length === 0) {
         alert("No data to make inactive!");
         return;
     } else {
         let ids = [];
-        const makeInactiveBody = {
+        makeInactiveBody = {
             vaccineTypeListIds : ids
         };
         checkboxes.forEach(checkbox => {
             ids.push(checkbox.closest('tr').querySelector('td:nth-child(2) a').textContent);
         });
-        fetch('/api/vaccine-type/make-inactive', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(makeInactiveBody)
-        })
-            .then(response => response.text())
-            .then(message => {
-                findAllVaccineType(0,10);
-                alert(message);
-            })
-            .catch(error => {
-                console.error('JS: Error making inactive:', error);
-                alert('JS: Failed to make inactive. Exception was thrown.');
-            });
-    }
+	}
+    $.ajax({
+    	url: "/api/vaccine-type/make-inactive",
+    	method: "PUT",
+    	contentType: "application/json",
+    	data: JSON.stringify(makeInactiveBody),
+    	success: function (stringData) {
+    		alert(stringData);
+    		findAllVaccineType(0,10);
+    	},
+    	error: function(xhr) {
+            alert(xhr.responseText);
+            console.error("error making inactive for vaccine type\nerror code: " + xhr.status + "\nerror message: " + xhr.responseText);
+    	}
+    });
 }
 
 function fetchUpdateVaccineType(filename, vaccineTypeId) {
@@ -253,6 +229,7 @@ function fetchUpdateVaccineType(filename, vaccineTypeId) {
         .then(response => response.text())
         .then(data => {
             document.getElementById('ajax-content').innerHTML = data;
+            $("#ajax-title")[0].innerHTML = "UPDATE VACCINE";
             updateVaccineTypeDetail(vaccineTypeId);
         })
         .catch(error => console.error('Error fetching document:', error));
@@ -267,6 +244,7 @@ function updateVaccineTypeDetail(vaccineTypeId) {
             $("#vaccineTypeName")[0].value = vaccineType.vaccineTypeName;
             $("#vaccineTypeDescription")[0].value = vaccineType.vaccineTypeDescription;
             $("#vaccineTypeStatus")[0].disabled = false;
+            $("#image")[0].required = false;
             const statusCheckbox = $("#vaccineTypeStatus")[0];
             // status = "ACTIVE" ? checked = true : checked = false
             vaccineType.vaccineTypeStatus === "ACTIVE" ? statusCheckbox.checked = true : statusCheckbox.checked = false ;
@@ -295,4 +273,3 @@ function resetVaccineTypeInput() {
 	}
     $("#image-preview")[0].style.display = 'none';
 }
-

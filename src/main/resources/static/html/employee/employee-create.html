@@ -118,7 +118,7 @@
                 </div>
             </div>
             <!--username-->
-            <div class="col-4">
+            <div class="col-4" id="username-div">
                 <label class="form-label fw-medium">Username <span class="text-danger">(*)</span></label>
                 <div class="input-group">
                     <img src="/images/icons/id-card.png" class="input-group-text border-0">
@@ -126,7 +126,7 @@
                 </div>
             </div>
             <!--password-->
-            <div class="col-3">
+            <div class="col-3" id="password-div">
                 <label class="form-label fw-medium">Password <span class="text-danger">(*)</span></label>
                 <div class="input-group">
                     <img src="/images/icons/password.png" class="input-group-text border-0">
@@ -156,7 +156,7 @@
                 </button>
             </div>
             <div>
-                <a class="btn btn-warning text-white" onclick="fetchEmployee('employee-list.html')"
+                <a class="btn btn-warning text-white" onclick="pressCancel(); fetchEmployee('employee-list.html');"
                    style="width: 100px;">Cancel</a>
             </div>
         </div>

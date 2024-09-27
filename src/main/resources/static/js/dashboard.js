@@ -11,6 +11,7 @@ let injectionScheduleLink = false;
 let InjectionResultUpdateBtn = false;
 let injectionResultTempId;
 let vaccineNameForDropdown;
+let employeeCancelBtn = false;
 
 function checkAllBoxes() {
     const selectAllCheckbox = $("#mother-checkbox")[0];
@@ -61,24 +62,7 @@ document.addEventListener("DOMContentLoaded", function () {
 			}
 		},
 		error: function(xhr) {
-			alert("error fetching current username!");
-			console.error("Error fetching current username!", xhr.status);
+			console.error("Error fetching current username!\nerror code:" + xhr.status + "\nerror message: " + xhr.responseText);
 		}
 	});
-
-	// get current user role
-//	$.ajax({
-//    		url: "/api/user/getRole",
-//    		method: "GET",
-//    		success: function(role) {
-//                if(role === "employee") {
-//                    $("#employeeManagementTitle").addClass("d-none");
-//                }
-//    		},
-//    		error: function(xhr) {
-//    			alert("error fetching current user role!");
-//    			console.error("Error fetching current role!", xhr.status);
-//    		}
-//    	});
-
 });

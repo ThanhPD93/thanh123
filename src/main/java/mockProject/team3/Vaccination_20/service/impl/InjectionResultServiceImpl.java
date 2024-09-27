@@ -127,6 +127,9 @@ public class InjectionResultServiceImpl implements InjectionResultService {
             injectionResult.setVaccineFromInjectionResult(vaccine);
             System.out.println(injectionResult.getInjectionResultId());
             injectionResultRepository.save(injectionResult);
+            if(injectionResultRepository.findById(dto.getInjectionResultId()).orElse(null) != null) {
+                return 2;
+            }
             return 1;
         } catch (Exception e) {
             return 0;
