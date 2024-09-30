@@ -11,10 +11,6 @@ function pressCancel() {
 	employeeCancelBtn = true;
 }
 
-function setPageSize(pageSize) {
-	$("#dropdownMenuButton")[0].textContent = pageSize;
-}
-
 //---------------------------
 function fetchEmployee(filename) {
     const checkbox = $(".check-boxes input[type='checkbox']:checked");

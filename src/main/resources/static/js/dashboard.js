@@ -27,6 +27,10 @@ function backToHomePage() {
 	ajaxNews("show-news.html");
 }
 
+function setPageSize(pageSize) {
+	$("#dropdownMenuButton")[0].textContent = pageSize;
+}
+
 document.addEventListener("DOMContentLoaded", function () {
 	// get news at home page
 	ajaxNews("show-news.html");

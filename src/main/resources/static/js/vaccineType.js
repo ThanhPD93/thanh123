@@ -55,7 +55,7 @@ function updatePageVaccineType(currentPage, totalPages, pageSize, totalElements)
 
     // Left button
     if (currentPage > 0) {
-        pageButtons += `<li class="page-item"><a class="page-link" onclick="findAllVaccineType(${currentPage - 1}, ${pageSize})">&laquo;</a></li>`;
+        pageButtons += `<li class="page-item"><a class="page-link" onclick="findAllVaccineType(${currentPage - 1})">&laquo;</a></li>`;
     } else {
         pageButtons += `<li class="page-item disabled"><span class="page-link">&laquo;</span></li>`;
     }
@@ -63,14 +63,14 @@ function updatePageVaccineType(currentPage, totalPages, pageSize, totalElements)
     // Show all pages if totalPages < 10
     if (totalPages <= 10) {
         for (let i = 0; i < totalPages; i++) {
-            pageButtons += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" onclick="findAllVaccineType(${i}, ${pageSize})">${i + 1}</a></li>`;
+            pageButtons += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" onclick="findAllVaccineType(${i})">${i + 1}</a></li>`;
         }
     } else {
         // Always show page 1 and 2
         if (totalPages > 1) {
-            pageButtons += `<li class="page-item ${currentPage === 0 ? 'active' : ''}"><a class="page-link" onclick="findAllVaccineType(0, ${pageSize})">1</a></li>`;
+            pageButtons += `<li class="page-item ${currentPage === 0 ? 'active' : ''}"><a class="page-link" onclick="findAllVaccineType(0)">1</a></li>`;
             if (totalPages > 2) {
-                pageButtons += `<li class="page-item ${currentPage === 1 ? 'active' : ''}"><a class="page-link" onclick="findAllVaccineType(1, ${pageSize})">2</a></li>`;
+                pageButtons += `<li class="page-item ${currentPage === 1 ? 'active' : ''}"><a class="page-link" onclick="findAllVaccineType(1)">2</a></li>`;
             }
         }
 
@@ -83,7 +83,7 @@ function updatePageVaccineType(currentPage, totalPages, pageSize, totalElements)
         let endPage = Math.min(totalPages - 3, currentPage + 1);
 
         for (let i = startPage; i <= endPage; i++) {
-            pageButtons += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" onclick="findAllVaccineType(${i}, ${pageSize})">${i + 1}</a></li>`;
+            pageButtons += `<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" onclick="findAllVaccineType(${i})">${i + 1}</a></li>`;
         }
 
         if (currentPage < totalPages - 4) {
@@ -93,15 +93,15 @@ function updatePageVaccineType(currentPage, totalPages, pageSize, totalElements)
         // Always show the last two pages
         if (totalPages > 2) {
             if (totalPages > 3) {
-                pageButtons += `<li class="page-item ${currentPage === totalPages - 2 ? 'active' : ''}"><a class="page-link" onclick="findAllVaccineType(${totalPages - 2}, ${pageSize})">${totalPages - 1}</a></li>`;
+                pageButtons += `<li class="page-item ${currentPage === totalPages - 2 ? 'active' : ''}"><a class="page-link" onclick="findAllVaccineType(${totalPages - 2})">${totalPages - 1}</a></li>`;
             }
-            pageButtons += `<li class="page-item ${currentPage === totalPages - 1 ? 'active' : ''}"><a class="page-link" onclick="findAllVaccineType(${totalPages - 1}, ${pageSize})">${totalPages}</a></li>`;
+            pageButtons += `<li class="page-item ${currentPage === totalPages - 1 ? 'active' : ''}"><a class="page-link" onclick="findAllVaccineType(${totalPages - 1})">${totalPages}</a></li>`;
         }
     }
 
     // Right button
     if (currentPage < totalPages - 1) {
-        pageButtons += `<li class="page-item"><a class="page-link" onclick="findAllVaccineType(${currentPage + 1}, ${pageSize})">&raquo;</a></li>`;
+        pageButtons += `<li class="page-item"><a class="page-link" onclick="findAllVaccineType(${currentPage + 1})">&raquo;</a></li>`;
     } else {
         pageButtons += `<li class="page-item disabled"><span class="page-link">&raquo;</span></li>`;
     }
@@ -118,7 +118,7 @@ function fetchVaccineType(filename) {
 		success: function(ajaxData) {
 			document.getElementById('ajax-content').innerHTML = ajaxData;
                 if(filename === "vaccine-type-list.html") {
-                    findAllVaccineType(0,10);
+                    findAllVaccineType(0);
                     document.getElementById("ajax-title").innerHTML="VACCINE TYPE LIST";
                 }
                 else {
@@ -219,7 +219,7 @@ function makeInactive() {
     	data: JSON.stringify(makeInactiveBody),
     	success: function (stringData) {
     		alert(stringData);
-    		findAllVaccineType(0,10);
+    		findAllVaccineType(0);
     	},
     	error: function(xhr) {
             alert(xhr.responseText);
